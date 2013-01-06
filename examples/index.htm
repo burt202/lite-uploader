@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>HTML5 jQuery File Upload - LiteUploader Example</title>
+</head>
+<body>
+	<input type="file" name="fileUpload" id="fileUpload" />
+	<div id="details"></div>
+	<div id="response"></div>
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script type="text/javascript" src="../jquery.liteuploader.min.js"></script>
+	<script type="text/javascript">
+
+		$(document).ready(function ()
+		{
+			$('#fileUpload').liteUploader(
+			{
+				multi: true,
+				script: 'upload.php',
+				allowedFileTypes: 'image/jpeg,image/png,image/gif',
+				maxSizeInBytes: 1048576,
+				beforeFunc: function ()
+				{
+					$('#details').html('');
+					$('#response').html('Uploading...');
+				},
+				afterFunc: function (response)
+				{
+					$('#response').html(response);
+				},
+				displayFunc: function (file, errors)
+				{
+					var i, errorsDisp = '';
+
+					if (errors.length > 0)
+					{
+						$('#response').html('One or more files did not pass validation');
+
+						for (i = 0; i < errors.length; i++)
+						{
+							errorsDisp += '<br />' + errors[i].message;
+						}
+					}
+
+					$('#details').append('<p>Name: ' + file.name + ' Type: ' + file.type + ' Size:' + file.size + errorsDisp + '</p>');
+				}
+			});
+		});
+
+	</script>
+</body>
+</html>
