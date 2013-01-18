@@ -1,24 +1,24 @@
-$.fn.liteUploader = function (options)
+$.fn.liteUploader = function (userOptions)
 {
 	var defaults = { multi: false, script: null, allowedFileTypes: null, maxSizeInBytes: null, beforeFunc: function(){}, afterFunc: function(res){}, displayFunc: function(file, errors){} },
-		options = $.extend(defaults, options);
+		options = $.extend(defaults, userOptions);
 
 	if (options.multi) { this.attr('multiple', 'multiple'); }
 
 	this.change(function ()
 	{
-		var i, formdata = new FormData(), file, obj = $(this), errors = false, errorsArray = [];
+		var i, formData = new FormData(), file, obj = $(this), errors = false, errorsArray = [];
 
 		options.beforeFunc();
 
-		for (i = 0; i < this.files.length; i++)
+		for (i = 0; i < this.files.length; i += 1)
 		{
 			file = this.files[i];
 
 			errorsArray = validateFile(file, options.allowedFileTypes, options.maxSizeInBytes);
 			if (errorsArray.length > 0) { errors = true; }
 
-			formdata.append(obj.attr('name') + '[]', file);
+			formData.append(obj.attr('name') + '[]', file);
 
 			options.displayFunc(file, errorsArray);
 		}
@@ -29,7 +29,7 @@ $.fn.liteUploader = function (options)
 			{
 				url: options.script,
 				type: 'POST',
-				data: formdata,
+				data: formData,
 				processData: false,
 				contentType: false,
 				success: function (res)
