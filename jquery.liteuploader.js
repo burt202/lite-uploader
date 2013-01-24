@@ -9,6 +9,8 @@ $.fn.liteUploader = function (userOptions)
 	{
 		var i, formData = new FormData(), file, obj = $(this), errors = false, errorsArray = [];
 
+		if (this.files.length === 0) { return; }
+
 		options.beforeFunc();
 
 		for (i = 0; i < this.files.length; i += 1)
