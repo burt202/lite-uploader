@@ -1,6 +1,6 @@
 $.fn.liteUploader = function (userOptions)
 {
-	var defaults = { multi: false, script: null, allowedFileTypes: null, maxSizeInBytes: null, beforeFunc: function(){}, afterFunc: function(res){}, displayFunc: function(file, errors){} },
+	var defaults = { multi: false, script: null, allowedFileTypes: null, maxSizeInBytes: null, typeMessage: null, sizeMessage: null, beforeFunc: function(){}, afterFunc: function(res){}, displayFunc: function(file, errors){}, cancelFunc: function(){} },
 		options = $.extend(defaults, userOptions);
 
 	if (options.multi) { this.attr('multiple', 'multiple'); }
@@ -17,7 +17,7 @@ $.fn.liteUploader = function (userOptions)
 		{
 			file = this.files[i];
 
-			errorsArray = validateFile(file, options.allowedFileTypes, options.maxSizeInBytes);
+			errorsArray = validateFile(file, options.allowedFileTypes, options.maxSizeInBytes, options.typeMessage, options.sizeMessage);
 			if (errorsArray.length > 0) { errors = true; }
 
 			formData.append(obj.attr('name') + '[]', file);
@@ -43,18 +43,20 @@ $.fn.liteUploader = function (userOptions)
 		}
 	});
 
-	function validateFile (file, allowedFileTypes, maxSizeInBytes)
+	function validateFile (file, allowedFileTypes, maxSizeInBytes, typeMessage, sizeMessage)
 	{
-		var errorsArray = [];
+		var errorsArray = [], message;
 
 		if (allowedFileTypes && jQuery.inArray(file.type, allowedFileTypes.split(',')) === -1)
 		{
-			errorsArray.push({'type': 'type', 'message': 'Incorrect file type (only ' + allowedFileTypes + ' allowed)'});
+			message = typeMessage || 'Incorrect file type (only ' + allowedFileTypes + ' allowed)';
+			errorsArray.push({'type': 'type', 'message': message});
 		}
 
 		if (maxSizeInBytes && file.size > maxSizeInBytes)
 		{
-			errorsArray.push({'type': 'size', 'message': 'File size too big (max ' + maxSizeInBytes + ' bytes)'});
+			message = sizeMessage || 'File size too big (max ' + maxSizeInBytes + ' bytes)';
+			errorsArray.push({'type': 'size', 'message': message});
 		}
 
 		return errorsArray;
