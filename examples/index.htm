@@ -16,21 +16,17 @@
 		{
 			$('#fileUpload').liteUploader(
 			{
-				multi: true,
 				script: 'upload.php',
+				multi: true,
 				allowedFileTypes: 'image/jpeg,image/png,image/gif',
 				maxSizeInBytes: 1048576,
 				typeMessage: 'You can put your custom type validation message here',
-				beforeFunc: function ()
+				before: function ()
 				{
 					$('#details').html('');
 					$('#response').html('Uploading...');
 				},
-				afterFunc: function (response)
-				{
-					$('#response').html(response);
-				},
-				displayFunc: function (file, errors)
+				each: function (file, errors)
 				{
 					var i, errorsDisp = '';
 
@@ -45,6 +41,10 @@
 					}
 
 					$('#details').append('<p>Name: ' + file.name + ' Type: ' + file.type + ' Size:' + file.size + errorsDisp + '</p>');
+				},
+				success: function (response)
+				{
+					$('#response').html(response);
 				}
 			});
 		});

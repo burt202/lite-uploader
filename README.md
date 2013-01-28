@@ -8,20 +8,19 @@ This is a small jQuery plugin designed to use new HTML5 features ([File API](htt
 * multi: (boolean, default=false, optional) allows for multiple file selection
 * allowedFileTypes: (string, default=null, optional) a comma delimited string of allowed mime types
 * maxSizeInBytes: (integer, default=null, optional) maximum size in bytes allowed per file
-* beforeFunc: (function, default=function(){}, optional) add code here to be executed before the upload
-* afterFunc: (function, default=function(res){}, optional) add code here to be executed after the upload, res = output from the script
-* displayFunc: (function, default=function(file, errors){}, optional) add code here to be executed for every file being uploaded, file = js file obj, errors = array of errors populated if the file does not pass validation set using allowedFileTypes and maxSizeInBytes options
+* before: (function, default=function(){}, optional) add code here to be executed before the upload
+* each: (function, default=function(file, errors){}, optional) add code here to be executed for every file being uploaded, file = js file obj, errors = array of errors populated if the file does not pass validation set using allowedFileTypes and maxSizeInBytes options
+* success: (function, default=function(response){}, optional) add code here to be executed if the upload suceeded, response = output from the script
+* fail: (function, default=function(jqXHR){}, optional) add code here to be executed if the upload failed, jqXHR = jQuery XMLHTTPRequest Object
 * typeMessage: (string, default=null, options) to override the type validation message
 * sizeMessage: (string, default=null, options) to override the size validation message
 
 ## Browser Support
 
-As I have already stated in the description above this was not built for non-HTML5 browsers so it cleary isn't going to be for everyone. The two main HTML5 dependencies are the File API and XHR2, and using caniuse ([File API](http://caniuse.com/fileapi), [XHR2](http://caniuse.com/xhr2)) as a reference if you are using any of the following browser versions you shouldn't have any problem with the code:
+As I have already stated in the description above this was not built for non-HTML5 browsers so it cleary isn't going to be for everyone. The two main HTML5 dependencies are the File API and XHR2, and using caniuse ([File API](http://caniuse.com/fileapi), [XHR2](http://caniuse.com/xhr2)) as a reference, if you are using any of the following browser versions you shouldn't have any problem with the code:
 
 * Chrome 13+
 * Firefox 4+
 * Internet Explorer 10+
 * Safari 6+
 * Opera 12+
-
-

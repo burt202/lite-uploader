@@ -1,6 +1,6 @@
 $.fn.liteUploader = function (userOptions)
 {
-	var defaults = { multi: false, script: null, allowedFileTypes: null, maxSizeInBytes: null, typeMessage: null, sizeMessage: null, beforeFunc: function(){}, afterFunc: function(res){}, displayFunc: function(file, errors){}, cancelFunc: function(){} },
+	var defaults = { script: null, multi: false, allowedFileTypes: null, maxSizeInBytes: null, typeMessage: null, sizeMessage: null, before: function(){}, each: function(file, errors){}, success: function(response){}, fail: function(jqXHR){} },
 		options = $.extend(defaults, userOptions);
 
 	if (options.multi) { this.attr('multiple', 'multiple'); }
@@ -11,7 +11,7 @@ $.fn.liteUploader = function (userOptions)
 
 		if (this.files.length === 0) { return; }
 
-		options.beforeFunc();
+		options.before();
 
 		for (i = 0; i < this.files.length; i += 1)
 		{
@@ -22,25 +22,31 @@ $.fn.liteUploader = function (userOptions)
 
 			formData.append(obj.attr('name') + '[]', file);
 
-			options.displayFunc(file, errorsArray);
+			options.each(file, errorsArray);
 		}
 
-		if (! errors)
+		if (errors) { return; }
+
+		$.ajax(
 		{
-			$.ajax(
-			{
-				url: options.script,
-				type: 'POST',
-				data: formData,
-				processData: false,
-				contentType: false,
-				success: function (res)
-				{
-					obj.replaceWith(obj.val('').clone(true));
-					options.afterFunc(res); 
-				}
-			});
-		}
+			url: options.script,
+			type: 'POST',
+			data: formData,
+			processData: false,
+			contentType: false
+		})
+		.always(function ()
+		{
+			obj.replaceWith(obj.val('').clone(true));
+		})
+		.done(function(response)
+		{
+			options.success(response);
+		})
+		.fail(function(jqXHR)
+		{
+			options.fail(jqXHR);
+		});
 	});
 
 	function validateFile (file, allowedFileTypes, maxSizeInBytes, typeMessage, sizeMessage)
