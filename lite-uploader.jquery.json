@@ -19,7 +19,8 @@
         "jQuery",
         "file",
         "uploader",
-        "upload"
+        "upload",
+        "AJAX"
     ],
     "homepage": "https://github.com/burt202/lite-uploader",
     "dependencies": {
