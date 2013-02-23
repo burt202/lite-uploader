@@ -1,9 +1,7 @@
 $.fn.liteUploader = function (userOptions)
 {
-	var defaults = { script: null, multi: false, allowedFileTypes: null, maxSizeInBytes: null, typeMessage: null, sizeMessage: null, before: function(){}, each: function(file, errors){}, success: function(response){}, fail: function(jqXHR){} },
+	var defaults = { script: null, allowedFileTypes: null, maxSizeInBytes: null, typeMessage: null, sizeMessage: null, before: function(){}, each: function(file, errors){}, success: function(response){}, fail: function(jqXHR){} },
 		options = $.extend(defaults, userOptions);
-
-	if (options.multi) { this.attr('multiple', 'multiple'); }
 
 	this.change(function ()
 	{
@@ -26,6 +24,7 @@ $.fn.liteUploader = function (userOptions)
 		}
 
 		if (errors) { return; }
+		if ($(this).attr('id')) { formData.append('liteUploader_id', $(this).attr('id')); }
 
 		$.ajax(
 		{

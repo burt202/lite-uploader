@@ -4,7 +4,8 @@
 	<title>HTML5 jQuery File Upload - LiteUploader Example</title>
 </head>
 <body>
-	<input type="file" name="fileUpload" id="fileUpload" />
+	<input type="file" name="fileUpload1" id="fileUpload1" class="fileUpload" />
+	<input type="file" name="fileUpload2" id="fileUpload2" class="fileUpload" multiple="multiple" />
 	<div id="details"></div>
 	<div id="response"></div>
 
@@ -14,10 +15,9 @@
 
 		$(document).ready(function ()
 		{
-			$('#fileUpload').liteUploader(
+			$('.fileUpload').liteUploader(
 			{
 				script: 'upload.php',
-				multi: true,
 				allowedFileTypes: 'image/jpeg,image/png,image/gif',
 				maxSizeInBytes: 1048576,
 				typeMessage: 'You can put your custom type validation message here',

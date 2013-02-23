@@ -1,13 +1,29 @@
 <?php
 
-foreach ($_FILES['fileUpload']['error'] as $key => $error)
+if (isset($_POST['liteUploader_id']) && $_POST['liteUploader_id'] == 'fileUpload1')
 {
-    if ($error == UPLOAD_ERR_OK)
+	foreach ($_FILES['fileUpload1']['error'] as $key => $error)
 	{
-        move_uploaded_file( $_FILES['fileUpload']['tmp_name'][$key], 'uploads/' . $_FILES['fileUpload']['name'][$key]);
-    }
+	    if ($error == UPLOAD_ERR_OK)
+		{
+	        move_uploaded_file( $_FILES['fileUpload1']['tmp_name'][$key], 'uploads/' . $_FILES['fileUpload1']['name'][$key]);
+	    }
+	}
+
+	echo 'Successfully Uploaded File(s) From First Upload Input';
 }
 
-echo 'Successfully Uploaded File(s)';
+if (isset($_POST['liteUploader_id']) && $_POST['liteUploader_id'] == 'fileUpload2')
+{
+	foreach ($_FILES['fileUpload2']['error'] as $key => $error)
+	{
+	    if ($error == UPLOAD_ERR_OK)
+		{
+	        move_uploaded_file( $_FILES['fileUpload2']['tmp_name'][$key], 'uploads/' . $_FILES['fileUpload2']['name'][$key]);
+	    }
+	}
+
+	echo 'Successfully Uploaded File(s) From Second Upload Input';
+}
 
 ?>

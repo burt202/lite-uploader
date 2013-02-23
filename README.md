@@ -5,7 +5,6 @@ This is a small jQuery plugin (loosely based on [this nettuts tutorial](http://n
 ## Options Explained
 
 * script: (string, default=null, required) the path to the script file that will handle the upload (see example)
-* multi: (boolean, default=false, optional) allows for multiple file selection
 * allowedFileTypes: (string, default=null, optional) a comma delimited string of allowed mime types
 * maxSizeInBytes: (integer, default=null, optional) maximum size in bytes allowed per file
 * before: (function, default=function(){}, optional) add code here to be executed before the upload
@@ -28,3 +27,11 @@ As I have already stated in the description above this was not built for non-HTM
 * Opera 12+
 
 According to [gs.statcounter.com](http://gs.statcounter.com), as of Jan 2012 the browser versions listed above should account for approx 60% of all internet users
+
+## Changelog
+
+1.3.0
+
+* removed multi option, this can be achieved by adding the multiple attribute to the file input instead
+* if an ID attribute is set on file input, it is now sent through as POST data to the server script
+* example improved to show how to handle multiple lite-uploader inputs on a single page
