@@ -1,4 +1,4 @@
-# LiteUploader - HTML5 jQuery File Uploader <sup>v1.3.0</sup>
+# LiteUploader - HTML5 jQuery File Uploader <sup>v1.3.1</sup>
 
 This is a small jQuery plugin (loosely based on [this nettuts tutorial](http://net.tutsplus.com/tutorials/javascript-ajax/uploading-files-with-ajax/)) designed to use new HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle. It purposely doesn't support older browsers because I don't know about you, but I'm sick of seeing snippets of JavaScript with double the code and logic just to make it work in HTML4-only browsers that have ever diminishing percentage of users. I know practically this is not helpful because browsers like IE9 will be around for a while but what I really wanted to see is, at its absolute minimum, how little code do you need to make a small, but very usable and easily expandable jQuery upload plugin. With some useful options including basic validation it turns out not many. With less than 100 lines of code and being < 2kb in size, it is a good choice for any developer who is not so worried about supporting the older browsers.
 
@@ -29,6 +29,9 @@ As I have already stated in the description above this was not built for non-HTM
 According to [gs.statcounter.com](http://gs.statcounter.com), as of Jan 2012 the browser versions listed above should account for approx 60% of all internet users
 
 ## Changelog
+
+1.3.1
+* Adds version and link at the top of un-minified js
 
 1.3.0
 
