@@ -26,7 +26,7 @@ As I have already stated in the description above this was not built for non-HTM
 * Safari 6+
 * Opera 12+
 
-According to [gs.statcounter.com](http://gs.statcounter.com), as of Jan 2012 the browser versions listed above should account for approx 60% of all internet users
+According to [gs.statcounter.com](http://gs.statcounter.com), as of April 2013 the browser versions listed above should account for approx 64% of all internet users
 
 ## Changelog
 
