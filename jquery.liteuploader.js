@@ -1,33 +1,83 @@
-/* liteUploader v1.3.1 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
+/* liteUploader v1.4.0 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
 $.fn.liteUploader = function (userOptions)
 {
-	var defaults = { script: null, allowedFileTypes: null, maxSizeInBytes: null, typeMessage: null, sizeMessage: null, before: function(){}, each: function(file, errors){}, success: function(response){}, fail: function(jqXHR){} },
-		options = $.extend(defaults, userOptions);
+	"use strict";
 
-	this.change(function ()
+	var defaults = {},
+		options = {};
+
+	defaults = {
+		script: null,
+		allowedFileTypes: null,
+		maxSizeInBytes: null,
+		customParams: {},
+		before: function() { return true; },
+		each: function(file, errors) {},
+		success: function(response) {},
+		fail: function(jqXHR) {}
+	};
+
+	options = $.extend(defaults, userOptions);
+
+	function findErrors (file, options)
 	{
-		var i, formData = new FormData(), file, obj = $(this), errors = false, errorsArray = [];
+		var errorsArray = [];
 
-		if (this.files.length === 0) { return; }
-
-		options.before();
-
-		for (i = 0; i < this.files.length; i += 1)
+		if (options.allowedFileTypes && $.inArray(file.type, options.allowedFileTypes.split(',')) === -1)
 		{
-			file = this.files[i];
-
-			errorsArray = validateFile(file, options.allowedFileTypes, options.maxSizeInBytes, options.typeMessage, options.sizeMessage);
-			if (errorsArray.length > 0) { errors = true; }
-
-			formData.append(obj.attr('name') + '[]', file);
-
-			options.each(file, errorsArray);
+			errorsArray.push({'type': 'type', 'rule': options.allowedFileTypes, 'given': file.type});
 		}
 
-		if (errors) { return; }
-		if ($(this).attr('id')) { formData.append('liteUploader_id', $(this).attr('id')); }
+		if (options.maxSizeInBytes && file.size > options.maxSizeInBytes)
+		{
+			errorsArray.push({'type': 'size', 'rule': options.maxSizeInBytes, 'given': file.size});
+		}
 
+		return errorsArray;
+	}
+
+	function validateFiles (files, options)
+	{
+		var errors = false;
+
+		$.each(files, function(i)
+		{
+			var errorsArray = findErrors(files[i], options);
+			if (errorsArray.length > 0) { errors = true; }
+			options.each(files[i], errorsArray);
+		});
+
+		if (errors) { return false; }
+		return true;
+	}
+
+	function collateFormData (obj, customParams, files)
+	{
+		var formData = new FormData();
+
+		if (obj.attr('id')) { formData.append('liteUploader_id', obj.attr('id')); }
+
+		$.each(customParams, function(key, value)
+		{
+			formData.append(key, value);
+		});
+
+		$.each(files, function(i)
+		{
+			formData.append(obj.attr('name') + '[]', files[i]);
+		});
+
+		return formData;
+	}
+
+	function resetInput (obj)
+	{
+		obj.replaceWith(obj.clone(true));
+	}
+
+	function performUpload (obj, options, formData)
+	{
 		$.ajax(
 		{
 			url: options.script,
@@ -38,7 +88,7 @@ $.fn.liteUploader = function (userOptions)
 		})
 		.always(function ()
 		{
-			obj.replaceWith(obj.val('').clone(true));
+			resetInput(obj);
 		})
 		.done(function(response)
 		{
@@ -48,24 +98,18 @@ $.fn.liteUploader = function (userOptions)
 		{
 			options.fail(jqXHR);
 		});
-	});
-
-	function validateFile (file, allowedFileTypes, maxSizeInBytes, typeMessage, sizeMessage)
-	{
-		var errorsArray = [], message;
-
-		if (allowedFileTypes && jQuery.inArray(file.type, allowedFileTypes.split(',')) === -1)
-		{
-			message = typeMessage || 'Incorrect file type (only ' + allowedFileTypes + ' allowed)';
-			errorsArray.push({'type': 'type', 'message': message});
-		}
-
-		if (maxSizeInBytes && file.size > maxSizeInBytes)
-		{
-			message = sizeMessage || 'File size too big (max ' + maxSizeInBytes + ' bytes)';
-			errorsArray.push({'type': 'size', 'message': message});
-		}
-
-		return errorsArray;
 	}
+
+	this.change(function ()
+	{
+		var obj = $(this);
+
+		if (!obj.attr('name') || !options.script || !options.before() || this.files.length === 0 || !validateFiles(this.files, options))
+		{
+			resetInput(obj);
+			return;
+		}
+
+		performUpload(obj, options, collateFormData(obj, options.customParams, this.files));
+	});
 };

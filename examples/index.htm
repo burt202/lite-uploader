@@ -2,16 +2,37 @@
 <html>
 <head>
 	<title>HTML5 jQuery File Upload - LiteUploader Example</title>
+
+	<style>
+
+		body {
+			font-family: helvetica;
+			font-size: 13px;
+		}
+
+		#response {
+			font-weight: bold;
+			font-size: 16px;
+			margin-bottom: 20px;
+		}
+
+		.error {
+			font-weight: bold;
+			color: red;
+		}
+
+	</style>
 </head>
 <body>
 	<input type="file" name="fileUpload1" id="fileUpload1" class="fileUpload" />
 	<input type="file" name="fileUpload2" id="fileUpload2" class="fileUpload" multiple="multiple" />
 	<div id="details"></div>
 	<div id="response"></div>
+	<div id="previews"></div>
 
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script type="text/javascript" src="../jquery.liteuploader.min.js"></script>
-	<script type="text/javascript">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="../jquery.liteuploader.min.js"></script>
+	<script>
 
 		$(document).ready(function ()
 		{
@@ -19,12 +40,16 @@
 			{
 				script: 'upload.php',
 				allowedFileTypes: 'image/jpeg,image/png,image/gif',
-				maxSizeInBytes: 1048576,
-				typeMessage: 'You can put your custom type validation message here',
+				maxSizeInBytes: 250000,
+				customParams: {
+					'custom': 'tester'
+				},
 				before: function ()
 				{
-					$('#details').html('');
+					$('#details, #previews').empty();
 					$('#response').html('Uploading...');
+
+					return true;
 				},
 				each: function (file, errors)
 				{
@@ -34,17 +59,24 @@
 					{
 						$('#response').html('One or more files did not pass validation');
 
-						for (i = 0; i < errors.length; i++)
+						$.each(errors, function(i, error)
 						{
-							errorsDisp += '<br />' + errors[i].message;
-						}
+							errorsDisp += '<br /><span class="error">' + error.type + ' error - Rule: ' + error.rule + '</span>';
+						});
 					}
 
-					$('#details').append('<p>Name: ' + file.name + ' Type: ' + file.type + ' Size:' + file.size + errorsDisp + '</p>');
+					$('#details').append('<p>name: ' + file.name + ', type: ' + file.type + ', size:' + file.size + errorsDisp + '</p>');
 				},
 				success: function (response)
 				{
-					$('#response').html(response);
+					var response = $.parseJSON(response);
+
+					$.each(response.urls, function(i, url)
+					{
+						$('#previews').append($('<img>', {'src': url, 'width': 200}));
+					});
+
+					$('#response').html(response.message);
 				}
 			});
 		});
