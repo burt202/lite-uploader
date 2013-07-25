@@ -1,6 +1,6 @@
 {
     "name": "lite-uploader",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "title": "lite-uploader.js",
     "author": {
         "name" : "Aaron Burtnyk",
@@ -20,7 +20,8 @@
         "file",
         "uploader",
         "upload",
-        "AJAX"
+        "AJAX",
+        "lite"
     ],
     "homepage": "https://github.com/burt202/lite-uploader",
     "dependencies": {

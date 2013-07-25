@@ -1,4 +1,4 @@
-/* liteUploader v1.4.0 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
+/* liteUploader v1.4.1 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
 $.fn.liteUploader = function (userOptions)
 {
@@ -14,6 +14,7 @@ $.fn.liteUploader = function (userOptions)
 		customParams: {},
 		before: function() { return true; },
 		each: function(file, errors) {},
+		progress: function (percentage) {},
 		success: function(response) {},
 		fail: function(jqXHR) {}
 	};
@@ -80,6 +81,20 @@ $.fn.liteUploader = function (userOptions)
 	{
 		$.ajax(
 		{
+			xhr: function()
+			{
+				var xhr = new XMLHttpRequest();
+
+				xhr.upload.addEventListener('progress', function (evt)
+				{
+					if (evt.lengthComputable)
+					{
+						options.progress(Math.floor((evt.loaded / evt.total) * 100));
+					}
+				}, false);
+
+				return xhr;
+			},
 			url: options.script,
 			type: 'POST',
 			data: formData,

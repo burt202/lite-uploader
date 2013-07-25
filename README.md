@@ -1,4 +1,4 @@
-# LiteUploader - HTML5 jQuery File Uploader <sup>v1.4.0</sup>
+# LiteUploader - HTML5 jQuery File Uploader <sup>v1.4.1</sup>
 
 This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://tekbrand.com/jquery/10-best-jquery-file-upload-plugins)) designed to use new HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle. It purposely doesn't support non-HTML5 which I know won't suit everyone because older versions of IE will be around for a while yet, but what I really wanted to see is, at its absolute minimum, how little code do you need to make a small, but very usable and easily expandable jQuery upload plugin. With some useful options including basic validation it turns out not many. After minification it is less then 2kb in size and is a good choice for any developer who is not so worried about supporting the older browsers.
 
@@ -10,6 +10,7 @@ This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://te
 * customParams: (object, default={}, optional) an object of custom params to be sent to the server
 * before: (function, default=function(){ return true; }, optional) add code here to be executed before the upload, if you use this option you must allow the function to return true to continue with the upload; useful if you want logic in place to be able to cancel the upload if needbe by just returning false
 * each: (function, default=function(file, errors){}, optional) add code here to be executed for every file being uploaded, file = js file obj, errors = array of errors populated if the file does not pass validation set using allowedFileTypes and maxSizeInBytes options
+* progress: (function, default=function(percentage){}, optional) add code here to use the progress percentage
 * success: (function, default=function(response){}, optional) add code here to be executed if the upload suceeded, response = output from the script
 * fail: (function, default=function(jqXHR){}, optional) add code here to be executed if the upload failed, jqXHR = jQuery XMLHTTPRequest Object
 
@@ -29,7 +30,11 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 
 ## Changelog
 
-1.4.0 (July 2013)
+1.4.1 (25 July 2013)
+
+* adds progress option
+
+1.4.0 (24 July 2013)
 
 * a complete code overhaul
 * adds 'customParams' option
@@ -38,14 +43,19 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 * removes 'sizeMessage' option
 * the errors param for the 'each' function has changed format, it now returns {type, given, rule} rather than {type, message}
 
-1.3.1
+1.3.1 (28 Feb 2013)
 
 * adds version and link at the top of un-minified js
 
-1.3.0
+1.3.0 (23 Feb 2013)
 
 * removed multi option, this can be achieved by adding the multiple attribute to the file input instead
 * if an ID attribute is set on file input, it is now sent through as POST data to the server script
 * example improved to show how to handle multiple lite-uploader inputs on a single page
+
+1.2.0 (30 Jan 2013)
+
+* adds 'fail' function option
+* updates ajax call to use new jquery methods (always, done, fail etc)
 
 ## Suggestions, comments and queries welcome, send to aaron@burtdev.net
