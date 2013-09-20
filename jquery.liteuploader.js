@@ -1,85 +1,116 @@
-/* liteUploader v1.4.1 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
+/* liteUploader v1.4.2 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
-$.fn.liteUploader = function (userOptions)
+$.fn.liteUploader = function (options)
 {
-	"use strict";
-
-	var defaults = {},
-		options = {};
-
-	defaults = {
+	var defaults = {
 		script: null,
 		allowedFileTypes: null,
 		maxSizeInBytes: null,
 		customParams: {},
-		before: function() { return true; },
-		each: function(file, errors) {},
-		progress: function (percentage) {},
-		success: function(response) {},
-		fail: function(jqXHR) {}
+		before: function () {},
+		each: function () {},
+		progress: function () {},
+		success: function () {},
+		fail: function () {}
 	};
 
-	options = $.extend(defaults, userOptions);
+	this.change(function (e)
+	{
+		LiteUploader.init($, $(e.currentTarget), $.extend(defaults, options));
+	});
+};
 
-	function findErrors (file, options)
+var LiteUploader = {
+
+	attrs: {},
+
+	init: function ($, el, options)
+	{
+		this.attrs = {
+			$: $,
+			el: el,
+			options: options
+		};
+
+		if (!el.attr('name') || !options.script || el.get(0).files.length === 0 || options.before(el.get(0).files) === false || !this.validateFiles())
+		{
+			this.resetInput();
+			return;
+		}
+
+		this.performUpload(this.collateFormData());
+	},
+
+	resetInput: function ()
+	{
+		this.attrs.el.replaceWith(this.attrs.el.clone(true));
+	},
+
+	validateFiles: function ()
+	{
+		var that = this,
+			errors = false,
+			files = that.attrs.el.get(0).files;
+
+		that.attrs.$.each(files, function(i)
+		{
+			var errorsArray = that.findErrors(files[i]);
+
+			if (that.attrs.options.each(files[i], errorsArray) === false || errorsArray.length > 0)
+			{
+				errors = true;
+			}
+		});
+
+		return (errors) ? false : true;
+	},
+
+	findErrors: function (file)
 	{
 		var errorsArray = [];
 
-		if (options.allowedFileTypes && $.inArray(file.type, options.allowedFileTypes.split(',')) === -1)
+		if (this.attrs.options.allowedFileTypes && this.attrs.$.inArray(file.type, this.attrs.options.allowedFileTypes.split(',')) === -1)
 		{
-			errorsArray.push({'type': 'type', 'rule': options.allowedFileTypes, 'given': file.type});
+			errorsArray.push({'type': 'type', 'rule': this.attrs.options.allowedFileTypes, 'given': file.type});
 		}
 
-		if (options.maxSizeInBytes && file.size > options.maxSizeInBytes)
+		if (this.attrs.options.maxSizeInBytes && file.size > this.attrs.options.maxSizeInBytes)
 		{
-			errorsArray.push({'type': 'size', 'rule': options.maxSizeInBytes, 'given': file.size});
+			errorsArray.push({'type': 'size', 'rule': this.attrs.options.maxSizeInBytes, 'given': file.size});
 		}
 
 		return errorsArray;
-	}
+	},
 
-	function validateFiles (files, options)
+	collateFormData: function ()
 	{
-		var errors = false;
+		var that = this,
+			files = that.attrs.el.get(0).files,
+			formData = new FormData();
 
-		$.each(files, function(i)
+		if (that.attrs.el.attr('id'))
 		{
-			var errorsArray = findErrors(files[i], options);
-			if (errorsArray.length > 0) { errors = true; }
-			options.each(files[i], errorsArray);
-		});
+			formData.append('liteUploader_id', that.attrs.el.attr('id'));
+		}
 
-		if (errors) { return false; }
-		return true;
-	}
-
-	function collateFormData (obj, customParams, files)
-	{
-		var formData = new FormData();
-
-		if (obj.attr('id')) { formData.append('liteUploader_id', obj.attr('id')); }
-
-		$.each(customParams, function(key, value)
+		that.attrs.$.each(that.attrs.options.customParams, function(key, value)
 		{
 			formData.append(key, value);
 		});
 
-		$.each(files, function(i)
+		that.attrs.$.each(files, function(i)
 		{
-			formData.append(obj.attr('name') + '[]', files[i]);
+			formData.append(that.attrs.el.attr('name') + '[]', files[i]);
 		});
 
 		return formData;
-	}
+	},
 
-	function resetInput (obj)
+	performUpload: function (formData)
 	{
-		obj.replaceWith(obj.clone(true));
-	}
+		var that = this;
 
-	function performUpload (obj, options, formData)
-	{
-		$.ajax(
+		that.attrs.$.ajax(
 		{
 			xhr: function()
 			{
@@ -89,13 +120,13 @@ $.fn.liteUploader = function (userOptions)
 				{
 					if (evt.lengthComputable)
 					{
-						options.progress(Math.floor((evt.loaded / evt.total) * 100));
+						that.attrs.options.progress(Math.floor((evt.loaded / evt.total) * 100));
 					}
 				}, false);
 
 				return xhr;
 			},
-			url: options.script,
+			url: that.attrs.options.script,
 			type: 'POST',
 			data: formData,
 			processData: false,
@@ -103,28 +134,15 @@ $.fn.liteUploader = function (userOptions)
 		})
 		.always(function ()
 		{
-			resetInput(obj);
+			that.resetInput();
 		})
 		.done(function(response)
 		{
-			options.success(response);
+			that.attrs.options.success(response);
 		})
 		.fail(function(jqXHR)
 		{
-			options.fail(jqXHR);
+			that.attrs.options.fail(jqXHR);
 		});
 	}
-
-	this.change(function ()
-	{
-		var obj = $(this);
-
-		if (!obj.attr('name') || !options.script || !options.before() || this.files.length === 0 || !validateFiles(this.files, options))
-		{
-			resetInput(obj);
-			return;
-		}
-
-		performUpload(obj, options, collateFormData(obj, options.customParams, this.files));
-	});
 };

@@ -44,12 +44,10 @@
 				customParams: {
 					'custom': 'tester'
 				},
-				before: function ()
+				before: function (files)
 				{
 					$('#details, #previews').empty();
-					$('#response').html('Uploading...');
-
-					return true;
+					$('#response').html('Uploading ' + files.length + ' file(s)...');
 				},
 				each: function (file, errors)
 				{
