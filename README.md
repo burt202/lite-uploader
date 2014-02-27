@@ -14,7 +14,10 @@ This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://te
 * success: (function, default=function(response){}, optional) add code here to be executed if the upload suceeded, response = output from the script
 * fail: (function, default=function(jqXHR){}, optional) add code here to be executed if the upload failed, jqXHR = jQuery XMLHTTPRequest Object
 
-NOTE: make sure your uploads directory is writable (chmod 777) as this sometimes catches people out
+## Gotchas
+
+* make sure your uploads directory is writable (chmod 777) as this sometimes catches people out
+* make sure your HTML file input has a name attribute as the plugin will not work without it
 
 ## Browser Support
 
