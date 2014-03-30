@@ -1,148 +1,170 @@
-/* liteUploader v1.4.2 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
+/* liteUploader v2.0.0 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
-$.fn.liteUploader = function (options)
-{
-	var defaults = {
-		script: null,
-		allowedFileTypes: null,
-		maxSizeInBytes: null,
-		customParams: {},
-		before: function () {},
-		each: function () {},
-		progress: function () {},
-		success: function () {},
-		fail: function () {}
-	};
+$.fn.liteUploader = function (options) {
+    var defaults = {
+        script: null,
+        rules: {
+            allowedFileTypes: null,
+            maxSize: null
+        },
+        params: {},
+        changeHandler: true,
+        clickElement: null
+    };
 
-	this.change(function (e)
-	{
-		LiteUploader.init($, $(e.currentTarget), $.extend(defaults, options));
-	});
+    return this.each(function () {
+        if (!$.data(this, 'liteUploader')) {
+            $.data(this, 'liteUploader', new LiteUploader(this, $.extend(defaults, options)));
+        }
+    });
 };
 
-var LiteUploader = {
+function LiteUploader (element, options) {
+    this.el = $(element);
+    this.options = options;
 
-	attrs: {},
+    this.init();
+}
 
-	init: function ($, el, options)
-	{
-		this.attrs = {
-			$: $,
-			el: el,
-			options: options
-		};
+LiteUploader.prototype = {
+    init: function () {
+        if (this.options.changeHandler) {
+            this.el.change(function () {
+                this.start();
+            }.bind(this));
+        }
 
-		if (!el.attr('name') || !options.script || el.get(0).files.length === 0 || options.before(el.get(0).files) === false || !this.validateFiles())
-		{
-			this.resetInput();
-			return;
-		}
+        if (this.options.clickElement) {
+            $(this.options.clickElement).click(function () {
+                this.start();
+            }.bind(this));
+        }
+    },
 
-		this.performUpload(this.collateFormData());
-	},
+    start: function () {
+        var proceedWithUpload = true,
+            files = this.el.get(0).files;
 
-	resetInput: function ()
-	{
-		this.attrs.el.replaceWith(this.attrs.el.clone(true));
-	},
+        if (!this.el.attr('name')) {
+            console.error('the file input element must have a name attribute');
+            proceedWithUpload = false;
+        }
 
-	validateFiles: function ()
-	{
-		var that = this,
-			errors = false,
-			files = that.attrs.el.get(0).files;
+        if (!this.options.script) {
+            console.error('the script option is required');
+            proceedWithUpload = false;
+        }
 
-		that.attrs.$.each(files, function(i)
-		{
-			var errorsArray = that.findErrors(files[i]);
+        if (this.validateFiles(files)) {
+            proceedWithUpload = false;
+        }
 
-			if (that.attrs.options.each(files[i], errorsArray) === false || errorsArray.length > 0)
-			{
-				errors = true;
-			}
-		});
+        if (!proceedWithUpload) {
+            this.resetInput();
+            return;
+        }
 
-		return (errors) ? false : true;
-	},
+        this.el.trigger('lu:before', [files]);
+        this.performUpload(this.collateFormData(files));
+    },
 
-	findErrors: function (file)
-	{
-		var errorsArray = [];
+    resetInput: function () {
+        this.el.replaceWith(this.el.clone(true));
+    },
 
-		if (this.attrs.options.allowedFileTypes && this.attrs.$.inArray(file.type, this.attrs.options.allowedFileTypes.split(',')) === -1)
-		{
-			errorsArray.push({'type': 'type', 'rule': this.attrs.options.allowedFileTypes, 'given': file.type});
-		}
+    validateFiles: function (files) {
+        var errorsPresent = false,
+            errorReporter = [];
 
-		if (this.attrs.options.maxSizeInBytes && file.size > this.attrs.options.maxSizeInBytes)
-		{
-			errorsArray.push({'type': 'size', 'rule': this.attrs.options.maxSizeInBytes, 'given': file.size});
-		}
+        $.each(files, function (i) {
+            var errorsFound = this.findErrors(files[i]);
 
-		return errorsArray;
-	},
+            errorReporter.push({
+                name: files[i].name,
+                errors: errorsFound
+            });
 
-	collateFormData: function ()
-	{
-		var that = this,
-			files = that.attrs.el.get(0).files,
-			formData = new FormData();
+            if (errorsFound.length > 0) {
+                errorsPresent = true;
+            }
+        }.bind(this));
 
-		if (that.attrs.el.attr('id'))
-		{
-			formData.append('liteUploader_id', that.attrs.el.attr('id'));
-		}
+        this.el.trigger('lu:errors', [errorReporter]);
+        return errorsPresent;
+    },
 
-		that.attrs.$.each(that.attrs.options.customParams, function(key, value)
-		{
-			formData.append(key, value);
-		});
+    findErrors: function (file) {
+        var errorsArray = [];
 
-		that.attrs.$.each(files, function(i)
-		{
-			formData.append(that.attrs.el.attr('name') + '[]', files[i]);
-		});
+        $.each(this.options.rules, function (key, value) {
+            if ($.inArray(key, ['allowedFileTypes', 'maxSize']) === -1) {
+                return;
+            }
 
-		return formData;
-	},
+            if (key === 'allowedFileTypes' && value && $.inArray(file.type, value.split(',')) === -1) {
+                errorsArray.push({'type': 'type', 'rule': value, 'given': file.type});
+            }
 
-	performUpload: function (formData)
-	{
-		var that = this;
+            if (key === 'maxSize' && value && file.size > value) {
+                errorsArray.push({'type': 'size', 'rule': value, 'given': file.size});
+            }
+        });
 
-		that.attrs.$.ajax(
-		{
-			xhr: function()
-			{
-				var xhr = new XMLHttpRequest();
+        return errorsArray;
+    },
 
-				xhr.upload.addEventListener('progress', function (evt)
-				{
-					if (evt.lengthComputable)
-					{
-						that.attrs.options.progress(Math.floor((evt.loaded / evt.total) * 100));
-					}
-				}, false);
+    getFormDataObject: function () {
+        return new FormData();
+    },
 
-				return xhr;
-			},
-			url: that.attrs.options.script,
-			type: 'POST',
-			data: formData,
-			processData: false,
-			contentType: false
-		})
-		.always(function ()
-		{
-			that.resetInput();
-		})
-		.done(function(response)
-		{
-			that.attrs.options.success(response);
-		})
-		.fail(function(jqXHR)
-		{
-			that.attrs.options.fail(jqXHR);
-		});
-	}
+    setParam: function (key, value) {
+        this.options.params[key] = value;
+    },
+
+    collateFormData: function (files) {
+        var formData = this.getFormDataObject();
+
+        if (this.el.attr('id')) {
+            formData.append('liteUploader_id', this.el.attr('id'));
+        }
+
+        $.each(this.options.params, function (key, value) {
+            formData.append(key, value);
+        });
+
+        $.each(files, function (i) {
+            formData.append(this.el.attr('name') + '[]', files[i]);
+        }.bind(this));
+
+        return formData;
+    },
+
+    performUpload: function (formData) {
+        $.ajax({
+            xhr: function () {
+                var xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener('progress', function (evt) {
+                    if (evt.lengthComputable) {
+                        this.el.trigger('lu:progress', Math.floor((evt.loaded / evt.total) * 100));
+                    }
+                }.bind(this), false);
+
+                return xhr;
+            }.bind(this),
+            url: this.options.script,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false
+        })
+        .done(function(response){
+            this.el.trigger('lu:success', response);
+            this.resetInput();
+        }.bind(this))
+        .fail(function(jqXHR) {
+            this.el.trigger('lu:fail', jqXHR);
+            this.resetInput();
+        }.bind(this));
+    }
 };

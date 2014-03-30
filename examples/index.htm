@@ -26,56 +26,55 @@
 <body>
 	<input type="file" name="fileUpload1" id="fileUpload1" class="fileUpload" />
 	<input type="file" name="fileUpload2" id="fileUpload2" class="fileUpload" multiple="multiple" />
-	<div id="details"></div>
-	<div id="response"></div>
+	<div id="display"></div>
 	<div id="previews"></div>
 
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	<script src="../jquery.liteuploader.min.js"></script>
+	<script src="../jquery.liteuploader.js"></script>
 	<script>
 
-		$(document).ready(function ()
-		{
-			$('.fileUpload').liteUploader(
-			{
+		$(document).ready(function () {
+			$('.fileUpload').liteUploader({
 				script: 'upload.php',
-				allowedFileTypes: 'image/jpeg,image/png,image/gif',
-				maxSizeInBytes: 250000,
-				customParams: {
+				rules: {
+					allowedFileTypes: 'image/jpeg,image/png,image/gif',
+					maxSize: 250000
+				},
+				params: {
 					'custom': 'tester'
-				},
-				before: function (files)
-				{
-					$('#details, #previews').empty();
-					$('#response').html('Uploading ' + files.length + ' file(s)...');
-				},
-				each: function (file, errors)
-				{
-					var i, errorsDisp = '';
+				}
+			})
+			.on('lu:errors', function (e, errors) {
+				var isErrors = false;
+				$('#display').html('');
 
-					if (errors.length > 0)
-					{
-						$('#response').html('One or more files did not pass validation');
-
-						$.each(errors, function(i, error)
-						{
-							errorsDisp += '<br /><span class="error">' + error.type + ' error - Rule: ' + error.rule + '</span>';
+				$.each(errors, function (i, error) {
+					if (error.errors.length > 0) {
+						isErrors = true;
+						$.each(error.errors, function (i, errorInfo) {
+							$('#display').append('<br />ERROR! File: ' + error.name + ' - Info: ' + JSON.stringify(errorInfo));
 						});
 					}
+				});
 
-					$('#details').append('<p>name: ' + file.name + ', type: ' + file.type + ', size:' + file.size + errorsDisp + '</p>');
-				},
-				success: function (response)
-				{
-					var response = $.parseJSON(response);
-
-					$.each(response.urls, function(i, url)
-					{
-						$('#previews').append($('<img>', {'src': url, 'width': 200}));
-					});
-
-					$('#response').html(response.message);
+				if (!isErrors) {
+					$('#display').append('<br />No errors');
 				}
+			})
+			.on('lu:before', function (e, files) {
+				$('#display').append('<br />Uploading ' + files.length + ' file(s)...');
+			})
+			.on('lu:progress', function (e, percentage) {
+				$('#display').append('<br />Progress ' + percentage + '%');
+			})
+			.on('lu:success', function (e, response) {
+				var response = $.parseJSON(response);
+
+				$.each(response.urls, function(i, url) {
+					$('#previews').append($('<img>', {'src': url, 'width': 200}));
+				});
+
+				$('#display').html(response.message);
 			});
 		});
 
