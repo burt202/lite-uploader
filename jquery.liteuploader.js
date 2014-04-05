@@ -13,15 +13,14 @@ $.fn.liteUploader = function (options) {
     };
 
     return this.each(function () {
-        if (!$.data(this, 'liteUploader')) {
-            $.data(this, 'liteUploader', new LiteUploader(this, $.extend(defaults, options)));
-        }
+        $.data(this, 'liteUploader', new LiteUploader(this, $.extend(defaults, options)));
     });
 };
 
 function LiteUploader (element, options) {
     this.el = $(element);
     this.options = options;
+    this.params = options.params;
 
     this.init();
 }
@@ -35,7 +34,7 @@ LiteUploader.prototype = {
         }
 
         if (this.options.clickElement) {
-            $(this.options.clickElement).click(function () {
+            this.options.clickElement.click(function () {
                 this.start();
             }.bind(this));
         }
@@ -97,10 +96,6 @@ LiteUploader.prototype = {
         var errorsArray = [];
 
         $.each(this.options.rules, function (key, value) {
-            if ($.inArray(key, ['allowedFileTypes', 'maxSize']) === -1) {
-                return;
-            }
-
             if (key === 'allowedFileTypes' && value && $.inArray(file.type, value.split(',')) === -1) {
                 errorsArray.push({'type': 'type', 'rule': value, 'given': file.type});
             }
@@ -117,8 +112,8 @@ LiteUploader.prototype = {
         return new FormData();
     },
 
-    setParam: function (key, value) {
-        this.options.params[key] = value;
+    addParam: function (key, value) {
+        this.params[key] = value;
     },
 
     collateFormData: function (files) {
@@ -128,7 +123,7 @@ LiteUploader.prototype = {
             formData.append('liteUploader_id', this.el.attr('id'));
         }
 
-        $.each(this.options.params, function (key, value) {
+        $.each(this.params, function (key, value) {
             formData.append(key, value);
         });
 
