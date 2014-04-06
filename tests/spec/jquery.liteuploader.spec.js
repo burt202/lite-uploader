@@ -6,7 +6,7 @@ describe('Lite Uploader', function () {
 
     describe('basic instantiation', function () {
         it('should be able to be instantiated', function () {
-            spyOn(LiteUploader.prototype, 'init');
+            spyOn(LiteUploader.prototype, '_init');
 
             var liteUploader = new LiteUploader(fileInput, {tester:'abc', params: {foo: '123'}});
 
@@ -14,91 +14,91 @@ describe('Lite Uploader', function () {
             expect(liteUploader.el).toEqual(jasmine.any(Object));
             expect(liteUploader.options).toEqual({tester:'abc', params: {foo: '123'}});
             expect(liteUploader.params).toEqual({foo: '123'});
-            expect(liteUploader.init).toHaveBeenCalled();
+            expect(liteUploader._init).toHaveBeenCalled();
         });
     });
 
     describe('start event', function () {
         it('should be called on file input change when changeHandler option is true', function () {
-            spyOn(LiteUploader.prototype, 'start');
+            spyOn(LiteUploader.prototype, '_start');
             var liteUploader = new LiteUploader(fileInput, {changeHandler: true});
 
             liteUploader.el.triggerHandler('change');
 
-            expect(liteUploader.start).toHaveBeenCalled();
+            expect(liteUploader._start).toHaveBeenCalled();
         });
 
         it('should not be called on file input change when changeHandler option is false', function () {
-            spyOn(LiteUploader.prototype, 'start');
+            spyOn(LiteUploader.prototype, '_start');
             var liteUploader = new LiteUploader(fileInput, {changeHandler: false});
 
             liteUploader.el.triggerHandler('change');
 
-            expect(liteUploader.start).not.toHaveBeenCalled();
+            expect(liteUploader._start).not.toHaveBeenCalled();
         });
 
         it('should be called on element click when clickElement option is set', function () {
-            spyOn(LiteUploader.prototype, 'start');
+            spyOn(LiteUploader.prototype, '_start');
             var liteUploader = new LiteUploader(fileInput, {clickElement: clickElement});
 
             clickElement.triggerHandler('click');
 
-            expect(liteUploader.start).toHaveBeenCalled();
+            expect(liteUploader._start).toHaveBeenCalled();
         });
     });
 
     describe('initial validation', function () {
         it('should not proceed with upload if file input does not have a name attribute', function () {
             spyOn(console, 'error');
-            spyOn(LiteUploader.prototype, 'resetInput');
-            spyOn(LiteUploader.prototype, 'performUpload');
+            spyOn(LiteUploader.prototype, '_resetInput');
+            spyOn(LiteUploader.prototype, '_performUpload');
             var liteUploader = new LiteUploader('<input type="file" />', {});
 
-            liteUploader.start();
+            liteUploader._start();
 
             expect(console.error).toHaveBeenCalledWith(jasmine.any(String));
-            expect(liteUploader.resetInput).toHaveBeenCalled();
-            expect(liteUploader.performUpload).not.toHaveBeenCalled();
+            expect(liteUploader._resetInput).toHaveBeenCalled();
+            expect(liteUploader._performUpload).not.toHaveBeenCalled();
         });
 
         it('should not proceed with upload if the script option has not been set', function () {
             spyOn(console, 'error');
-            spyOn(LiteUploader.prototype, 'resetInput');
-            spyOn(LiteUploader.prototype, 'performUpload');
+            spyOn(LiteUploader.prototype, '_resetInput');
+            spyOn(LiteUploader.prototype, '_performUpload');
             var liteUploader = new LiteUploader(fileInput, {});
 
-            liteUploader.start();
+            liteUploader._start();
 
             expect(console.error).toHaveBeenCalledWith(jasmine.any(String));
-            expect(liteUploader.resetInput).toHaveBeenCalled();
-            expect(liteUploader.performUpload).not.toHaveBeenCalled();
+            expect(liteUploader._resetInput).toHaveBeenCalled();
+            expect(liteUploader._performUpload).not.toHaveBeenCalled();
         });
 
         it('should not proceed with upload if the files do not pass validation', function () {
-            spyOn(LiteUploader.prototype, 'validateFiles').and.returnValue(true);
-            spyOn(LiteUploader.prototype, 'resetInput');
-            spyOn(LiteUploader.prototype, 'performUpload');
+            spyOn(LiteUploader.prototype, '_validateFiles').and.returnValue(true);
+            spyOn(LiteUploader.prototype, '_resetInput');
+            spyOn(LiteUploader.prototype, '_performUpload');
             var liteUploader = new LiteUploader(fileInput, {script: 'script'});
 
-            liteUploader.start();
+            liteUploader._start();
 
-            expect(liteUploader.resetInput).toHaveBeenCalled();
-            expect(liteUploader.performUpload).not.toHaveBeenCalled();
+            expect(liteUploader._resetInput).toHaveBeenCalled();
+            expect(liteUploader._performUpload).not.toHaveBeenCalled();
         });
 
         it('should proceed with upload if no errors are found', function () {
-            spyOn(LiteUploader.prototype, 'validateFiles').and.returnValue(false);
-            spyOn(LiteUploader.prototype, 'resetInput');
-            spyOn(LiteUploader.prototype, 'collateFormData').and.returnValue('collated');
-            spyOn(LiteUploader.prototype, 'performUpload');
+            spyOn(LiteUploader.prototype, '_validateFiles').and.returnValue(false);
+            spyOn(LiteUploader.prototype, '_resetInput');
+            spyOn(LiteUploader.prototype, '_collateFormData').and.returnValue('collated');
+            spyOn(LiteUploader.prototype, '_performUpload');
             var liteUploader = new LiteUploader(fileInput, {script: 'script'});
             spyOn(liteUploader.el, 'trigger');
 
-            liteUploader.start();
+            liteUploader._start();
 
-            expect(liteUploader.resetInput).not.toHaveBeenCalled();
+            expect(liteUploader._resetInput).not.toHaveBeenCalled();
             expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:before', jasmine.any(Object));
-            expect(liteUploader.performUpload).toHaveBeenCalledWith('collated');
+            expect(liteUploader._performUpload).toHaveBeenCalledWith('collated');
         });
     });
 
@@ -107,7 +107,7 @@ describe('Lite Uploader', function () {
             var liteUploader = new LiteUploader(fileInput, {script: 'script'});
             spyOn(liteUploader.el, 'replaceWith');
 
-            liteUploader.resetInput();
+            liteUploader._resetInput();
 
             expect(liteUploader.el.replaceWith).toHaveBeenCalledWith(jasmine.any(Object));
         });
@@ -118,10 +118,10 @@ describe('Lite Uploader', function () {
             var files = [{name: 'name'}],
                 liteUploader = new LiteUploader(fileInput, {script: 'script'}),
                 result;
-            spyOn(liteUploader, 'findErrors').and.returnValue([{error: 'here'}]);
+            spyOn(liteUploader, '_findErrors').and.returnValue([{error: 'here'}]);
             spyOn(liteUploader.el, 'trigger');
 
-            result = liteUploader.validateFiles(files);
+            result = liteUploader._validateFiles(files);
 
             expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'name', errors: [{error: 'here'}]}]]);
             expect(result).toBe(true);
@@ -131,10 +131,10 @@ describe('Lite Uploader', function () {
             var files = [{name: 'name'}],
                 liteUploader = new LiteUploader(fileInput, {script: 'script'}),
                 result;
-            spyOn(liteUploader, 'findErrors').and.returnValue([]);
+            spyOn(liteUploader, '_findErrors').and.returnValue([]);
             spyOn(liteUploader.el, 'trigger');
 
-            result = liteUploader.validateFiles(files);
+            result = liteUploader._validateFiles(files);
 
             expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'name', errors: []}]]);
             expect(result).toBe(false);
@@ -152,7 +152,7 @@ describe('Lite Uploader', function () {
                 }),
                 result;
 
-            result = liteUploader.findErrors(file);
+            result = liteUploader._findErrors(file);
 
             expect(result).toEqual([{'type': 'type', 'rule': 'a,b,c', 'given': 'd'}]);
         });
@@ -168,7 +168,7 @@ describe('Lite Uploader', function () {
                 }),
                 result;
 
-            result = liteUploader.findErrors(file);
+            result = liteUploader._findErrors(file);
 
             expect(result).toEqual([{'type': 'size', 'rule': 99, 'given': 100}]);
         });
@@ -206,9 +206,9 @@ describe('Lite Uploader', function () {
         it('should add liteUploader_id to form data if the file input has an id', function () {
             var liteUploader = new LiteUploader(fileInput, {params: {}}),
                 result;
-            spyOn(liteUploader, 'getFormDataObject').and.returnValue(formDataObject);
+            spyOn(liteUploader, '_getFormDataObject').and.returnValue(formDataObject);
 
-            result = liteUploader.collateFormData([]);
+            result = liteUploader._collateFormData([]);
 
             expect(result.get()).toEqual([{'liteUploader_id': 'foobar'}]);
         });
@@ -216,9 +216,9 @@ describe('Lite Uploader', function () {
         it('should not add liteUploader_id to form data if the file input does not have an id', function () {
             var liteUploader = new LiteUploader('<input type="file" name="tester" />', {params: {}}),
                 result;
-            spyOn(liteUploader, 'getFormDataObject').and.returnValue(formDataObject);
+            spyOn(liteUploader, '_getFormDataObject').and.returnValue(formDataObject);
 
-            result = liteUploader.collateFormData([]);
+            result = liteUploader._collateFormData([]);
 
             expect(result.get()).toEqual([]);
         });
@@ -226,9 +226,9 @@ describe('Lite Uploader', function () {
         it('should add any params to form data', function () {
             var liteUploader = new LiteUploader(fileInput, {params: {tester: 123, another: 'abc'}}),
                 result;
-            spyOn(liteUploader, 'getFormDataObject').and.returnValue(formDataObject);
+            spyOn(liteUploader, '_getFormDataObject').and.returnValue(formDataObject);
 
-            result = liteUploader.collateFormData([]);
+            result = liteUploader._collateFormData([]);
 
             expect(result.get()).toEqual([{ 'liteUploader_id' : 'foobar' }, {tester: 123}, {another: 'abc'}]);
         });
@@ -236,9 +236,9 @@ describe('Lite Uploader', function () {
         it('should add any files to form data', function () {
             var liteUploader = new LiteUploader(fileInput, {params: {}}),
                 result;
-            spyOn(liteUploader, 'getFormDataObject').and.returnValue(formDataObject);
+            spyOn(liteUploader, '_getFormDataObject').and.returnValue(formDataObject);
 
-            result = liteUploader.collateFormData(['tester1', 'tester2']);
+            result = liteUploader._collateFormData(['tester1', 'tester2']);
 
             expect(result.get()).toEqual([{ 'liteUploader_id' : 'foobar' }, {'tester[]': 'tester1'}, {'tester[]': 'tester2'}]);
         });

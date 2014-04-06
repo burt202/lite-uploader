@@ -22,25 +22,25 @@ function LiteUploader (element, options) {
     this.options = options;
     this.params = options.params;
 
-    this.init();
+    this._init();
 }
 
 LiteUploader.prototype = {
-    init: function () {
+    _init: function () {
         if (this.options.changeHandler) {
             this.el.change(function () {
-                this.start();
+                this._start();
             }.bind(this));
         }
 
         if (this.options.clickElement) {
             this.options.clickElement.click(function () {
-                this.start();
+                this._start();
             }.bind(this));
         }
     },
 
-    start: function () {
+    _start: function () {
         var proceedWithUpload = true,
             files = this.el.get(0).files;
 
@@ -54,29 +54,29 @@ LiteUploader.prototype = {
             proceedWithUpload = false;
         }
 
-        if (this.validateFiles(files)) {
+        if (this._validateFiles(files)) {
             proceedWithUpload = false;
         }
 
         if (!proceedWithUpload) {
-            this.resetInput();
+            this._resetInput();
             return;
         }
 
         this.el.trigger('lu:before', [files]);
-        this.performUpload(this.collateFormData(files));
+        this._performUpload(this._collateFormData(files));
     },
 
-    resetInput: function () {
+    _resetInput: function () {
         this.el.replaceWith(this.el.clone(true));
     },
 
-    validateFiles: function (files) {
+    _validateFiles: function (files) {
         var errorsPresent = false,
             errorReporter = [];
 
         $.each(files, function (i) {
-            var errorsFound = this.findErrors(files[i]);
+            var errorsFound = this._findErrors(files[i]);
 
             errorReporter.push({
                 name: files[i].name,
@@ -92,7 +92,7 @@ LiteUploader.prototype = {
         return errorsPresent;
     },
 
-    findErrors: function (file) {
+    _findErrors: function (file) {
         var errorsArray = [];
 
         $.each(this.options.rules, function (key, value) {
@@ -108,16 +108,12 @@ LiteUploader.prototype = {
         return errorsArray;
     },
 
-    getFormDataObject: function () {
+    _getFormDataObject: function () {
         return new FormData();
     },
 
-    addParam: function (key, value) {
-        this.params[key] = value;
-    },
-
-    collateFormData: function (files) {
-        var formData = this.getFormDataObject();
+    _collateFormData: function (files) {
+        var formData = this._getFormDataObject();
 
         if (this.el.attr('id')) {
             formData.append('liteUploader_id', this.el.attr('id'));
@@ -134,7 +130,7 @@ LiteUploader.prototype = {
         return formData;
     },
 
-    performUpload: function (formData) {
+    _performUpload: function (formData) {
         $.ajax({
             xhr: function () {
                 var xhr = new XMLHttpRequest();
@@ -155,11 +151,15 @@ LiteUploader.prototype = {
         })
         .done(function(response){
             this.el.trigger('lu:success', response);
-            this.resetInput();
+            this._resetInput();
         }.bind(this))
         .fail(function(jqXHR) {
             this.el.trigger('lu:fail', jqXHR);
-            this.resetInput();
+            this._resetInput();
         }.bind(this));
+    },
+
+    addParam: function (key, value) {
+        this.params[key] = value;
     }
 };
