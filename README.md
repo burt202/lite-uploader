@@ -1,27 +1,93 @@
-# LiteUploader - HTML5 jQuery File Uploader <sup>v1.4.2</sup>
+## LiteUploader - HTML5 jQuery File Uploader <sup>v2.0.0</sup>
 
-This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://tekbrand.com/jquery/10-best-jquery-file-upload-plugins)) designed to use new HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle. It purposely doesn't support non-HTML5 which I know won't suit everyone because older versions of IE will be around for a while yet, but what I really wanted to see is, at its absolute minimum, how little code do you need to make a small, but very usable and easily expandable jQuery upload plugin. With some useful options including basic validation it turns out not many. After minification it is very small in size and is a good choice for any developer who is not so worried about supporting the older browsers.
+This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://tekbrand.com/jquery/10-best-jquery-file-upload-plugins)) which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
 
-## Options Explained
+The aim was to see, at its absolute minimum, how little code do you need to make a small, but very usable and easily expandable jQuery upload plugin. With some useful options including basic validation it turns out not many. After minification it is very small in size and is a good choice for any developer who is not so worried about supporting legacy browsers.
 
-* script: (string, default=null, required) the path to the script file that will handle the upload (see example)
-* allowedFileTypes: (string, default=null, optional) a comma delimited string of allowed mime types
-* maxSizeInBytes: (integer, default=null, optional) maximum size in bytes allowed per file
-* customParams: (object, default={}, optional) an object of custom params to be sent to the server
-* before: (function, default=function(files){}, optional) add code here to be executed before the upload, return false if you want to cancel the upload, files = array of files to be uploaded
-* each: (function, default=function(file, errors){}, optional) add code here to be executed for every file being uploaded, return false if you want to cancel the upload, file = js file obj, errors = array of errors populated if the file does not pass validation set using allowedFileTypes and maxSizeInBytes options
-* progress: (function, default=function(percentage){}, optional) add code here to use the progress percentage
-* success: (function, default=function(response){}, optional) add code here to be executed if the upload suceeded, response = output from the script
-* fail: (function, default=function(jqXHR){}, optional) add code here to be executed if the upload failed, jqXHR = jQuery XMLHTTPRequest Object
+### Options
 
-## Gotchas
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>script</td>
+        <td>String (required)</td>
+        <td>null</td>
+        <td>the path to the script file that will handle the upload</td>
+    </tr>
+    <tr>
+        <td>rules</td>
+        <td>Object</td>
+        <td>{allowedFileTypes: null, maxSize: null}</td>
+        <td>object where you can specify validation rules for the files to be uploaded - current supported rules are allowedFileTypes (list of comma-separated mime-types) and maxSize (in bytes)</td>
+    </tr>
+    <tr>
+        <td>params</td>
+        <td>Object</td>
+        <td>{}</td>
+        <td>object of params to be sent to the server in addition to the files being uploaded</td>
+    </tr>
+    <tr>
+        <td>changeHandler</td>
+        <td>Boolean</td>
+        <td>true</td>
+        <td>initiate the upload on file input change</td>
+    </tr>
+    <tr>
+        <td>clickElement</td>
+        <td>jQuery Element</td>
+        <td>null</td>
+        <td>initiate the upload on the click event of the jQuery element passed here</td>
+    </tr>
+</table>
 
-* make sure your uploads directory is writable (chmod 777) as this sometimes catches people out
+### Events
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Parameters</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>lu:errors</td>
+        <td>errors</td>
+        <td>triggered after validation</td>
+    </tr>
+    <tr>
+        <td>lu:before</td>
+        <td>files</td>
+        <td>triggered before the uploading starts</td>
+    </tr>
+    <tr>
+        <td>lu:progress</td>
+        <td>percentage</td>
+        <td>triggered whilst uploading files</td>
+    </tr>
+    <tr>
+        <td>lu:success</td>
+        <td>response</td>
+        <td>triggered on upload success</td>
+    </tr>
+    <tr>
+        <td>lu:fail</td>
+        <td>jqXHR</td>
+        <td>triggered on upload failure</td>
+    </tr>
+</table>
+
+### Gotchas
+
+* make sure your uploads directory is writable (chmod 777)
 * make sure your HTML file input has a name attribute as the plugin will not work without it
 
-## Browser Support
+### Browser Support
 
-As I have already stated in the description above this was not built for non-HTML5 browsers so it clearly isn't going to be for everyone. The two main HTML5 dependencies are the File API and XHR2, and using caniuse ([File API](http://caniuse.com/fileapi), [XHR2](http://caniuse.com/xhr2)) as a reference, if you are using any of the following browser versions you shouldn't have any problem with the code:
+The two main HTML5 dependencies for the plugin are the File API and XHR2, and using caniuse ([File API](http://caniuse.com/fileapi), [XHR2](http://caniuse.com/xhr2)) as a reference, if you are using any of the following browser versions you shouldn't have any problem with the code:
 
 * Chrome 13+
 * Firefox 4+
@@ -29,9 +95,20 @@ As I have already stated in the description above this was not built for non-HTM
 * Safari 6+
 * Opera 12+
 
-Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of June 2013 the browser versions listed above should account for approx 73% of all internet users
+Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of March 2014 the browser versions listed above should account for approx 80% of all internet users
 
-## Changelog
+### Examples & Tests
+
+There are 5 examples in the example directory to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the tests directory and run by opening runner.html
+
+### Changelog
+
+2.0.0 (06 Apr 2014)
+
+* complete rewrite - THIS VERSION IS NOT BACKWARDS COMPATIBLE
+* you can now add params after instantiation
+* you can now control when the uploader starts (on file input change or click of a element or both)
+* callback functions have been replaced with triggered events
 
 1.4.2 (20 Sept 2013)
 
@@ -67,4 +144,4 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 * adds 'fail' function option
 * updates ajax call to use new jquery methods (always, done, fail etc)
 
-## Suggestions, comments and queries welcome, send to aaron@burtdev.net
+### Suggestions, comments and queries welcome, send to aaron@burtdev.net
