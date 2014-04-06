@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Params LiteUploader Example</title>
+
+	<style>
+
+		body {
+			font-family: helvetica;
+			font-size: 13px;
+		}
+
+	</style>
+</head>
+<body>
+	<input type="file" name="fileUpload" class="fileUpload" />
+	<button id="uploadBtn">Upload</button>
+	<div id="display"></div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="../jquery.liteuploader.js"></script>
+	<script>
+
+		$(document).ready(function () {
+			$('.fileUpload').liteUploader({
+				script: 'params.php',
+				params: {
+					foo: 'bar',
+					abc: 123
+				},
+				changeHandler: false,
+				clickElement: $('#uploadBtn')
+			})
+			.on('lu:success', function (e, response) {
+				$('#display').html('Params: ');
+
+				$.each(JSON.parse(response), function (key, value) {
+					$('#display').append(key + ':' + value + ' ');
+				});
+			});
+
+			$('.fileUpload').data('liteUploader').addParam('another', 'here');
+		});
+
+	</script>
+</body>
+</html>
