@@ -41,24 +41,14 @@ LiteUploader.prototype = {
     },
 
     _start: function () {
-        var proceedWithUpload = true,
-            files = this.el.get(0).files;
+        var files = this.el.get(0).files;
 
-        if (!this.el.attr('name')) {
-            console.error('the file input element must have a name attribute');
-            proceedWithUpload = false;
-        }
-
-        if (!this.options.script) {
-            console.error('the script option is required');
-            proceedWithUpload = false;
+        if (this._validateInput(files)) {
+            this._resetInput();
+            return;
         }
 
         if (this._validateFiles(files)) {
-            proceedWithUpload = false;
-        }
-
-        if (!proceedWithUpload) {
             this._resetInput();
             return;
         }
@@ -69,6 +59,32 @@ LiteUploader.prototype = {
 
     _resetInput: function () {
         this.el.replaceWith(this.el.clone(true));
+    },
+
+    _validateInput: function (files) {
+        var errors = [];
+
+        if (!this.el.attr('name')) {
+            errors.push('the file input element must have a name attribute');
+        }
+
+        if (!this.options.script) {
+            errors.push('the script option is required');
+        }
+
+        if (files.length === 0) {
+            errors.push('at least one file must be selected');
+        }
+
+        this.el.trigger('lu:errors', [[{
+            name: 'liteUploader_input',
+            errors: errors
+        }]]);
+
+        if (errors.length > 0) {
+            return true;
+        }
+        return false;
     },
 
     _validateFiles: function (files) {

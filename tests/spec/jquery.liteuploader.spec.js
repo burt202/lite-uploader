@@ -18,7 +18,7 @@ describe('Lite Uploader', function () {
         });
     });
 
-    describe('start event', function () {
+    describe('binding start event', function () {
         it('should be called on file input change when changeHandler option is true', function () {
             spyOn(LiteUploader.prototype, '_start');
             var liteUploader = new LiteUploader(fileInput, {changeHandler: true});
@@ -47,34 +47,20 @@ describe('Lite Uploader', function () {
         });
     });
 
-    describe('initial validation', function () {
-        it('should not proceed with upload if file input does not have a name attribute', function () {
-            spyOn(console, 'error');
+    describe('start', function () {
+        it('should not proceed with upload if the files do not pass input validation', function () {
+            spyOn(LiteUploader.prototype, '_validateInput').and.returnValue(true);
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_performUpload');
-            var liteUploader = new LiteUploader('<input type="file" />', {});
+            var liteUploader = new LiteUploader(fileInput, {script: 'script'});
 
             liteUploader._start();
 
-            expect(console.error).toHaveBeenCalledWith(jasmine.any(String));
             expect(liteUploader._resetInput).toHaveBeenCalled();
             expect(liteUploader._performUpload).not.toHaveBeenCalled();
         });
 
-        it('should not proceed with upload if the script option has not been set', function () {
-            spyOn(console, 'error');
-            spyOn(LiteUploader.prototype, '_resetInput');
-            spyOn(LiteUploader.prototype, '_performUpload');
-            var liteUploader = new LiteUploader(fileInput, {});
-
-            liteUploader._start();
-
-            expect(console.error).toHaveBeenCalledWith(jasmine.any(String));
-            expect(liteUploader._resetInput).toHaveBeenCalled();
-            expect(liteUploader._performUpload).not.toHaveBeenCalled();
-        });
-
-        it('should not proceed with upload if the files do not pass validation', function () {
+        it('should not proceed with upload if the files do not pass file validation', function () {
             spyOn(LiteUploader.prototype, '_validateFiles').and.returnValue(true);
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_performUpload');
@@ -87,6 +73,7 @@ describe('Lite Uploader', function () {
         });
 
         it('should proceed with upload if no errors are found', function () {
+            spyOn(LiteUploader.prototype, '_validateInput').and.returnValue(false);
             spyOn(LiteUploader.prototype, '_validateFiles').and.returnValue(false);
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_collateFormData').and.returnValue('collated');
@@ -110,6 +97,52 @@ describe('Lite Uploader', function () {
             liteUploader._resetInput();
 
             expect(liteUploader.el.replaceWith).toHaveBeenCalledWith(jasmine.any(Object));
+        });
+    });
+
+    describe('input validation', function () {
+        it('should find error if the file input has no name attribute and return true', function () {
+            var liteUploader = new LiteUploader('<input type="file" />', {script: 'script'}),
+                result;
+            spyOn(liteUploader.el, 'trigger');
+
+            result = liteUploader._validateInput([1]);
+
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'liteUploader_input', errors: ['the file input element must have a name attribute']}]]);
+            expect(result).toBe(true);
+        });
+
+        it('should find error if the script option is blank and return true', function () {
+            var liteUploader = new LiteUploader(fileInput, {}),
+                result;
+            spyOn(liteUploader.el, 'trigger');
+
+            result = liteUploader._validateInput([1]);
+
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'liteUploader_input', errors: ['the script option is required']}]]);
+            expect(result).toBe(true);
+        });
+
+        it('should find error if the file array is empty and return true', function () {
+            var liteUploader = new LiteUploader(fileInput, {script: 'script'}),
+                result;
+            spyOn(liteUploader.el, 'trigger');
+
+            result = liteUploader._validateInput([]);
+
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'liteUploader_input', errors: ['at least one file must be selected']}]]);
+            expect(result).toBe(true);
+        });
+
+        it('should return false if no input errors are found', function () {
+            var liteUploader = new LiteUploader(fileInput, {script: 'script'}),
+                result;
+            spyOn(liteUploader.el, 'trigger');
+
+            result = liteUploader._validateInput([1]);
+
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'liteUploader_input', errors: []}]]);
+            expect(result).toBe(false);
         });
     });
 
