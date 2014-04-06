@@ -1,24 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>HTML5 jQuery File Upload - LiteUploader Example</title>
+	<title>Multiple LiteUploader Example</title>
 
 	<style>
 
 		body {
 			font-family: helvetica;
 			font-size: 13px;
-		}
-
-		#response {
-			font-weight: bold;
-			font-size: 16px;
-			margin-bottom: 20px;
-		}
-
-		.error {
-			font-weight: bold;
-			color: red;
 		}
 
 	</style>
@@ -35,13 +24,10 @@
 
 		$(document).ready(function () {
 			$('.fileUpload').liteUploader({
-				script: 'upload.php',
+				script: 'upload-multiple.php',
 				rules: {
 					allowedFileTypes: 'image/jpeg,image/png,image/gif',
 					maxSize: 250000
-				},
-				params: {
-					'custom': 'tester'
 				}
 			})
 			.on('lu:errors', function (e, errors) {
@@ -69,6 +55,7 @@
 			})
 			.on('lu:success', function (e, response) {
 				var response = $.parseJSON(response);
+				$('#previews').html('');
 
 				$.each(response.urls, function(i, url) {
 					$('#previews').append($('<img>', {'src': url, 'width': 200}));
