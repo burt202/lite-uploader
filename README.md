@@ -56,7 +56,7 @@ The aim was to see, at its absolute minimum, how little code do you need to make
     <tr>
         <td>lu:errors</td>
         <td>errors</td>
-        <td>triggered after validation</td>
+        <td>triggered after input and file validation</td>
     </tr>
     <tr>
         <td>lu:before</td>
@@ -99,7 +99,7 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 
 ### Examples & Tests
 
-There are 5 examples in the example directory to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the tests directory and run by opening runner.html
+There are 3 examples in the example directory to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the tests directory and run by opening runner.html
 
 ### Changelog
 

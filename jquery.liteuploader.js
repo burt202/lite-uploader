@@ -58,7 +58,7 @@ LiteUploader.prototype = {
     },
 
     _resetInput: function () {
-        this.el.replaceWith(this.el.clone(true));
+        this.el.val('');
     },
 
     _validateInput: function (files) {

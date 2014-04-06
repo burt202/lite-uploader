@@ -89,17 +89,6 @@ describe('Lite Uploader', function () {
         });
     });
 
-    describe('reset input', function () {
-        it('should clear the file input', function () {
-            var liteUploader = new LiteUploader(fileInput, {script: 'script'});
-            spyOn(liteUploader.el, 'replaceWith');
-
-            liteUploader._resetInput();
-
-            expect(liteUploader.el.replaceWith).toHaveBeenCalledWith(jasmine.any(Object));
-        });
-    });
-
     describe('input validation', function () {
         it('should find error if the file input has no name attribute and return true', function () {
             var liteUploader = new LiteUploader('<input type="file" />', {script: 'script'}),
