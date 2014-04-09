@@ -103,7 +103,7 @@ There are 3 examples in the example directory to help you get on your way and al
 
 ### Changelog
 
-2.0.0 (06 Apr 2014)
+2.0.0 (09 Apr 2014)
 
 * complete rewrite - THIS VERSION IS NOT BACKWARDS COMPATIBLE
 * you can now add params after instantiation

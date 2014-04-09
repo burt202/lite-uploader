@@ -51,7 +51,7 @@
 				$('#display').append('<br />Uploading ' + files.length + ' file(s)...');
 			})
 			.on('lu:progress', function (e, percentage) {
-				$('#display').append('<br />Progress ' + percentage + '%');
+				$('#display').append('<br />Progress ' + percentage + '%<br />');
 			})
 			.on('lu:success', function (e, response) {
 				var response = $.parseJSON(response);
@@ -61,7 +61,7 @@
 					$('#previews').append($('<img>', {'src': url, 'width': 200}));
 				});
 
-				$('#display').html(response.message);
+				$('#display').append(response.message);
 			});
 		});
 
