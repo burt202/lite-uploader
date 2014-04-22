@@ -23,7 +23,12 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>rules</td>
         <td>Object</td>
         <td>{allowedFileTypes: null, maxSize: null}</td>
-        <td>object where you can specify validation rules for the files to be uploaded - current supported rules are allowedFileTypes (list of comma-separated mime-types) and maxSize (in bytes)</td>
+        <td>object where you can specify validation rules for the files to be uploaded - current supported rules are:
+            <ul>
+                <li>allowedFileTypes (list of comma-separated mime-types)</li>
+                <li>maxSize (in bytes)</li>
+            </ul>
+        </td>
     </tr>
     <tr>
         <td>params</td>
@@ -80,6 +85,33 @@ The aim was to see, at its absolute minimum, how little code do you need to make
     </tr>
 </table>
 
+### Public API
+
+#### addParam(key, value)
+
+Allows parameters to be added after plugin instantiation
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>key</td>
+        <td>String (required)</td>
+        <td>n/a</td>
+        <td>name of parameter to be added</td>
+    </tr>
+    <tr>
+        <td>value</td>
+        <td>String (required)</td>
+        <td>n/a</td>
+        <td>value of parameter to be added</td>
+    </tr>
+</table>
+
 ### Gotchas
 
 * make sure your uploads directory is writable (chmod 777)
@@ -99,7 +131,7 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 
 ### Examples & Tests
 
-There are 3 examples in the example directory to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the tests directory and run by opening runner.html
+There are 3 examples in the example directory (using PHP as the server-side language) to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the tests directory and run by opening runner.html
 
 ### Changelog
 
