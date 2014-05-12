@@ -1,4 +1,4 @@
-/* global LiteUploader */
+/* global LiteUploader, XMLHttpRequestUpload */
 
 describe('Lite Uploader', function () {
     var fileInput = '<input type="file" name="tester" id="foobar" />',
@@ -8,12 +8,14 @@ describe('Lite Uploader', function () {
         it('should be able to be instantiated', function () {
             spyOn(LiteUploader.prototype, '_init');
 
-            var liteUploader = new LiteUploader(fileInput, {tester:'abc', params: {foo: '123'}});
+            spyOn(LiteUploader.prototype, '_buildXhrObject').and.returnValue('xhrObject');
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
 
             expect(liteUploader).toBeTruthy();
             expect(liteUploader.el).toEqual(jasmine.any(Object));
-            expect(liteUploader.options).toEqual({tester:'abc', params: {foo: '123'}});
+            expect(liteUploader.options).toEqual({tester: 'abc', params: {foo: '123'}});
             expect(liteUploader.params).toEqual({foo: '123'});
+            expect(liteUploader.xhr).toEqual('xhrObject');
             expect(liteUploader._init).toHaveBeenCalled();
         });
     });
@@ -47,6 +49,40 @@ describe('Lite Uploader', function () {
         });
     });
 
+    describe('building xhr object', function () {
+        it('should return a new instance of XMLHttpRequest and setup a progress listener', function () {
+            spyOn(XMLHttpRequestUpload.prototype, 'addEventListener');
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+
+            expect(liteUploader.xhr instanceof XMLHttpRequest).toBeTruthy();
+            expect(XMLHttpRequestUpload.prototype.addEventListener).toHaveBeenCalledWith('progress', jasmine.any(Function), false);
+        });
+    });
+
+    describe('xhr object on-progress', function () {
+        it('should not trigger progress event if lengthComputable is false', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+            spyOn(liteUploader.el, 'trigger');
+
+            liteUploader._onProgress({lengthComputable: false});
+
+            expect(liteUploader.el.trigger).not.toHaveBeenCalled();
+        });
+
+        it('should trigger progress event if lengthComputable is true', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+            spyOn(liteUploader.el, 'trigger');
+
+            liteUploader._onProgress({
+                lengthComputable: true,
+                loaded: 2.1,
+                total: 10.3
+            });
+
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:progress', 20);
+        });
+    });
+
     describe('start', function () {
         it('should not proceed with upload if the files do not pass input validation', function () {
             spyOn(LiteUploader.prototype, '_validateInput').and.returnValue(true);
@@ -61,6 +97,7 @@ describe('Lite Uploader', function () {
         });
 
         it('should not proceed with upload if the files do not pass file validation', function () {
+            spyOn(LiteUploader.prototype, '_validateInput').and.returnValue(false);
             spyOn(LiteUploader.prototype, '_validateFiles').and.returnValue(true);
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_performUpload');
@@ -86,6 +123,17 @@ describe('Lite Uploader', function () {
             expect(liteUploader._resetInput).not.toHaveBeenCalled();
             expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:before', jasmine.any(Object));
             expect(liteUploader._performUpload).toHaveBeenCalledWith('collated');
+        });
+    });
+
+    describe('reset input', function () {
+        it('should change the value of the form input to an empty string', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+
+            spyOn(liteUploader.el, 'val');
+            liteUploader._resetInput();
+
+            expect(liteUploader.el.val).toHaveBeenCalledWith('');
         });
     });
 
@@ -196,6 +244,17 @@ describe('Lite Uploader', function () {
         });
     });
 
+    describe('get form data object', function () {
+        it('should return FormData object', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}}),
+                returned;
+
+            returned = liteUploader._getFormDataObject();
+
+            expect(returned instanceof FormData).toBeTruthy();
+        });
+    });
+
     describe('form data', function () {
         var formDataObject;
 
@@ -263,6 +322,39 @@ describe('Lite Uploader', function () {
             result = liteUploader._collateFormData(['tester1', 'tester2']);
 
             expect(result.get()).toEqual([{ 'liteUploader_id' : 'foobar' }, {'tester[]': 'tester1'}, {'tester[]': 'tester2'}]);
+        });
+    });
+
+    describe('perform upload', function () {
+        it('should setup the ajax call correctly', function () {
+            var liteUploader = new LiteUploader(fileInput, {script: 'abc', params: {foo: '123'}});
+
+            spyOn($, 'ajax').and.callThrough();
+            liteUploader._performUpload('form-data');
+
+            expect($.ajax).toHaveBeenCalledWith({
+                xhr: jasmine.any(Function),
+                url: 'abc',
+                type: 'POST',
+                data: 'form-data',
+                processData: false,
+                contentType: false
+            });
+        });
+    });
+
+    describe('cancel upload', function () {
+        it('should abort the xhr object, trigger cancelled event and reset the input', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+
+            spyOn(liteUploader.xhr, 'abort');
+            spyOn(liteUploader.el, 'trigger');
+            spyOn(liteUploader, '_resetInput');
+            liteUploader.cancelUpload();
+
+            expect(liteUploader.xhr.abort).toHaveBeenCalled();
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:cancelled');
+            expect(liteUploader._resetInput).toHaveBeenCalled();
         });
     });
 });
