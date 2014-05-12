@@ -83,6 +83,11 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>jqXHR</td>
         <td>triggered on upload failure</td>
     </tr>
+    <tr>
+        <td>lu:cancelled</td>
+        <td>---</td>
+        <td>triggered on upload abort</td>
+    </tr>
 </table>
 
 ### Public API
@@ -112,6 +117,22 @@ Allows parameters to be added after plugin instantiation
     </tr>
 </table>
 
+#### cancelUpload()
+
+Allows the upload to be cancelled
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Default</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td colspan="4">No parameters</td>
+    </tr>
+</table>
+
 ### Gotchas
 
 * make sure your uploads directory is writable (chmod 777)
@@ -134,6 +155,12 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 There are 3 examples in the example directory (using PHP as the server-side language) to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the tests directory and run by opening runner.html
 
 ### Changelog
+
+2.1.0 (12 May 2014)
+
+* adds ability to abort the upload
+* adds blanket.js for test coverage reports
+* adds more tests for better test coverage
 
 2.0.0 (09 Apr 2014)
 
