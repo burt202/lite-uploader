@@ -21,6 +21,7 @@ function LiteUploader (element, options) {
     this.el = $(element);
     this.options = options;
     this.params = options.params;
+    this.xhr = this._buildXhrObject();
 
     this._init();
 }
@@ -37,6 +38,18 @@ LiteUploader.prototype = {
             this.options.clickElement.click(function () {
                 this._start();
             }.bind(this));
+        }
+    },
+
+    _buildXhrObject: function () {
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('progress', this._onProgress.bind(this), false);
+        return xhr;
+    },
+
+    _onProgress: function (evt) {
+        if (evt.lengthComputable) {
+            this.el.trigger('lu:progress', Math.floor((evt.loaded / evt.total) * 100));
         }
     },
 
@@ -149,15 +162,7 @@ LiteUploader.prototype = {
     _performUpload: function (formData) {
         $.ajax({
             xhr: function () {
-                var xhr = new XMLHttpRequest();
-
-                xhr.upload.addEventListener('progress', function (evt) {
-                    if (evt.lengthComputable) {
-                        this.el.trigger('lu:progress', Math.floor((evt.loaded / evt.total) * 100));
-                    }
-                }.bind(this), false);
-
-                return xhr;
+                return this.xhr;
             }.bind(this),
             url: this.options.script,
             type: 'POST',
@@ -167,15 +172,22 @@ LiteUploader.prototype = {
         })
         .done(function(response){
             this.el.trigger('lu:success', response);
-            this._resetInput();
         }.bind(this))
         .fail(function(jqXHR) {
             this.el.trigger('lu:fail', jqXHR);
+        }.bind(this))
+        .always(function() {
             this._resetInput();
         }.bind(this));
     },
 
     addParam: function (key, value) {
         this.params[key] = value;
+    },
+
+    cancelUpload: function () {
+        this.xhr.abort();
+        this.el.trigger('lu:cancelled');
+        this._resetInput();
     }
 };
