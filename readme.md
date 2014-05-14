@@ -61,7 +61,7 @@ The aim was to see, at its absolute minimum, how little code do you need to make
     <tr>
         <td>lu:errors</td>
         <td>errors</td>
-        <td>triggered after input and file validation</td>
+        <td>triggered after input and file validation - see 'File Error Types' section for more</td>
     </tr>
     <tr>
         <td>lu:before</td>
@@ -89,6 +89,13 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>triggered on upload abort</td>
     </tr>
 </table>
+
+### File Error Types
+
+Below is an overview of the error types that can be returned when validating files
+
+* type - when file mime type does not match any mime types supplied in the rule.allowedFileTypes option
+* size - when file size is above the size (in bytes) supplied in the rule.maxSize option
 
 ### Public API
 
