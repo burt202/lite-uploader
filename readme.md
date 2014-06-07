@@ -60,32 +60,32 @@ The aim was to see, at its absolute minimum, how little code do you need to make
     </tr>
     <tr>
         <td>lu:errors</td>
-        <td>errors</td>
+        <td>event, errors</td>
         <td>triggered after input and file validation - see 'File Error Types' section for more</td>
     </tr>
     <tr>
         <td>lu:before</td>
-        <td>files</td>
+        <td>event, files</td>
         <td>triggered before the uploading starts</td>
     </tr>
     <tr>
         <td>lu:progress</td>
-        <td>percentage</td>
+        <td>event, percentage</td>
         <td>triggered whilst uploading files</td>
     </tr>
     <tr>
         <td>lu:success</td>
-        <td>response</td>
+        <td>event, response</td>
         <td>triggered on upload success</td>
     </tr>
     <tr>
         <td>lu:fail</td>
-        <td>jqXHR</td>
+        <td>event, jqXHR</td>
         <td>triggered on upload failure</td>
     </tr>
     <tr>
         <td>lu:cancelled</td>
-        <td>---</td>
+        <td>event</td>
         <td>triggered on upload abort</td>
     </tr>
 </table>
