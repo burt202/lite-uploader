@@ -3,12 +3,10 @@
 $urls = array();
 
 if (isset($_POST['liteUploader_id']) && $_POST['liteUploader_id'] == 'fileUpload1') {
-    foreach ($_FILES['fileUpload1']['error'] as $key => $error) {
-        if ($error == UPLOAD_ERR_OK) {
-            $uploadedUrl = 'uploads/' . $_FILES['fileUpload1']['name'][$key];
-            move_uploaded_file( $_FILES['fileUpload1']['tmp_name'][$key], $uploadedUrl);
-            $urls[] = $uploadedUrl;
-        }
+    if ($_FILES['fileUpload1']['name']) {
+        $uploadedUrl = 'uploads/' . $_FILES['fileUpload1']['name'];
+        move_uploaded_file($_FILES['fileUpload1']['tmp_name'], $uploadedUrl);
+        $urls[] = $uploadedUrl;
     }
 
     $message = 'Successfully Uploaded File(s) From First Upload Input';

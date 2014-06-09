@@ -321,7 +321,7 @@ describe('Lite Uploader', function () {
 
             result = liteUploader._collateFormData(['tester1', 'tester2']);
 
-            expect(result.get()).toEqual([{ 'liteUploader_id' : 'foobar' }, {'tester[]': 'tester1'}, {'tester[]': 'tester2'}]);
+            expect(result.get()).toEqual([{ 'liteUploader_id' : 'foobar' }, {'tester': 'tester1'}, {'tester': 'tester2'}]);
         });
     });
 
