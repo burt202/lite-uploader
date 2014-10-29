@@ -4,6 +4,10 @@ This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://te
 
 The aim was to see, at its absolute minimum, how little code do you need to make a small, but very usable and easily expandable jQuery upload plugin. With some useful options including basic validation it turns out not many. After minification it is very small in size and is a good choice for any developer who is not so worried about supporting legacy browsers.
 
+### Bower
+
+`bower install lite-uploader --save`
+
 ### Options
 
 <table>
@@ -166,7 +170,6 @@ There are 3 examples in the `example` directory (using PHP as the server-side la
 2.1.2 (29 October 2014)
 
 * adds bower support
-
 
 2.1.1 (09 June 2014)
 
