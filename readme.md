@@ -1,4 +1,4 @@
-## LiteUploader - HTML5 jQuery File Uploader <sup>v2.1.1</sup>
+## LiteUploader - HTML5 jQuery File Uploader <sup>v2.1.2</sup>
 
 This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://tekbrand.com/jquery/10-best-jquery-file-upload-plugins)) which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
 
@@ -159,9 +159,14 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 
 ### Examples & Tests
 
-There are 3 examples in the example directory (using PHP as the server-side language) to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the tests directory and run by opening runner.html
+There are 3 examples in the `example` directory (using PHP as the server-side language) to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the `tests` directory and run by opening `runner.html`
 
 ### Changelog
+
+2.1.2 (29 October 2014)
+
+* adds bower support
+
 
 2.1.1 (09 June 2014)
 

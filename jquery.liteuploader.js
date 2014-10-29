@@ -1,4 +1,4 @@
-/* liteUploader v2.1.1 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
+/* liteUploader v2.1.2 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
 $.fn.liteUploader = function (options) {
     var defaults = {
