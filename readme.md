@@ -126,7 +126,7 @@ Allows parameters to be added after plugin instantiation
 
 #### cancelUpload()
 
-Allows the upload to be cancelled
+Allows the upload to be cancelled, triggers `lu:cancelled`
 
 <table>
     <tr>
@@ -155,7 +155,7 @@ The two main HTML5 dependencies for the plugin are the File API and XHR2, and us
 * Safari 6+
 * Opera 12+
 
-Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of March 2014 the browser versions listed above should account for approx 80% of all internet users
+Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of June 2014 the browser versions listed above should account for approx 81% of all internet users
 
 ### Examples & Tests
 
