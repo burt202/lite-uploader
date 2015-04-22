@@ -55,19 +55,16 @@ LiteUploader.prototype = {
 
     _start: function () {
         var files = this.el.get(0).files;
+        var errors = this._getInputErrors(files);
+        if (!errors) errors = this._getFileErrors(files);
 
-        if (this._getInputErrors(files)) {
+        if (errors) {
+            this.el.trigger('lu:errors', errors);
             this._resetInput();
-            return;
+        } else {
+            this.el.trigger('lu:before', [files]);
+            this._performUpload(this._collateFormData(files));
         }
-
-        if (this._getFileErrors(files)) {
-            this._resetInput();
-            return;
-        }
-
-        this.el.trigger('lu:before', [files]);
-        this._performUpload(this._collateFormData(files));
     },
 
     _resetInput: function () {
@@ -76,6 +73,7 @@ LiteUploader.prototype = {
 
     _getInputErrors: function (files) {
         var errors = [];
+        var inputErrors = [];
 
         if (!this.el.attr('name')) {
             errors.push({
@@ -95,36 +93,30 @@ LiteUploader.prototype = {
             });
         }
 
-        this.el.trigger('lu:errors', [[{
+        inputErrors.push ({
             name: 'liteUploader_input',
             errors: errors
-        }]]);
+        });
 
-        if (errors.length > 0) {
-            return true;
-        }
-        return false;
+        return (errors.length > 0) ? [inputErrors] : null;
     },
 
     _getFileErrors: function (files) {
-        var errorsPresent = false,
-            errorReporter = [];
+        var errorsCount = 0;
+        var fileErrors = [];
 
         $.each(files, function (i) {
             var errorsFound = this._findErrorsForFile(files[i]);
 
-            errorReporter.push({
+            fileErrors.push({
                 name: files[i].name,
                 errors: errorsFound
             });
 
-            if (errorsFound.length > 0) {
-                errorsPresent = true;
-            }
+            errorsCount += errorsFound.length;
         }.bind(this));
 
-        this.el.trigger('lu:errors', [errorReporter]);
-        return errorsPresent;
+        return (errorsCount > 0) ? [fileErrors] : null;
     },
 
     _findErrorsForFile: function (file) {
@@ -143,7 +135,7 @@ LiteUploader.prototype = {
                 errorsArray.push({
                     type: 'size',
                     rule: value,
-                    given: file.type
+                    given: file.size
                 });
             }
         });
