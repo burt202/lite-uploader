@@ -41,18 +41,6 @@ LiteUploader.prototype = {
         }
     },
 
-    _buildXhrObject: function () {
-        var xhr = new XMLHttpRequest();
-        xhr.upload.addEventListener('progress', this._onProgress.bind(this), false);
-        return xhr;
-    },
-
-    _onProgress: function (evt) {
-        if (evt.lengthComputable) {
-            this.el.trigger('lu:progress', Math.floor((evt.loaded / evt.total) * 100));
-        }
-    },
-
     _start: function () {
         var files = this.el.get(0).files;
         var errors = this._getInputErrors(files);
@@ -149,7 +137,6 @@ LiteUploader.prototype = {
 
     _collateFormData: function (files) {
         var formData = this._getFormDataObject();
-
         if (this.el.attr('id')) formData.append('liteUploader_id', this.el.attr('id'));
 
         $.each(this.params, function (key, value) {
@@ -163,26 +150,44 @@ LiteUploader.prototype = {
         return formData;
     },
 
+    _buildXhrObject: function () {
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('progress', this._onXHRProgress.bind(this), false);
+        return xhr;
+    },
+
+    _getXHRObject: function () {
+        return this.xhr;
+    },
+
     _performUpload: function (formData) {
         $.ajax({
-            xhr: function () {
-                return this.xhr;
-            }.bind(this),
+            xhr: this._getXHRObject.bind(this),
             url: this.options.script,
             type: 'POST',
             data: formData,
             processData: false,
             contentType: false
         })
-        .done(function (response) {
-            this.el.trigger('lu:success', response);
-        }.bind(this))
-        .fail(function (jqXHR) {
-            this.el.trigger('lu:fail', jqXHR);
-        }.bind(this))
-        .always(function () {
-            this._resetInput();
-        }.bind(this));
+        .done(this._onXHRSuccess.bind(this))
+        .fail(this._onXHRFailure.bind(this))
+        .always(this._onXHRAlways.bind(this));
+    },
+
+    _onXHRProgress: function (e) {
+        if (e.lengthComputable) this.el.trigger('lu:progress', Math.floor((e.loaded / e.total) * 100));
+    },
+
+    _onXHRSuccess: function (response) {
+        this.el.trigger('lu:success', response);
+    },
+
+    _onXHRFailure: function (jqXHR) {
+        this.el.trigger('lu:fail', jqXHR);
+    },
+
+    _onXHRAlways: function () {
+        this._resetInput();
     },
 
     /* Public Methods */
