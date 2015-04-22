@@ -1,8 +1,10 @@
 /* global LiteUploader, XMLHttpRequestUpload */
 
+'use strict';
+
 describe('Lite Uploader', function () {
-    var fileInput = '<input type="file" name="tester" id="foobar" />',
-        clickElement = $('<input type="button" />');
+    var fileInput = '<input type="file" name="tester" id="foobar" />';
+    var clickElement = $('<input type="button" />');
 
     describe('basic instantiation', function () {
         it('should be able to be instantiated', function () {
@@ -49,69 +51,39 @@ describe('Lite Uploader', function () {
         });
     });
 
-    describe('building xhr object', function () {
-        it('should return a new instance of XMLHttpRequest and setup a progress listener', function () {
-            spyOn(XMLHttpRequestUpload.prototype, 'addEventListener');
-            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
-
-            expect(liteUploader.xhr instanceof XMLHttpRequest).toBeTruthy();
-            expect(XMLHttpRequestUpload.prototype.addEventListener).toHaveBeenCalledWith('progress', jasmine.any(Function), false);
-        });
-    });
-
-    describe('xhr object on-progress', function () {
-        it('should not trigger progress event if lengthComputable is false', function () {
-            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
-            spyOn(liteUploader.el, 'trigger');
-
-            liteUploader._onProgress({lengthComputable: false});
-
-            expect(liteUploader.el.trigger).not.toHaveBeenCalled();
-        });
-
-        it('should trigger progress event if lengthComputable is true', function () {
-            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
-            spyOn(liteUploader.el, 'trigger');
-
-            liteUploader._onProgress({
-                lengthComputable: true,
-                loaded: 2.1,
-                total: 10.3
-            });
-
-            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:progress', 20);
-        });
-    });
-
     describe('start', function () {
-        it('should not proceed with upload if the files do not pass input validation', function () {
-            spyOn(LiteUploader.prototype, '_validateInput').and.returnValue(true);
+        it('should not proceed with upload if there are input errors', function () {
+            spyOn(LiteUploader.prototype, '_getInputErrors').and.returnValue('foo');
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_performUpload');
             var liteUploader = new LiteUploader(fileInput, {script: 'script'});
+            spyOn(liteUploader.el, 'trigger');
 
             liteUploader._start();
 
             expect(liteUploader._resetInput).toHaveBeenCalled();
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', 'foo');
             expect(liteUploader._performUpload).not.toHaveBeenCalled();
         });
 
         it('should not proceed with upload if the files do not pass file validation', function () {
-            spyOn(LiteUploader.prototype, '_validateInput').and.returnValue(false);
-            spyOn(LiteUploader.prototype, '_validateFiles').and.returnValue(true);
+            spyOn(LiteUploader.prototype, '_getInputErrors').and.returnValue(null);
+            spyOn(LiteUploader.prototype, '_getFileErrors').and.returnValue('bar');
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_performUpload');
             var liteUploader = new LiteUploader(fileInput, {script: 'script'});
+            spyOn(liteUploader.el, 'trigger');
 
             liteUploader._start();
 
             expect(liteUploader._resetInput).toHaveBeenCalled();
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', 'bar');
             expect(liteUploader._performUpload).not.toHaveBeenCalled();
         });
 
         it('should proceed with upload if no errors are found', function () {
-            spyOn(LiteUploader.prototype, '_validateInput').and.returnValue(false);
-            spyOn(LiteUploader.prototype, '_validateFiles').and.returnValue(false);
+            spyOn(LiteUploader.prototype, '_getInputErrors').and.returnValue(null);
+            spyOn(LiteUploader.prototype, '_getFileErrors').and.returnValue(null);
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_collateFormData').and.returnValue('collated');
             spyOn(LiteUploader.prototype, '_performUpload');
@@ -121,7 +93,7 @@ describe('Lite Uploader', function () {
             liteUploader._start();
 
             expect(liteUploader._resetInput).not.toHaveBeenCalled();
-            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:before', jasmine.any(Object));
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:before', jasmine.any(Array));
             expect(liteUploader._performUpload).toHaveBeenCalledWith('collated');
         });
     });
@@ -137,77 +109,59 @@ describe('Lite Uploader', function () {
         });
     });
 
-    describe('input validation', function () {
-        it('should find error if the file input has no name attribute and return true', function () {
-            var liteUploader = new LiteUploader('<input type="file" />', {script: 'script'}),
-                result;
-            spyOn(liteUploader.el, 'trigger');
+    describe('get input errors', function () {
+        it('should return error if the file input has no name attribute', function () {
+            var liteUploader = new LiteUploader('<input type="file" />', {script: 'script'});
 
-            result = liteUploader._validateInput([1]);
+            var result = liteUploader._getInputErrors([1]);
 
-            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'liteUploader_input', errors: ['the file input element must have a name attribute']}]]);
-            expect(result).toBe(true);
+            expect(result).toEqual([[{name: 'liteUploader_input', errors: [{type: 'fileInputNameRequired'}]}]]);
         });
 
-        it('should find error if the script option is blank and return true', function () {
-            var liteUploader = new LiteUploader(fileInput, {}),
-                result;
-            spyOn(liteUploader.el, 'trigger');
+        it('should return error if the script option is blank', function () {
+            var liteUploader = new LiteUploader(fileInput, {});
 
-            result = liteUploader._validateInput([1]);
+            var result = liteUploader._getInputErrors([1]);
 
-            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'liteUploader_input', errors: ['the script option is required']}]]);
-            expect(result).toBe(true);
+            expect(result).toEqual([[{name: 'liteUploader_input', errors: [{type: 'scriptOptionRequired'}]}]]);
         });
 
-        it('should find error if the file array is empty and return true', function () {
-            var liteUploader = new LiteUploader(fileInput, {script: 'script'}),
-                result;
-            spyOn(liteUploader.el, 'trigger');
+        it('should return error if the file array is empty', function () {
+            var liteUploader = new LiteUploader(fileInput, {script: 'script'});
 
-            result = liteUploader._validateInput([]);
+            var result = liteUploader._getInputErrors([]);
 
-            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'liteUploader_input', errors: ['at least one file must be selected']}]]);
-            expect(result).toBe(true);
+            expect(result).toEqual([[{name: 'liteUploader_input', errors: [{type: 'noFilesSelected'}]}]]);
         });
 
-        it('should return false if no input errors are found', function () {
-            var liteUploader = new LiteUploader(fileInput, {script: 'script'}),
-                result;
-            spyOn(liteUploader.el, 'trigger');
+        it('should return null if no input errors are found', function () {
+            var liteUploader = new LiteUploader(fileInput, {script: 'script'});
 
-            result = liteUploader._validateInput([1]);
+            var result = liteUploader._getInputErrors([1]);
 
-            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'liteUploader_input', errors: []}]]);
-            expect(result).toBe(false);
+            expect(result).not.toBeTruthy();
         });
     });
 
     describe('file validation', function () {
-        it('should pass errors found to errors event if any are found and return true', function () {
-            var files = [{name: 'name'}],
-                liteUploader = new LiteUploader(fileInput, {script: 'script'}),
-                result;
-            spyOn(liteUploader, '_findErrors').and.returnValue([{error: 'here'}]);
-            spyOn(liteUploader.el, 'trigger');
+        it('should return errors if any are found', function () {
+            var files = [{name: 'name'}];
+            var liteUploader = new LiteUploader(fileInput, {script: 'script'});
+            spyOn(liteUploader, '_findErrorsForFile').and.returnValue([{error: 'here'}]);
 
-            result = liteUploader._validateFiles(files);
+            var result = liteUploader._getFileErrors(files);
 
-            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'name', errors: [{error: 'here'}]}]]);
-            expect(result).toBe(true);
+            expect(result).toEqual([[{name: 'name', errors: [{error: 'here'}]}]]);
         });
 
-        it('should return false if no files errors are found', function () {
-            var files = [{name: 'name'}],
-                liteUploader = new LiteUploader(fileInput, {script: 'script'}),
-                result;
-            spyOn(liteUploader, '_findErrors').and.returnValue([]);
-            spyOn(liteUploader.el, 'trigger');
+        it('should return null if no errors are found', function () {
+            var files = [{name: 'name'}];
+            var liteUploader = new LiteUploader(fileInput, {script: 'script'});
+            spyOn(liteUploader, '_findErrorsForFile').and.returnValue([]);
 
-            result = liteUploader._validateFiles(files);
+            var result = liteUploader._getFileErrors(files);
 
-            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:errors', [[{name: 'name', errors: []}]]);
-            expect(result).toBe(false);
+            expect(result).not.toBeTruthy();
         });
     });
 
@@ -222,7 +176,7 @@ describe('Lite Uploader', function () {
                 }),
                 result;
 
-            result = liteUploader._findErrors(file);
+            result = liteUploader._findErrorsForFile(file);
 
             expect(result).toEqual([{'type': 'type', 'rule': 'a,b,c', 'given': 'd'}]);
         });
@@ -238,7 +192,7 @@ describe('Lite Uploader', function () {
                 }),
                 result;
 
-            result = liteUploader._findErrors(file);
+            result = liteUploader._findErrorsForFile(file);
 
             expect(result).toEqual([{'type': 'size', 'rule': 99, 'given': 100}]);
         });
@@ -325,11 +279,35 @@ describe('Lite Uploader', function () {
         });
     });
 
+    describe('building xhr object', function () {
+        it('should return a new instance of XMLHttpRequest and setup a progress listener', function () {
+            spyOn(XMLHttpRequestUpload.prototype, 'addEventListener');
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+
+            liteUploader._buildXhrObject();
+
+            expect(liteUploader.xhr instanceof XMLHttpRequest).toBeTruthy();
+            expect(XMLHttpRequestUpload.prototype.addEventListener).toHaveBeenCalledWith('progress', jasmine.any(Function), false);
+        });
+    });
+
+    describe('get xhr object', function () {
+        it('should return the xhr variable', function () {
+            var liteUploader = new LiteUploader(fileInput, {script: 'abc', params: {foo: '123'}});
+
+            liteUploader.xhr = 'abc';
+            var result = liteUploader._getXHRObject();
+
+            expect(result).toEqual('abc');
+        });
+    });
+
     describe('perform upload', function () {
         it('should setup the ajax call correctly', function () {
             var liteUploader = new LiteUploader(fileInput, {script: 'abc', params: {foo: '123'}});
+            var deferred = $.Deferred();
 
-            spyOn($, 'ajax').and.callThrough();
+            spyOn($, 'ajax').and.returnValue(deferred);
             liteUploader._performUpload('form-data');
 
             expect($.ajax).toHaveBeenCalledWith({
@@ -341,13 +319,100 @@ describe('Lite Uploader', function () {
                 contentType: false
             });
         });
+
+        it('should trigger success event on success', function () {
+            var liteUploader = new LiteUploader(fileInput, {script: 'abc', params: {foo: '123'}});
+            var deferred = $.Deferred();
+
+            spyOn($, 'ajax').and.returnValue(deferred);
+            spyOn(liteUploader, '_onXHRSuccess');
+            spyOn(liteUploader, '_resetInput');
+            liteUploader._performUpload('form-data');
+            deferred.resolve();
+
+            expect(liteUploader._onXHRSuccess).toHaveBeenCalled();
+            expect(liteUploader._resetInput).toHaveBeenCalled();
+        });
+
+        it('should trigger fail event on fail', function () {
+            var liteUploader = new LiteUploader(fileInput, {script: 'abc', params: {foo: '123'}});
+            var deferred = $.Deferred();
+
+            spyOn($, 'ajax').and.returnValue(deferred);
+            spyOn(liteUploader, '_onXHRFailure');
+            spyOn(liteUploader, '_resetInput');
+            liteUploader._performUpload('form-data');
+            deferred.reject();
+
+            expect(liteUploader._onXHRFailure).toHaveBeenCalled();
+            expect(liteUploader._resetInput).toHaveBeenCalled();
+        });
+    });
+
+    describe('xhr object on-progress', function () {
+        it('should not trigger progress event if lengthComputable is false', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+            spyOn(liteUploader.el, 'trigger');
+
+            liteUploader._onXHRProgress({lengthComputable: false});
+
+            expect(liteUploader.el.trigger).not.toHaveBeenCalled();
+        });
+
+        it('should trigger progress event if lengthComputable is true', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+            spyOn(liteUploader.el, 'trigger');
+
+            liteUploader._onXHRProgress({
+                lengthComputable: true,
+                loaded: 2.1,
+                total: 10.3
+            });
+
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:progress', 20);
+        });
+    });
+
+    describe('xhr object on-success', function () {
+        it('should trigger success event', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+            spyOn(liteUploader.el, 'trigger');
+
+            liteUploader._onXHRSuccess({response: 'something'});
+
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:success', {response: 'something'});
+        });
+    });
+
+    describe('xhr object on-failure', function () {
+        it('should trigger fail event', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+            spyOn(liteUploader.el, 'trigger');
+
+            liteUploader._onXHRFailure({jqXHR: 'something'});
+
+            expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:fail', {jqXHR: 'something'});
+        });
+    });
+
+    describe('xhr object on-always', function () {
+        it('should reset the input', function () {
+            var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+            spyOn(liteUploader, '_resetInput');
+
+            liteUploader._onXHRAlways();
+
+            expect(liteUploader._resetInput).toHaveBeenCalled();
+        });
     });
 
     describe('cancel upload', function () {
         it('should abort the xhr object, trigger cancelled event and reset the input', function () {
             var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
+            liteUploader.xhr = {
+                abort: jasmine.createSpy()
+            };
 
-            spyOn(liteUploader.xhr, 'abort');
             spyOn(liteUploader.el, 'trigger');
             spyOn(liteUploader, '_resetInput');
             liteUploader.cancelUpload();
