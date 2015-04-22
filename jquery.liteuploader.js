@@ -56,12 +56,12 @@ LiteUploader.prototype = {
     _start: function () {
         var files = this.el.get(0).files;
 
-        if (this._validateInput(files)) {
+        if (this._getInputErrors(files)) {
             this._resetInput();
             return;
         }
 
-        if (this._validateFiles(files)) {
+        if (this._getFileErrors(files)) {
             this._resetInput();
             return;
         }
@@ -74,7 +74,7 @@ LiteUploader.prototype = {
         this.el.val('');
     },
 
-    _validateInput: function (files) {
+    _getInputErrors: function (files) {
         var errors = [];
 
         if (!this.el.attr('name')) {
@@ -100,12 +100,12 @@ LiteUploader.prototype = {
         return false;
     },
 
-    _validateFiles: function (files) {
+    _getFileErrors: function (files) {
         var errorsPresent = false,
             errorReporter = [];
 
         $.each(files, function (i) {
-            var errorsFound = this._findErrors(files[i]);
+            var errorsFound = this._findErrorsForFile(files[i]);
 
             errorReporter.push({
                 name: files[i].name,
@@ -121,7 +121,7 @@ LiteUploader.prototype = {
         return errorsPresent;
     },
 
-    _findErrors: function (file) {
+    _findErrorsForFile: function (file) {
         var errorsArray = [];
 
         $.each(this.options.rules, function (key, value) {
