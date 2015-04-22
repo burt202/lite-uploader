@@ -78,15 +78,21 @@ LiteUploader.prototype = {
         var errors = [];
 
         if (!this.el.attr('name')) {
-            errors.push('the file input element must have a name attribute');
+            errors.push({
+                type: 'fileInputNameRequired'
+            });
         }
 
         if (!this.options.script) {
-            errors.push('the script option is required');
+            errors.push({
+                type: 'scriptOptionRequired'
+            });
         }
 
         if (files.length === 0) {
-            errors.push('at least one file must be selected');
+            errors.push({
+                type: 'noFilesSelected'
+            });
         }
 
         this.el.trigger('lu:errors', [[{
