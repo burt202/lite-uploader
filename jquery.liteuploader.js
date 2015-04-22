@@ -126,11 +126,19 @@ LiteUploader.prototype = {
 
         $.each(this.options.rules, function (key, value) {
             if (key === 'allowedFileTypes' && value && $.inArray(file.type, value.split(',')) === -1) {
-                errorsArray.push({'type': 'type', 'rule': value, 'given': file.type});
+                errorsArray.push({
+                    type: 'type',
+                    rule: value,
+                    given: file.type
+                });
             }
 
             if (key === 'maxSize' && value && file.size > value) {
-                errorsArray.push({'type': 'size', 'rule': value, 'given': file.size});
+                errorsArray.push({
+                    type: 'size',
+                    rule: value,
+                    given: file.type
+                });
             }
         });
 
@@ -144,9 +152,7 @@ LiteUploader.prototype = {
     _collateFormData: function (files) {
         var formData = this._getFormDataObject();
 
-        if (this.el.attr('id')) {
-            formData.append('liteUploader_id', this.el.attr('id'));
-        }
+        if (this.el.attr('id')) formData.append('liteUploader_id', this.el.attr('id'));
 
         $.each(this.params, function (key, value) {
             formData.append(key, value);
@@ -170,16 +176,18 @@ LiteUploader.prototype = {
             processData: false,
             contentType: false
         })
-        .done(function(response){
+        .done(function (response) {
             this.el.trigger('lu:success', response);
         }.bind(this))
-        .fail(function(jqXHR) {
+        .fail(function (jqXHR) {
             this.el.trigger('lu:fail', jqXHR);
         }.bind(this))
-        .always(function() {
+        .always(function () {
             this._resetInput();
         }.bind(this));
     },
+
+    /* Public Methods */
 
     addParam: function (key, value) {
         this.params[key] = value;
