@@ -1,4 +1,4 @@
-## LiteUploader - HTML5 jQuery File Uploader <sup>v2.1.2</sup>
+## LiteUploader - HTML5 jQuery File Uploader <sup>v2.2.0</sup>
 
 This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://tekbrand.com/jquery/10-best-jquery-file-upload-plugins)) which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
 
@@ -94,12 +94,15 @@ The aim was to see, at its absolute minimum, how little code do you need to make
     </tr>
 </table>
 
-### File Error Types
+### Error Types
 
 Below is an overview of the error types that can be returned when validating files
 
 * type - when file mime type does not match any mime types supplied in the rule.allowedFileTypes option
 * size - when file size is above the size (in bytes) supplied in the rule.maxSize option
+* fileInputNameRequired - when there is no name attribute on the file input
+* scriptOptionRequired - when no 'script' option is passed to the plugin
+* noFilesSelected - when no files have been selected for the file input
 
 ### Public API
 
@@ -146,8 +149,7 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 
 ### Gotchas
 
-* make sure your uploads directory is writable (chmod 777)
-* make sure your HTML file input has a name attribute as the plugin will not work without it
+* make sure your uploads directory is writable: `chmod 777`
 
 ### Browser Support
 
@@ -159,13 +161,18 @@ The two main HTML5 dependencies for the plugin are the File API and XHR2, and us
 * Safari 6+
 * Opera 12+
 
-Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of June 2014 the browser versions listed above should account for approx 81% of all internet users
+Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of April 2015, the browser versions listed above should account for approx 86% of all internet users
 
 ### Examples & Tests
 
 There are 3 examples in the `example` directory (using PHP as the server-side language) to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the `tests` directory and run by opening `runner.html`
 
 ### Changelog
+
+2.2.0 (23 April 2015)
+
+* error handling more consistent
+* better test coverage
 
 2.1.2 (29 October 2014)
 
