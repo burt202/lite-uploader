@@ -41,6 +41,12 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>object of params to be sent to the server in addition to the files being uploaded</td>
     </tr>
     <tr>
+        <td>headers</td>
+        <td>Object</td>
+        <td>{}</td>
+        <td>object of headers to be sent to the server</td>
+    </tr>
+    <tr>
         <td>changeHandler</td>
         <td>Boolean</td>
         <td>true</td>

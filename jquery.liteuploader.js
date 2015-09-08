@@ -8,6 +8,7 @@ $.fn.liteUploader = function (options) {
             maxSize: null
         },
         params: {},
+        headers: {},
         changeHandler: true,
         clickElement: null
     };
@@ -166,6 +167,7 @@ LiteUploader.prototype = {
             url: this.options.script,
             type: 'POST',
             data: formData,
+            headers: this.options.headers,
             processData: false,
             contentType: false
         })
