@@ -315,6 +315,7 @@ describe('Lite Uploader', function () {
                 url: 'abc',
                 type: 'POST',
                 data: 'form-data',
+                headers: {},
                 processData: false,
                 contentType: false
             });
