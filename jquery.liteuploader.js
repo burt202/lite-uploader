@@ -10,7 +10,10 @@ $.fn.liteUploader = function (options) {
         params: {},
         headers: {},
         changeHandler: true,
-        clickElement: null
+        clickElement: null,
+        // By default file selections are uploaded in one request each.
+        // Set to true to upload each file of a selection using an individual request.
+        singleFileUploads: false
     };
 
     return this.each(function () {
@@ -22,7 +25,7 @@ function LiteUploader (element, options) {
     this.el = $(element);
     this.options = options;
     this.params = options.params;
-    this.xhr = this._buildXhrObject();
+    this.xhrs = [];
 
     this._init();
 }
@@ -51,9 +54,19 @@ LiteUploader.prototype = {
             this.el.trigger('lu:errors', errors);
             this._resetInput();
         } else {
-            this.el.trigger('lu:before', [files]);
-            this._performUpload(this._collateFormData(files));
+            if (this.options.singleFileUploads) {
+                $.each(files, function (i) {
+                    this._startUploadWithFiles([files[i]]);
+                }.bind(this));
+            } else {
+                this._startUploadWithFiles(files);
+            }
         }
+    },
+
+    _startUploadWithFiles: function (files) {
+        this.el.trigger('lu:before', [files]);
+        this._performUpload(this._collateFormData(files));
     },
 
     _resetInput: function () {
@@ -154,16 +167,13 @@ LiteUploader.prototype = {
     _buildXhrObject: function () {
         var xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('progress', this._onXHRProgress.bind(this), false);
+        this.xhrs.push(xhr);
         return xhr;
-    },
-
-    _getXHRObject: function () {
-        return this.xhr;
     },
 
     _performUpload: function (formData) {
         $.ajax({
-            xhr: this._getXHRObject.bind(this),
+            xhr: this._buildXhrObject.bind(this),
             url: this.options.script,
             type: 'POST',
             data: formData,
@@ -199,7 +209,9 @@ LiteUploader.prototype = {
     },
 
     cancelUpload: function () {
-        this.xhr.abort();
+        this.xhrs.forEach(function (xhr) {
+            xhr.abort();
+        });
         this.el.trigger('lu:cancelled');
         this._resetInput();
     }

@@ -58,6 +58,12 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>null</td>
         <td>initiate the upload on the click event of the jQuery element passed here</td>
     </tr>
+    <tr>
+        <td>singleFileUploads</td>
+        <td>Boolean</td>
+        <td>false</td>
+        <td>set to true to upload each file of a selection using an individual request</td>
+    </tr>
 </table>
 
 ### Events
