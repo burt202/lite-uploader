@@ -54,6 +54,7 @@ LiteUploader.prototype = {
             this.el.trigger('lu:errors', errors);
             this._resetInput();
         } else {
+            this.el.trigger('lu:start', files);
             if (this.options.singleFileUploads) {
                 $.each(files, function (i) {
                     this._startUploadWithFiles([files[i]]);

@@ -80,6 +80,11 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>triggered after input and file validation - see 'File Error Types' section for more</td>
     </tr>
     <tr>
+        <td>lu:start</td>
+        <td>event, files</td>
+        <td>triggered before any uploading starts, after the clickElement click event or the change handler - fires once per file selection</td>
+    </tr>
+    <tr>
         <td>lu:before</td>
         <td>event, files</td>
         <td>triggered before the uploading starts</td>
