@@ -64,6 +64,11 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>false</td>
         <td>set to true to upload each file of a selection using an individual request</td>
     </tr>
+    <tr>
+        <td>beforeRequest</td>
+        <td>Function</td>
+        <td colspan="2">Delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
+    </tr>
 </table>
 
 ### Events

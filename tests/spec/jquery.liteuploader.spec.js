@@ -79,13 +79,29 @@ describe('Lite Uploader', function () {
             expect(liteUploader._performUpload).not.toHaveBeenCalled();
         });
 
+        it('should not proceed with upload if beforeRequest was rejected', function () {
+            spyOn(LiteUploader.prototype, '_getInputErrors').and.returnValue(null);
+            spyOn(LiteUploader.prototype, '_getFileErrors').and.returnValue(null);
+            spyOn(LiteUploader.prototype, '_resetInput');
+            spyOn(LiteUploader.prototype, '_collateFormData').and.returnValue('collated');
+            spyOn(LiteUploader.prototype, '_performUpload');
+            var beforeRequest = function (files, formData) { return $.Deferred().reject(); };
+            var liteUploader = new LiteUploader(fileInput, {script: 'script', beforeRequest: beforeRequest});
+
+            liteUploader._start();
+
+            expect(liteUploader._resetInput).not.toHaveBeenCalled();
+            expect(liteUploader._performUpload).not.toHaveBeenCalled();
+        });
+
         it('should proceed with upload if no errors are found', function () {
             spyOn(LiteUploader.prototype, '_getInputErrors').and.returnValue(null);
             spyOn(LiteUploader.prototype, '_getFileErrors').and.returnValue(null);
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_collateFormData').and.returnValue('collated');
             spyOn(LiteUploader.prototype, '_performUpload');
-            var liteUploader = new LiteUploader(fileInput, {script: 'script'});
+            var beforeRequest = function (files, formData) { return $.when(formData); };
+            var liteUploader = new LiteUploader(fileInput, {script: 'script', beforeRequest: beforeRequest});
             spyOn(liteUploader.el, 'trigger');
 
             liteUploader._start();

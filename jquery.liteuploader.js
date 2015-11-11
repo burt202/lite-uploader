@@ -13,7 +13,10 @@ $.fn.liteUploader = function (options) {
         clickElement: null,
         // By default file selections are uploaded in one request each.
         // Set to true to upload each file of a selection using an individual request.
-        singleFileUploads: false
+        singleFileUploads: false,
+        // Delay the file upload request by returning a promise.
+        // File upload will start after the promise resolves with the formData.
+        beforeRequest: function (files, formData) { return $.when(formData); }
     };
 
     return this.each(function () {
@@ -62,7 +65,8 @@ LiteUploader.prototype = {
     _startUploadWithFiles: function (files) {
         function performUpload() {
             this.el.trigger('lu:before', [files]);
-            this._performUpload(this._collateFormData(files));
+            this.options.beforeRequest(files, this._collateFormData(files))
+                .done(this._performUpload.bind(this));
         }
 
         if (this.options.singleFileUploads) {
