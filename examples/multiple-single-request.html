@@ -13,9 +13,9 @@
 	</style>
 </head>
 <body>
-  <p>In this example each file of a selection using an individual request.</p>
+	<p>In this example each file of a selection using an individual request.</p>
 
-  <input type="file" name="fileUpload2[]" id="fileUpload2" class="fileUpload" multiple="multiple" />
+	<input type="file" name="fileUpload2[]" id="fileUpload2" class="fileUpload" multiple="multiple" />
 	<div id="display"></div>
 	<div id="previews"></div>
 
@@ -26,16 +26,21 @@
 		$(document).ready(function () {
 			$('.fileUpload').liteUploader({
 				script: 'multiple.php',
-        // Each file of a selection using an individual request.
-        singleFileUploads: true,
+				// Each file of a selection using an individual request.
+				singleFileUploads: true,
+				// Perform async operation before every file upload
+				// Useful to get a 3rd party token or authenticate user.
+				beforeRequest: function (files, formData) {
+					return $.when(formData);
+				},
 				rules: {
 					allowedFileTypes: 'image/jpeg,image/png,image/gif',
-          maxSize: 250000
+					maxSize: 250000
 				}
 			})
-      .on('lu:start', function () {
-        $('#previews').html('');
-      })
+			.on('lu:start', function () {
+				$('#previews').html('');
+			})
 			.on('lu:errors', function (e, errors) {
 				var isErrors = false;
 				$('#display').html('');
