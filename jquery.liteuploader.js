@@ -178,7 +178,7 @@ LiteUploader.prototype = {
             url: this.options.script,
             type: 'POST',
             data: formData,
-            headers: this.options.headers,
+            headers: this.options.headers || {},
             processData: false,
             contentType: false
         })

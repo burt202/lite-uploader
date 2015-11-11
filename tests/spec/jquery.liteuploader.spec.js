@@ -302,9 +302,24 @@ describe('Lite Uploader', function () {
                 url: 'abc',
                 type: 'POST',
                 data: 'form-data',
+                headers: {},
                 processData: false,
                 contentType: false
             });
+        });
+
+        it('should setup the ajax call with header', function () {
+            var headers = {'x-my-custom-header': 'some value'};
+            var options = {script: 'abc', params: {foo: '123'}, headers: headers};
+            var liteUploader = new LiteUploader(fileInput, options);
+            var deferred = $.Deferred();
+
+            spyOn($, 'ajax').and.returnValue(deferred);
+            liteUploader._performUpload('form-data');
+
+            expect($.ajax).toHaveBeenCalled();
+            expect($.ajax.calls.argsFor(0)[0]).not.toBeUndefined();
+            expect($.ajax.calls.argsFor(0)[0].headers).toEqual(headers);
         });
 
         it('should trigger success event on success', function () {
