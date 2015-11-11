@@ -55,19 +55,23 @@ LiteUploader.prototype = {
             this._resetInput();
         } else {
             this.el.trigger('lu:start', files);
-            if (this.options.singleFileUploads) {
-                $.each(files, function (i) {
-                    this._startUploadWithFiles([files[i]]);
-                }.bind(this));
-            } else {
-                this._startUploadWithFiles(files);
-            }
+            this._startUploadWithFiles(files);
         }
     },
 
     _startUploadWithFiles: function (files) {
-        this.el.trigger('lu:before', [files]);
-        this._performUpload(this._collateFormData(files));
+        function performUpload() {
+            this.el.trigger('lu:before', [files]);
+            this._performUpload(this._collateFormData(files));
+        }
+
+        if (this.options.singleFileUploads) {
+            $.each(files, function (i) {
+                performUpload.call(this, [files[i]]);
+            }.bind(this));
+        } else {
+            performUpload.call(this, files);
+        }
     },
 
     _resetInput: function () {
