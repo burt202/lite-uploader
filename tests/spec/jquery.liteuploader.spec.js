@@ -10,14 +10,12 @@ describe('Lite Uploader', function () {
         it('should be able to be instantiated', function () {
             spyOn(LiteUploader.prototype, '_init');
 
-            spyOn(LiteUploader.prototype, '_buildXhrObject').and.returnValue('xhrObject');
             var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
 
             expect(liteUploader).toBeTruthy();
             expect(liteUploader.el).toEqual(jasmine.any(Object));
             expect(liteUploader.options).toEqual({tester: 'abc', params: {foo: '123'}});
             expect(liteUploader.params).toEqual({foo: '123'});
-            expect(liteUploader.xhr).toEqual('xhrObject');
             expect(liteUploader._init).toHaveBeenCalled();
         });
     });
@@ -81,13 +79,29 @@ describe('Lite Uploader', function () {
             expect(liteUploader._performUpload).not.toHaveBeenCalled();
         });
 
+        it('should not proceed with upload if beforeRequest was rejected', function () {
+            spyOn(LiteUploader.prototype, '_getInputErrors').and.returnValue(null);
+            spyOn(LiteUploader.prototype, '_getFileErrors').and.returnValue(null);
+            spyOn(LiteUploader.prototype, '_resetInput');
+            spyOn(LiteUploader.prototype, '_collateFormData').and.returnValue('collated');
+            spyOn(LiteUploader.prototype, '_performUpload');
+            var beforeRequest = function (files, formData) { return $.Deferred().reject(); };
+            var liteUploader = new LiteUploader(fileInput, {script: 'script', beforeRequest: beforeRequest});
+
+            liteUploader._start();
+
+            expect(liteUploader._resetInput).not.toHaveBeenCalled();
+            expect(liteUploader._performUpload).not.toHaveBeenCalled();
+        });
+
         it('should proceed with upload if no errors are found', function () {
             spyOn(LiteUploader.prototype, '_getInputErrors').and.returnValue(null);
             spyOn(LiteUploader.prototype, '_getFileErrors').and.returnValue(null);
             spyOn(LiteUploader.prototype, '_resetInput');
             spyOn(LiteUploader.prototype, '_collateFormData').and.returnValue('collated');
             spyOn(LiteUploader.prototype, '_performUpload');
-            var liteUploader = new LiteUploader(fileInput, {script: 'script'});
+            var beforeRequest = function (files, formData) { return $.when(formData); };
+            var liteUploader = new LiteUploader(fileInput, {script: 'script', beforeRequest: beforeRequest});
             spyOn(liteUploader.el, 'trigger');
 
             liteUploader._start();
@@ -286,19 +300,8 @@ describe('Lite Uploader', function () {
 
             liteUploader._buildXhrObject();
 
-            expect(liteUploader.xhr instanceof XMLHttpRequest).toBeTruthy();
+            expect(liteUploader.xhrs[0] instanceof XMLHttpRequest).toBeTruthy();
             expect(XMLHttpRequestUpload.prototype.addEventListener).toHaveBeenCalledWith('progress', jasmine.any(Function), false);
-        });
-    });
-
-    describe('get xhr object', function () {
-        it('should return the xhr variable', function () {
-            var liteUploader = new LiteUploader(fileInput, {script: 'abc', params: {foo: '123'}});
-
-            liteUploader.xhr = 'abc';
-            var result = liteUploader._getXHRObject();
-
-            expect(result).toEqual('abc');
         });
     });
 
@@ -424,15 +427,15 @@ describe('Lite Uploader', function () {
     describe('cancel upload', function () {
         it('should abort the xhr object, trigger cancelled event and reset the input', function () {
             var liteUploader = new LiteUploader(fileInput, {tester: 'abc', params: {foo: '123'}});
-            liteUploader.xhr = {
+            liteUploader.xhrs = [{
                 abort: jasmine.createSpy()
-            };
+            }];
 
             spyOn(liteUploader.el, 'trigger');
             spyOn(liteUploader, '_resetInput');
             liteUploader.cancelUpload();
 
-            expect(liteUploader.xhr.abort).toHaveBeenCalled();
+            expect(liteUploader.xhrs[0].abort).toHaveBeenCalled();
             expect(liteUploader.el.trigger).toHaveBeenCalledWith('lu:cancelled');
             expect(liteUploader._resetInput).toHaveBeenCalled();
         });

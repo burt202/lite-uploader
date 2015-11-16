@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Multiple LiteUploader Example With Single Requests</title>
+
+	<style>
+
+		body {
+			font-family: helvetica;
+			font-size: 13px;
+		}
+
+	</style>
+</head>
+<body>
+	<p>In this example each file of a selection using an individual request.</p>
+
+	<input type="file" name="fileUpload2[]" id="fileUpload2" class="fileUpload" multiple="multiple" />
+	<div id="display"></div>
+	<div id="previews"></div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+	<script src="../jquery.liteuploader.js"></script>
+	<script>
+
+		$(document).ready(function () {
+			$('.fileUpload').liteUploader({
+				script: 'multiple.php',
+				// Each file of a selection using an individual request.
+				singleFileUploads: true,
+				// Perform async operation before every file upload
+				// Useful to get a 3rd party token or authenticate user.
+				beforeRequest: function (files, formData) {
+					return $.when(formData);
+				},
+				rules: {
+					allowedFileTypes: 'image/jpeg,image/png,image/gif',
+					maxSize: 250000
+				}
+			})
+			.on('lu:start', function () {
+				$('#previews').html('');
+			})
+			.on('lu:errors', function (e, errors) {
+				var isErrors = false;
+				$('#display').html('');
+
+				$.each(errors, function (i, error) {
+					if (error.errors.length > 0) {
+						isErrors = true;
+						$.each(error.errors, function (i, errorInfo) {
+							$('#display').append('<br />ERROR! File: ' + error.name + ' - Info: ' + JSON.stringify(errorInfo));
+						});
+					}
+				});
+
+				if (!isErrors) {
+					$('#display').append('<br />No errors');
+				}
+			})
+			.on('lu:before', function (e, files) {
+				$('#display').append('<br />Uploading ' + files.length + ' file(s)...');
+			})
+			.on('lu:progress', function (e, percentage) {
+				$('#display').append('<br />Progress ' + percentage + '%<br />');
+			})
+			.on('lu:success', function (e, response) {
+				var response = $.parseJSON(response);
+
+				$.each(response.urls, function(i, url) {
+					$('#previews').append($('<img>', {'src': url, 'width': 200}));
+				});
+
+				$('#display').append(response.message);
+			});
+		});
+
+	</script>
+</body>
+</html>

@@ -58,6 +58,17 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>null</td>
         <td>initiate the upload on the click event of the jQuery element passed here</td>
     </tr>
+    <tr>
+        <td>singleFileUploads</td>
+        <td>Boolean</td>
+        <td>false</td>
+        <td>set to true to upload each file of a selection using an individual request</td>
+    </tr>
+    <tr>
+        <td>beforeRequest</td>
+        <td>Function</td>
+        <td colspan="2">Delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
+    </tr>
 </table>
 
 ### Events
@@ -72,6 +83,11 @@ The aim was to see, at its absolute minimum, how little code do you need to make
         <td>lu:errors</td>
         <td>event, errors</td>
         <td>triggered after input and file validation - see 'File Error Types' section for more</td>
+    </tr>
+    <tr>
+        <td>lu:start</td>
+        <td>event, files</td>
+        <td>triggered before any uploading starts, after the clickElement click event or the change handler - fires once per file selection</td>
     </tr>
     <tr>
         <td>lu:before</td>
