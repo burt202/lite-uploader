@@ -191,16 +191,16 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
 
 ### Tests & Coverage
 
-  `cd to project root`
-  `npm i`
-  `npm run tests`
-  `npm run coverage`
+* `cd to project root`
+* `npm i`
+* `npm run tests`
+* `npm run coverage`
 
 ### Changelog
 
 2.3.0 (18 November 2015)
 
-* adds singleFileUploads and beforeRequest options (thanks to [@Zmetser](https://github.com/Zmetser)
+* adds singleFileUploads and beforeRequest options (thanks to [@Zmetser](https://github.com/Zmetser))
 * adds headers option (thanks to [@malthe](https://github.com/malthe))
 * tests and coverage now run from command line
 
