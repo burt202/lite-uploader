@@ -1,6 +1,26 @@
 {
   "name": "lite-uploader",
+  "description": "Lightweight HTML5 jQuery File Uploader",
   "version": "2.3.0",
+  "keywords": [
+    "lightweight",
+    "html5",
+    "jQuery",
+    "file",
+    "uploader",
+    "upload",
+    "AJAX",
+    "lite",
+    "jquery-plugin"
+  ],
+  "homepage": "https://github.com/burt202/lite-uploader",
+  "license": "MIT",
+  "main": "jquery.liteuploader.js",
+  "author": "Aaron Burtnyk <aaron@burtdev.net>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/burt202/lite-uploader.git"
+  },
   "devDependencies": {
     "chai": "^3.4.1",
     "gulp": "^3.9.0",

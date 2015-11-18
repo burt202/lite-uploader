@@ -14,21 +14,17 @@
     "jquery-plugin"
   ],
   "homepage": "https://github.com/burt202/lite-uploader",
+  "licenses": "MIT",
+  "main": "jquery.liteuploader.js",
   "author": {
     "name" : "Aaron Burtnyk",
     "url" : "http://www.burtdev.net"
   },
-  "main": [
-    "jquery.liteuploader.js",
-    "jquery.liteuploader.min.js"
-  ],
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "http://opensource.org/licenses/MIT"
-    }
-  ],
   "dependencies": {
     "jquery": ">=1.8"
-  }
+  },
+  "ignore": [
+    "test",
+    ".gitignore"
+  ]
 }
