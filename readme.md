@@ -11,109 +11,109 @@ The aim was to see, at its absolute minimum, how little code do you need to make
 ### Options
 
 <table>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Default</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>script</td>
-        <td>String (required)</td>
-        <td>null</td>
-        <td>the path to the script file that will handle the upload</td>
-    </tr>
-    <tr>
-        <td>rules</td>
-        <td>Object</td>
-        <td>{allowedFileTypes: null, maxSize: null}</td>
-        <td>object where you can specify validation rules for the files to be uploaded - current supported rules are:
-            <ul>
-                <li>allowedFileTypes (list of comma-separated mime-types)</li>
-                <li>maxSize (in bytes)</li>
-            </ul>
-        </td>
-    </tr>
-    <tr>
-        <td>params</td>
-        <td>Object</td>
-        <td>{}</td>
-        <td>object of params to be sent to the server in addition to the files being uploaded</td>
-    </tr>
-    <tr>
-        <td>headers</td>
-        <td>Object</td>
-        <td>{}</td>
-        <td>object of headers to be sent to the server</td>
-    </tr>
-    <tr>
-        <td>changeHandler</td>
-        <td>Boolean</td>
-        <td>true</td>
-        <td>initiate the upload on file input change</td>
-    </tr>
-    <tr>
-        <td>clickElement</td>
-        <td>jQuery Element</td>
-        <td>null</td>
-        <td>initiate the upload on the click event of the jQuery element passed here</td>
-    </tr>
-    <tr>
-        <td>singleFileUploads</td>
-        <td>Boolean</td>
-        <td>false</td>
-        <td>set to true to upload each file of a selection using an individual request</td>
-    </tr>
-    <tr>
-        <td>beforeRequest</td>
-        <td>Function</td>
-        <td colspan="2">Delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
-    </tr>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>script</td>
+    <td>String (required)</td>
+    <td>null</td>
+    <td>the path to the script file that will handle the upload</td>
+  </tr>
+  <tr>
+    <td>rules</td>
+    <td>Object</td>
+    <td>{allowedFileTypes: null, maxSize: null}</td>
+    <td>object where you can specify validation rules for the files to be uploaded - current supported rules are:
+      <ul>
+        <li>allowedFileTypes (list of comma-separated mime-types)</li>
+        <li>maxSize (in bytes)</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>params</td>
+    <td>Object</td>
+    <td>{}</td>
+    <td>object of params to be sent to the server in addition to the files being uploaded</td>
+  </tr>
+  <tr>
+    <td>headers</td>
+    <td>Object</td>
+    <td>{}</td>
+    <td>object of headers to be sent to the server</td>
+  </tr>
+  <tr>
+    <td>changeHandler</td>
+    <td>Boolean</td>
+    <td>true</td>
+    <td>initiate the upload on file input change</td>
+  </tr>
+  <tr>
+    <td>clickElement</td>
+    <td>jQuery Element</td>
+    <td>null</td>
+    <td>initiate the upload on the click event of the jQuery element passed here</td>
+  </tr>
+  <tr>
+    <td>singleFileUploads</td>
+    <td>Boolean</td>
+    <td>false</td>
+    <td>set to true to upload each file of a selection using an individual request</td>
+  </tr>
+  <tr>
+    <td>beforeRequest</td>
+    <td>Function</td>
+    <td colspan="2">Delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
+  </tr>
 </table>
 
 ### Events
 
 <table>
-    <tr>
-        <th>Name</th>
-        <th>Parameters</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>lu:errors</td>
-        <td>event, errors</td>
-        <td>triggered after input and file validation - see 'File Error Types' section for more</td>
-    </tr>
-    <tr>
-        <td>lu:start</td>
-        <td>event, files</td>
-        <td>triggered before any uploading starts, after the clickElement click event or the change handler - fires once per file selection</td>
-    </tr>
-    <tr>
-        <td>lu:before</td>
-        <td>event, files</td>
-        <td>triggered before the uploading starts</td>
-    </tr>
-    <tr>
-        <td>lu:progress</td>
-        <td>event, percentage</td>
-        <td>triggered whilst uploading files</td>
-    </tr>
-    <tr>
-        <td>lu:success</td>
-        <td>event, response</td>
-        <td>triggered on upload success</td>
-    </tr>
-    <tr>
-        <td>lu:fail</td>
-        <td>event, jqXHR</td>
-        <td>triggered on upload failure</td>
-    </tr>
-    <tr>
-        <td>lu:cancelled</td>
-        <td>event</td>
-        <td>triggered on upload abort</td>
-    </tr>
+  <tr>
+    <th>Name</th>
+    <th>Parameters</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>lu:errors</td>
+    <td>event, errors</td>
+    <td>triggered after input and file validation - see 'File Error Types' section for more</td>
+  </tr>
+  <tr>
+    <td>lu:start</td>
+    <td>event, files</td>
+    <td>triggered before any uploading starts, after the clickElement click event or the change handler - fires once per file selection</td>
+  </tr>
+  <tr>
+    <td>lu:before</td>
+    <td>event, files</td>
+    <td>triggered before the uploading starts</td>
+  </tr>
+  <tr>
+    <td>lu:progress</td>
+    <td>event, percentage</td>
+    <td>triggered whilst uploading files</td>
+  </tr>
+  <tr>
+    <td>lu:success</td>
+    <td>event, response</td>
+    <td>triggered on upload success</td>
+  </tr>
+  <tr>
+    <td>lu:fail</td>
+    <td>event, jqXHR</td>
+    <td>triggered on upload failure</td>
+  </tr>
+  <tr>
+    <td>lu:cancelled</td>
+    <td>event</td>
+    <td>triggered on upload abort</td>
+  </tr>
 </table>
 
 ### Error Types
@@ -133,24 +133,24 @@ Below is an overview of the error types that can be returned when validating fil
 Allows parameters to be added after plugin instantiation
 
 <table>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Default</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td>key</td>
-        <td>String (required)</td>
-        <td>n/a</td>
-        <td>name of parameter to be added</td>
-    </tr>
-    <tr>
-        <td>value</td>
-        <td>String (required)</td>
-        <td>n/a</td>
-        <td>value of parameter to be added</td>
-    </tr>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>key</td>
+    <td>String (required)</td>
+    <td>n/a</td>
+    <td>name of parameter to be added</td>
+  </tr>
+  <tr>
+    <td>value</td>
+    <td>String (required)</td>
+    <td>n/a</td>
+    <td>value of parameter to be added</td>
+  </tr>
 </table>
 
 #### cancelUpload()
@@ -158,15 +158,15 @@ Allows parameters to be added after plugin instantiation
 Allows the upload to be cancelled, triggers `lu:cancelled`
 
 <table>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Default</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <td colspan="4">No parameters</td>
-    </tr>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td colspan="4">No parameters</td>
+  </tr>
 </table>
 
 ### Gotchas
