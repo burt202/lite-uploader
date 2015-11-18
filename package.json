@@ -1,12 +1,13 @@
 {
   "name": "lite-uploader",
   "version": "2.3.0",
-  "scripts": {
-    "tests": "./node_modules/mocha/bin/_mocha",
-    "coverage": "./node_modules/istanbul/lib/cli.js cover -x **/node_modules/** --hook-run-in-context --report html --print both ./node_modules/mocha/bin/_mocha -- --recursive test/"
-  },
   "devDependencies": {
     "chai": "^3.4.1",
+    "gulp": "^3.9.0",
+    "gulp-istanbul": "^0.10.2",
+    "gulp-mocha": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.1",
     "istanbul": "^0.4.0",
     "jquery": "^2.1.4",
     "jsdom": "3.1.2",
