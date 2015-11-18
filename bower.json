@@ -1,34 +1,34 @@
 {
-    "name": "lite-uploader",
-    "description": "Lightweight HTML5 jQuery File Uploader",
-    "version": "2.2.0",
-    "keywords": [
-        "lightweight",
-        "html5",
-        "jQuery",
-        "file",
-        "uploader",
-        "upload",
-        "AJAX",
-        "lite",
-        "jquery-plugin"
-    ],
-    "homepage": "https://github.com/burt202/lite-uploader",
-    "author": {
-        "name" : "Aaron Burtnyk",
-        "url" : "http://www.burtdev.net"
-    },
-    "main": [
-        "jquery.liteuploader.js",
-        "jquery.liteuploader.min.js"
-    ],
-    "licenses": [
-        {
-            "type": "MIT",
-            "url": "http://opensource.org/licenses/MIT"
-        }
-    ],
-    "dependencies": {
-        "jquery": ">=1.8"
+  "name": "lite-uploader",
+  "description": "Lightweight HTML5 jQuery File Uploader",
+  "version": "2.2.0",
+  "keywords": [
+    "lightweight",
+    "html5",
+    "jQuery",
+    "file",
+    "uploader",
+    "upload",
+    "AJAX",
+    "lite",
+    "jquery-plugin"
+  ],
+  "homepage": "https://github.com/burt202/lite-uploader",
+  "author": {
+    "name" : "Aaron Burtnyk",
+    "url" : "http://www.burtdev.net"
+  },
+  "main": [
+    "jquery.liteuploader.js",
+    "jquery.liteuploader.min.js"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
     }
+  ],
+  "dependencies": {
+    "jquery": ">=1.8"
+  }
 }
