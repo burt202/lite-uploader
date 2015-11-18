@@ -11,11 +11,7 @@ $.fn.liteUploader = function (options) {
         headers: {},
         changeHandler: true,
         clickElement: null,
-        // By default file selections are uploaded in one request each.
-        // Set to true to upload each file of a selection using an individual request.
         singleFileUploads: false,
-        // Delay the file upload request by returning a promise.
-        // File upload will start after the promise resolves with the formData.
         beforeRequest: function (files, formData) { return $.when(formData); }
     };
 
@@ -33,23 +29,29 @@ function LiteUploader (element, options) {
     this._init();
 }
 
+window.LiteUploader = LiteUploader;
+
 LiteUploader.prototype = {
     _init: function () {
         if (this.options.changeHandler) {
             this.el.change(function () {
-                this._start();
+                this._validateInputAndFiles();
             }.bind(this));
         }
 
         if (this.options.clickElement) {
             this.options.clickElement.click(function () {
-                this._start();
+                this._validateInputAndFiles();
             }.bind(this));
         }
     },
 
-    _start: function () {
-        var files = this.el.get(0).files;
+    _getInputFiles: function () {
+        return this.el.get(0).files;
+    },
+
+    _validateInputAndFiles: function () {
+        var files = this._getInputFiles();
         var errors = this._getInputErrors(files);
         if (!errors) errors = this._getFileErrors(files);
 
@@ -63,19 +65,19 @@ LiteUploader.prototype = {
     },
 
     _startUploadWithFiles: function (files) {
-        function performUpload() {
-            this.el.trigger('lu:before', [files]);
-            this.options.beforeRequest(files, this._collateFormData(files))
-                .done(this._performUpload.bind(this));
-        }
-
         if (this.options.singleFileUploads) {
             $.each(files, function (i) {
-                performUpload.call(this, [files[i]]);
+               this._beforeUpload.call(this, [files[i]]);
             }.bind(this));
         } else {
-            performUpload.call(this, files);
+            this._beforeUpload.call(this, files);
         }
+    },
+
+    _beforeUpload: function (files) {
+        this.el.trigger('lu:before', files);
+        this.options.beforeRequest(files, this._collateFormData(files))
+            .done(this._performUpload.bind(this));
     },
 
     _resetInput: function () {
@@ -173,8 +175,12 @@ LiteUploader.prototype = {
         return formData;
     },
 
+    _getXmlHttpRequestObject: function () {
+        return new XMLHttpRequest();
+    },
+
     _buildXhrObject: function () {
-        var xhr = new XMLHttpRequest();
+        var xhr = this._getXmlHttpRequestObject();
         xhr.upload.addEventListener('progress', this._onXHRProgress.bind(this), false);
         this.xhrs.push(xhr);
         return xhr;

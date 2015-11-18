@@ -185,9 +185,16 @@ The two main HTML5 dependencies for the plugin are the File API and XHR2, and us
 
 Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of April 2015, the browser versions listed above should account for approx 86% of all internet users
 
-### Examples & Tests
+### Examples
 
-There are 3 examples in the `example` directory (using PHP as the server-side language) to help you get on your way and also there is a full suite of Jasmine tests to back the plugin. They can be found in the `tests` directory and run by opening `runner.html`
+See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.md)
+
+### Tests & Coverage
+
+  `cd to project root`
+  `npm i`
+  `npm run tests`
+  `npm run coverage`
 
 ### Changelog
 
