@@ -1,6 +1,6 @@
-## LiteUploader - HTML5 jQuery File Uploader <sup>v2.2.0</sup>
+## LiteUploader - HTML5 jQuery File Uploader <sup>v2.3.0</sup>
 
-This is a small jQuery plugin (featured in [this jQuery plugin top 10](http://tekbrand.com/jquery/10-best-jquery-file-upload-plugins)) which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
+This is a small jQuery plugin which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
 
 The aim was to see, at its absolute minimum, how little code do you need to make a small, but very usable and easily expandable jQuery upload plugin. With some useful options including basic validation it turns out not many. After minification it is very small in size and is a good choice for any developer who is not so worried about supporting legacy browsers.
 
@@ -183,7 +183,7 @@ The two main HTML5 dependencies for the plugin are the File API and XHR2, and us
 * Safari 6+
 * Opera 12+
 
-Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of April 2015, the browser versions listed above should account for approx 86% of all internet users
+Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of October 2015, the browser versions listed above should account for approx 86% of all internet users
 
 ### Examples
 
@@ -197,6 +197,12 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
   `npm run coverage`
 
 ### Changelog
+
+2.3.0 (18 November 2015)
+
+* adds singleFileUploads and beforeRequest options (thanks to [@Zmetser](https://github.com/Zmetser)
+* adds headers option (thanks to [@malthe](https://github.com/malthe))
+* tests and coverage now run from command line
 
 2.2.0 (23 April 2015)
 

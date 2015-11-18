@@ -1,6 +1,6 @@
 {
   "name": "lite-uploader",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "scripts": {
     "tests": "./node_modules/mocha/bin/_mocha",
     "coverage": "./node_modules/istanbul/lib/cli.js cover -x **/node_modules/** --hook-run-in-context --report html --print both ./node_modules/mocha/bin/_mocha -- --recursive test/"
