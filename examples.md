@@ -104,28 +104,55 @@ Basic validation is built-in for file types and size
     </html>
 
     $(".fileUpload").liteUploader({
-      $(".fileUpload").liteUploader({
-        script: "upload.php",
-        rules: {
-          allowedFileTypes: "image/jpeg,image/png,image/gif",
-          maxSize: 250000
-        }
-      })
-      .on("lu:errors", function (e, errors) {
-        /*
-          example errors content:
-          [
-            {
-              name: "fileName",
-              errors: [
-                {
-                  type: "size",
-                  rule: 250000,
-                  given: 300000
-                }
-              ]
-            }
-          ]
-        */
-        console.log(errors);
-      })
+      script: "upload.php",
+      rules: {
+        allowedFileTypes: "image/jpeg,image/png,image/gif",
+        maxSize: 250000
+      }
+    })
+    .on("lu:errors", function (e, errors) {
+      /*
+        example errors content:
+        [
+          {
+            name: "fileName",
+            errors: [
+              {
+                type: "size",
+                rule: 250000,
+                given: 300000
+              }
+            ]
+          }
+        ]
+      */
+      console.log(errors);
+    })
+
+### Before Upload Request
+
+You can dynamically change/update the form data packet before each upload using the beforeRequest option. This function must return a promise, where the resolved value is the ammended form data. Reject the promise to cancel the upload.
+
+    <html>
+      <input type="file" name="fileUpload" class="fileUpload" />
+    </html>
+
+    $(".fileUpload").liteUploader({
+      script: "http://localhost:8081/test.php",
+      params: {
+        foo: "bar"
+      },
+      beforeRequest: function (files, formData) {
+        formData.append("abc", 123);
+        return $.Deferred().resolve(formData);
+      }
+    });
+
+    /*
+      form data to be sent to the server:
+      {
+        files....
+        foo: "bar",
+        abc: 123.
+      }
+    */
