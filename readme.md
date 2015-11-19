@@ -193,8 +193,8 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
 
 * `cd to project root`
 * `npm i`
-* `npm run tests`
-* `npm run coverage`
+* `npm i -g gulp`
+* `gulp`
 
 ### Changelog
 
