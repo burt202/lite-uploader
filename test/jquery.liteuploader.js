@@ -49,101 +49,101 @@ describe("Lite Uploader", function () {
 
   describe("starting handlers", function () {
     it("should continue with plugin on file input change when changeHandler option is true", function () {
-      sinon.stub(LiteUploader.prototype, "_validateInputAndFiles");
+      sinon.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
       var liteUploader = new LiteUploader(fileInput, {changeHandler: true});
 
       liteUploader.el.triggerHandler("change");
 
-      expect(liteUploader._validateInputAndFiles).to.have.been.called;
+      expect(liteUploader._validateOptionsAndFiles).to.have.been.called;
 
-      LiteUploader.prototype._validateInputAndFiles.restore();
+      LiteUploader.prototype._validateOptionsAndFiles.restore();
     });
 
     it("should continue with plugin on file input change when changeHandler option is false", function () {
-      sinon.stub(LiteUploader.prototype, "_validateInputAndFiles");
+      sinon.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
       var liteUploader = new LiteUploader(fileInput, {changeHandler: false});
 
       liteUploader.el.triggerHandler("change");
 
-      expect(liteUploader._validateInputAndFiles).not.to.have.been.called;
+      expect(liteUploader._validateOptionsAndFiles).not.to.have.been.called;
 
-      LiteUploader.prototype._validateInputAndFiles.restore();
+      LiteUploader.prototype._validateOptionsAndFiles.restore();
     });
 
     it("should continue with plugin on element click when clickElement option is set", function () {
-      sinon.stub(LiteUploader.prototype, "_validateInputAndFiles");
+      sinon.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
       var liteUploader = new LiteUploader(fileInput, {clickElement: clickElement});
 
       clickElement.triggerHandler("click");
 
-      expect(liteUploader._validateInputAndFiles).to.have.been.called;
+      expect(liteUploader._validateOptionsAndFiles).to.have.been.called;
 
-      LiteUploader.prototype._validateInputAndFiles.restore();
+      LiteUploader.prototype._validateOptionsAndFiles.restore();
     });
   });
 
   describe("validation", function () {
     it("should not proceed with upload if there are input errors", function () {
-      sinon.stub(LiteUploader.prototype, "_getInputErrors").returns("foo");
+      sinon.stub(LiteUploader.prototype, "_getGeneralErrors").returns("foo");
       sinon.stub(LiteUploader.prototype, "_startUploadWithFiles");
       var liteUploader = new LiteUploader(fileInput, {script: "script"});
 
-      liteUploader._validateInputAndFiles();
+      liteUploader._validateOptionsAndFiles();
 
       expect(liteUploader._startUploadWithFiles).not.to.have.been.called;
 
-      LiteUploader.prototype._getInputErrors.restore();
+      LiteUploader.prototype._getGeneralErrors.restore();
       LiteUploader.prototype._startUploadWithFiles.restore();
     });
 
     it("should not proceed with upload if the files do not pass file validation", function () {
-      sinon.stub(LiteUploader.prototype, "_getInputErrors").returns(null);
+      sinon.stub(LiteUploader.prototype, "_getGeneralErrors").returns(null);
       sinon.stub(LiteUploader.prototype, "_getFileErrors").returns("bar");
       sinon.stub(LiteUploader.prototype, "_startUploadWithFiles");
       var liteUploader = new LiteUploader(fileInput, {script: "script"});
 
-      liteUploader._validateInputAndFiles();
+      liteUploader._validateOptionsAndFiles();
 
       expect(liteUploader._startUploadWithFiles).not.to.have.been.called;
 
-      LiteUploader.prototype._getInputErrors.restore();
+      LiteUploader.prototype._getGeneralErrors.restore();
       LiteUploader.prototype._getFileErrors.restore();
       LiteUploader.prototype._startUploadWithFiles.restore();
     });
 
     it("should emit event containing errors", function () {
-      sinon.stub(LiteUploader.prototype, "_getInputErrors").returns("foo");
+      sinon.stub(LiteUploader.prototype, "_getGeneralErrors").returns("foo");
       var liteUploader = new LiteUploader(fileInput, {script: "script"});
 
       liteUploader.el.on("lu:errors", function (e, errors) {
         expect(errors).to.eql("foo");
       });
 
-      liteUploader._validateInputAndFiles();
+      liteUploader._validateOptionsAndFiles();
 
-      LiteUploader.prototype._getInputErrors.restore();
+      LiteUploader.prototype._getGeneralErrors.restore();
     });
 
     it("should proceed with upload if no errors are found", function () {
-      sinon.stub(LiteUploader.prototype, "_getInputFiles").returns("files");
-      sinon.stub(LiteUploader.prototype, "_getInputErrors").returns(null);
+      sinon.stub(LiteUploader.prototype, "_getFiles").returns("files");
+      sinon.stub(LiteUploader.prototype, "_getGeneralErrors").returns(null);
       sinon.stub(LiteUploader.prototype, "_getFileErrors").returns(null);
       sinon.stub(LiteUploader.prototype, "_startUploadWithFiles");
       var liteUploader = new LiteUploader(fileInput, {script: "script"});
 
-      liteUploader._validateInputAndFiles();
+      liteUploader._validateOptionsAndFiles();
 
       expect(liteUploader._startUploadWithFiles).to.have.been.calledWith("files");
 
-      LiteUploader.prototype._getInputFiles.restore();
-      LiteUploader.prototype._getInputErrors.restore();
+      LiteUploader.prototype._getFiles.restore();
+      LiteUploader.prototype._getGeneralErrors.restore();
       LiteUploader.prototype._getFileErrors.restore();
       LiteUploader.prototype._startUploadWithFiles.restore();
     });
 
     it("should emit event if no errors are found", function () {
-      sinon.stub(LiteUploader.prototype, "_getInputFiles").returns("files");
-      sinon.stub(LiteUploader.prototype, "_getInputErrors").returns(null);
+      sinon.stub(LiteUploader.prototype, "_getFiles").returns("files");
+      sinon.stub(LiteUploader.prototype, "_getGeneralErrors").returns(null);
       sinon.stub(LiteUploader.prototype, "_getFileErrors").returns(null);
       sinon.stub(LiteUploader.prototype, "_startUploadWithFiles");
       var liteUploader = new LiteUploader(fileInput, {script: "script"});
@@ -152,10 +152,10 @@ describe("Lite Uploader", function () {
         expect(files).to.eql("files");
       });
 
-      liteUploader._validateInputAndFiles();
+      liteUploader._validateOptionsAndFiles();
 
-      LiteUploader.prototype._getInputFiles.restore();
-      LiteUploader.prototype._getInputErrors.restore();
+      LiteUploader.prototype._getFiles.restore();
+      LiteUploader.prototype._getGeneralErrors.restore();
       LiteUploader.prototype._getFileErrors.restore();
       LiteUploader.prototype._startUploadWithFiles.restore();
     });
@@ -241,31 +241,31 @@ describe("Lite Uploader", function () {
     it("should return error if the file input has no name attribute", function () {
       var liteUploader = new LiteUploader("<input type=\"file\" />", {script: "script"});
 
-      var result = liteUploader._getInputErrors([1]);
+      var result = liteUploader._getGeneralErrors([1]);
 
-      expect(result).to.eql([[{name: "liteUploader_input", errors: [{type: "fileInputNameRequired"}]}]]);
+      expect(result).to.eql([[{name: "_general", errors: [{type: "fileRefRequired"}]}]]);
     });
 
     it("should return error if the script option is blank", function () {
       var liteUploader = new LiteUploader(fileInput, {});
 
-      var result = liteUploader._getInputErrors([1]);
+      var result = liteUploader._getGeneralErrors([1]);
 
-      expect(result).to.eql([[{name: "liteUploader_input", errors: [{type: "scriptOptionRequired"}]}]]);
+      expect(result).to.eql([[{name: "_general", errors: [{type: "scriptOptionRequired"}]}]]);
     });
 
     it("should return error if the file array is empty", function () {
       var liteUploader = new LiteUploader(fileInput, {script: "script"});
 
-      var result = liteUploader._getInputErrors([]);
+      var result = liteUploader._getGeneralErrors([]);
 
-      expect(result).to.eql([[{name: "liteUploader_input", errors: [{type: "noFilesSelected"}]}]]);
+      expect(result).to.eql([[{name: "_general", errors: [{type: "noFilesSelected"}]}]]);
     });
 
     it("should return null if no input errors are found", function () {
       var liteUploader = new LiteUploader(fileInput, {script: "script"});
 
-      var result = liteUploader._getInputErrors([1]);
+      var result = liteUploader._getGeneralErrors([1]);
 
       expect(result).not.to.be.defined;
     });

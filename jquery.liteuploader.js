@@ -36,30 +36,34 @@ LiteUploader.prototype = {
   _init: function () {
     if (this.options.changeHandler) {
       this.el.change(function () {
-        this._validateInputAndFiles();
+        this._validateOptionsAndFiles();
       }.bind(this));
     }
 
     if (this.options.clickElement) {
       this.options.clickElement.click(function () {
-        this._validateInputAndFiles();
+        this._validateOptionsAndFiles();
       }.bind(this));
     }
   },
 
-  _getInputFiles: function () {
+  _getFiles: function () {
     return this.el.get(0).files;
   },
 
-  _validateInputAndFiles: function () {
-    var files = this._getInputFiles();
-    var errors = this._getInputErrors(files);
+  _triggerEvent: function (name, value) {
+    this.el.trigger(name, value);
+  },
+
+  _validateOptionsAndFiles: function () {
+    var files = this._getFiles();
+    var errors = this._getGeneralErrors(files);
     if (!errors) errors = this._getFileErrors(files);
 
     if (errors) {
-      this.el.trigger("lu:errors", errors);
+      this._triggerEvent("lu:errors", errors);
     } else {
-      this.el.trigger("lu:start", files);
+      this._triggerEvent("lu:start", files);
       this._startUploadWithFiles(files);
     }
   },
@@ -75,18 +79,18 @@ LiteUploader.prototype = {
   },
 
   _beforeUpload: function (files) {
-    this.el.trigger("lu:before", files);
+    this._triggerEvent("lu:before", files);
     this.options.beforeRequest(files, this._collateFormData(files))
       .done(this._performUpload.bind(this));
   },
 
-  _getInputErrors: function (files) {
+  _getGeneralErrors: function (files) {
     var errors = [];
-    var inputErrors = [];
+    var generalErrors = [];
 
-    if (!this.el.attr("name")) {
+    if (!this.ref) {
       errors.push({
-        type: "fileInputNameRequired"
+        type: "fileRefRequired"
       });
     }
 
@@ -102,12 +106,12 @@ LiteUploader.prototype = {
       });
     }
 
-    inputErrors.push ({
-      name: "liteUploader_input",
+    generalErrors.push ({
+      name: "_general",
       errors: errors
     });
 
-    return (errors.length > 0) ? [inputErrors] : null;
+    return (errors.length > 0) ? [generalErrors] : null;
   },
 
   _getFileErrors: function (files) {
@@ -194,15 +198,15 @@ LiteUploader.prototype = {
   },
 
   _onXHRProgress: function (e) {
-    if (e.lengthComputable) this.el.trigger("lu:progress", Math.floor((e.loaded / e.total) * 100));
+    if (e.lengthComputable) this._triggerEvent("lu:progress", Math.floor((e.loaded / e.total) * 100));
   },
 
   _onXHRSuccess: function (response) {
-    this.el.trigger("lu:success", response);
+    this._triggerEvent("lu:success", response);
   },
 
   _onXHRFailure: function (jqXHR) {
-    this.el.trigger("lu:fail", jqXHR);
+    this._triggerEvent("lu:fail", jqXHR);
   },
 
   /* Public Methods */
@@ -215,6 +219,6 @@ LiteUploader.prototype = {
     this.xhrs.forEach(function (xhr) {
       xhr.abort();
     });
-    this.el.trigger("lu:cancelled");
+    this._triggerEvent("lu:cancelled");
   }
 };
