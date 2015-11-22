@@ -66,11 +66,11 @@ LiteUploader.prototype = {
 
   _startUploadWithFiles: function (files) {
     if (this.options.singleFileUploads) {
-      $.each(files, function (i) {
-        this._beforeUpload.call(this, [files[i]]);
+      files.forEach(function (file) {
+        this._beforeUpload([file]);
       }.bind(this));
     } else {
-      this._beforeUpload.call(this, files);
+      this._beforeUpload(files);
     }
   },
 
@@ -116,17 +116,15 @@ LiteUploader.prototype = {
 
   _getFileErrors: function (files) {
     var errorsCount = 0;
-    var fileErrors = [];
 
-    $.each(files, function (i) {
-      var errorsFound = this._findErrorsForFile(files[i]);
-
-      fileErrors.push({
-        name: files[i].name,
-        errors: errorsFound
-      });
-
+    var fileErrors = files.map(function (file) {
+      var errorsFound = this._findErrorsForFile(file);
       errorsCount += errorsFound.length;
+
+      return {
+        name: file.name,
+        errors: errorsFound
+      };
     }.bind(this));
 
     return (errorsCount > 0) ? [fileErrors] : null;
@@ -136,7 +134,7 @@ LiteUploader.prototype = {
     var errorsArray = [];
 
     $.each(this.options.rules, function (key, value) {
-      if (key === "allowedFileTypes" && value && $.inArray(file.type, value.split(",")) === -1) {
+      if (key === "allowedFileTypes" && value && value.split(",").indexOf(file.type) === -1) {
         errorsArray.push({
           type: "type",
           rule: value,
@@ -168,8 +166,8 @@ LiteUploader.prototype = {
       formData.append(key, value);
     });
 
-    $.each(files, function (i) {
-      formData.append(this.el.attr("name"), files[i]);
+    files.forEach(function (file) {
+      formData.append(this.el.attr("name"), file);
     }.bind(this));
 
     return formData;
