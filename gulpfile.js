@@ -10,7 +10,7 @@ var MINIFIED_FILE_NAME = "jquery.liteuploader.min.js";
 gulp.task("default", ["watch", "tests"]);
 
 gulp.task("watch", function () {
-  gulp.watch(PATH_TO_SRC, ["minify"]);
+  gulp.watch(["test/*.js", PATH_TO_SRC], ["minify", "tests"]);
 });
 
 gulp.task("minify", function() {
