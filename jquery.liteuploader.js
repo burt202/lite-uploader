@@ -25,6 +25,7 @@ function LiteUploader (element, options) {
   this.options = options;
   this.params = options.params;
   this.xhrs = [];
+  this.ref = this.el.attr("name");
 
   this._init();
 }
@@ -160,14 +161,13 @@ LiteUploader.prototype = {
 
   _collateFormData: function (files) {
     var formData = this._getFormDataObject();
-    if (this.el.attr("id")) formData.append("liteUploader_id", this.el.attr("id"));
 
     $.each(this.params, function (key, value) {
       formData.append(key, value);
     });
 
     files.forEach(function (file) {
-      formData.append(this.el.attr("name"), file);
+      formData.append(this.ref, file);
     }.bind(this));
 
     return formData;

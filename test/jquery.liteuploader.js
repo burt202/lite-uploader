@@ -40,6 +40,7 @@ describe("Lite Uploader", function () {
       expect(liteUploader.options).to.eql({tester: "abc", params: {foo: "123"}});
       expect(liteUploader.params).to.eql({foo: "123"});
       expect(liteUploader.xhrs).to.eql([]);
+      expect(liteUploader.ref).to.eql("tester");
       expect(liteUploader._init).to.have.been.called;
 
       LiteUploader.prototype._init.restore();
@@ -372,14 +373,6 @@ describe("Lite Uploader", function () {
       expect(liteUploader.params).to.eql({foo: "123", bar: "456"});
     });
 
-    it("should add liteUploader_id to form data if the file input has an id", function () {
-      var liteUploader = new LiteUploader(fileInput, {params: {}});
-
-      var result = liteUploader._collateFormData([]);
-
-      expect(result.get()).to.eql([{"liteUploader_id": "foobar"}]);
-    });
-
     it("should not add liteUploader_id to form data if the file input does not have an id", function () {
       var liteUploader = new LiteUploader("<input type=\"file\" name=\"tester\" />", {params: {}});
 
@@ -393,7 +386,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._collateFormData([]);
 
-      expect(result.get()).to.eql([{ "liteUploader_id" : "foobar" }, {tester: 123}, {another: "abc"}]);
+      expect(result.get()).to.eql([{tester: 123}, {another: "abc"}]);
     });
 
     it("should add any files to form data", function () {
@@ -401,7 +394,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._collateFormData(["tester1", "tester2"]);
 
-      expect(result.get()).to.eql([{ "liteUploader_id" : "foobar" }, {"tester": "tester1"}, {"tester": "tester2"}]);
+      expect(result.get()).to.eql([{"tester": "tester1"}, {"tester": "tester2"}]);
     });
   });
 
