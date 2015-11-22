@@ -58,7 +58,6 @@ LiteUploader.prototype = {
 
     if (errors) {
       this.el.trigger("lu:errors", errors);
-      this._resetInput();
     } else {
       this.el.trigger("lu:start", files);
       this._startUploadWithFiles(files);
@@ -79,10 +78,6 @@ LiteUploader.prototype = {
     this.el.trigger("lu:before", files);
     this.options.beforeRequest(files, this._collateFormData(files))
       .done(this._performUpload.bind(this));
-  },
-
-  _resetInput: function () {
-    this.el.val("");
   },
 
   _getInputErrors: function (files) {
@@ -195,8 +190,7 @@ LiteUploader.prototype = {
       contentType: false
     })
     .done(this._onXHRSuccess.bind(this))
-    .fail(this._onXHRFailure.bind(this))
-    .always(this._onXHRAlways.bind(this));
+    .fail(this._onXHRFailure.bind(this));
   },
 
   _onXHRProgress: function (e) {
@@ -211,10 +205,6 @@ LiteUploader.prototype = {
     this.el.trigger("lu:fail", jqXHR);
   },
 
-  _onXHRAlways: function () {
-    this._resetInput();
-  },
-
   /* Public Methods */
 
   addParam: function (key, value) {
@@ -226,6 +216,5 @@ LiteUploader.prototype = {
       xhr.abort();
     });
     this.el.trigger("lu:cancelled");
-    this._resetInput();
   }
 };

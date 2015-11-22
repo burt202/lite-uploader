@@ -111,19 +111,6 @@ describe("Lite Uploader", function () {
       LiteUploader.prototype._startUploadWithFiles.restore();
     });
 
-    it("should reset input if there are errors", function () {
-      sinon.stub(LiteUploader.prototype, "_getInputErrors").returns("foo");
-      var liteUploader = new LiteUploader(fileInput, {script: "script"});
-
-      liteUploader.el.val("abc");
-      expect(liteUploader.el.val()).to.eql("abc");
-
-      liteUploader._validateInputAndFiles();
-      expect(liteUploader.el.val()).to.eql("");
-
-      LiteUploader.prototype._getInputErrors.restore();
-    });
-
     it("should emit event containing errors", function () {
       sinon.stub(LiteUploader.prototype, "_getInputErrors").returns("foo");
       var liteUploader = new LiteUploader(fileInput, {script: "script"});
@@ -478,22 +465,6 @@ describe("Lite Uploader", function () {
       $.ajax.restore();
     });
 
-    it("should reset input on success", function () {
-      var liteUploader = new LiteUploader(fileInput, {script: "abc", params: {foo: "123"}});
-      var deferred = $.Deferred();
-
-      liteUploader.el.val("foo");
-      expect(liteUploader.el.val()).to.eql("foo");
-
-      sinon.stub($, "ajax").returns(deferred);
-      liteUploader._performUpload("form-data");
-      deferred.resolve("response");
-
-      expect(liteUploader.el.val()).to.eql("");
-
-      $.ajax.restore();
-    });
-
     it("should emit event on failure", function () {
       var liteUploader = new LiteUploader(fileInput, {script: "abc", params: {foo: "123"}});
       var deferred = $.Deferred();
@@ -505,22 +476,6 @@ describe("Lite Uploader", function () {
       sinon.stub($, "ajax").returns(deferred);
       liteUploader._performUpload("form-data");
       deferred.reject("response");
-
-      $.ajax.restore();
-    });
-
-    it("should reset input on failure", function () {
-      var liteUploader = new LiteUploader(fileInput, {script: "abc", params: {foo: "123"}});
-      var deferred = $.Deferred();
-
-      liteUploader.el.val("foo");
-      expect(liteUploader.el.val()).to.eql("foo");
-
-      sinon.stub($, "ajax").returns(deferred);
-      liteUploader._performUpload("form-data");
-      deferred.reject("response");
-
-      expect(liteUploader.el.val()).to.eql("");
 
       $.ajax.restore();
     });
@@ -573,17 +528,6 @@ describe("Lite Uploader", function () {
       expect(liteUploader.el.trigger).to.have.been.calledWith("lu:cancelled");
 
       liteUploader.el.trigger.restore();
-    });
-
-    it("should reset input on failure", function () {
-      var liteUploader = new LiteUploader(fileInput, {script: "abc", params: {foo: "123"}});
-
-      liteUploader.el.val("foo");
-      expect(liteUploader.el.val()).to.eql("foo");
-
-      liteUploader.cancelUpload();
-
-      expect(liteUploader.el.val()).to.eql("");
     });
   });
 });
