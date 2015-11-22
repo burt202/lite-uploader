@@ -16,7 +16,7 @@ $.fn.liteUploader = function (options) {
   };
 
   return this.each(function () {
-    $.data(this, 'liteUploader', new LiteUploader(this, $.extend(defaults, options)));
+    $.data(this, "liteUploader", new LiteUploader(this, $.extend(defaults, options)));
   });
 };
 
@@ -56,10 +56,10 @@ LiteUploader.prototype = {
     if (!errors) errors = this._getFileErrors(files);
 
     if (errors) {
-      this.el.trigger('lu:errors', errors);
+      this.el.trigger("lu:errors", errors);
       this._resetInput();
     } else {
-      this.el.trigger('lu:start', files);
+      this.el.trigger("lu:start", files);
       this._startUploadWithFiles(files);
     }
   },
@@ -75,39 +75,39 @@ LiteUploader.prototype = {
   },
 
   _beforeUpload: function (files) {
-    this.el.trigger('lu:before', files);
+    this.el.trigger("lu:before", files);
     this.options.beforeRequest(files, this._collateFormData(files))
       .done(this._performUpload.bind(this));
   },
 
   _resetInput: function () {
-    this.el.val('');
+    this.el.val("");
   },
 
   _getInputErrors: function (files) {
     var errors = [];
     var inputErrors = [];
 
-    if (!this.el.attr('name')) {
+    if (!this.el.attr("name")) {
       errors.push({
-        type: 'fileInputNameRequired'
+        type: "fileInputNameRequired"
       });
     }
 
     if (!this.options.script) {
       errors.push({
-        type: 'scriptOptionRequired'
+        type: "scriptOptionRequired"
       });
     }
 
     if (files.length === 0) {
       errors.push({
-        type: 'noFilesSelected'
+        type: "noFilesSelected"
       });
     }
 
     inputErrors.push ({
-      name: 'liteUploader_input',
+      name: "liteUploader_input",
       errors: errors
     });
 
@@ -136,17 +136,17 @@ LiteUploader.prototype = {
     var errorsArray = [];
 
     $.each(this.options.rules, function (key, value) {
-      if (key === 'allowedFileTypes' && value && $.inArray(file.type, value.split(',')) === -1) {
+      if (key === "allowedFileTypes" && value && $.inArray(file.type, value.split(",")) === -1) {
         errorsArray.push({
-          type: 'type',
+          type: "type",
           rule: value,
           given: file.type
         });
       }
 
-      if (key === 'maxSize' && value && file.size > value) {
+      if (key === "maxSize" && value && file.size > value) {
         errorsArray.push({
-          type: 'size',
+          type: "size",
           rule: value,
           given: file.size
         });
@@ -162,14 +162,14 @@ LiteUploader.prototype = {
 
   _collateFormData: function (files) {
     var formData = this._getFormDataObject();
-    if (this.el.attr('id')) formData.append('liteUploader_id', this.el.attr('id'));
+    if (this.el.attr("id")) formData.append("liteUploader_id", this.el.attr("id"));
 
     $.each(this.params, function (key, value) {
       formData.append(key, value);
     });
 
     $.each(files, function (i) {
-      formData.append(this.el.attr('name'), files[i]);
+      formData.append(this.el.attr("name"), files[i]);
     }.bind(this));
 
     return formData;
@@ -181,7 +181,7 @@ LiteUploader.prototype = {
 
   _buildXhrObject: function () {
     var xhr = this._getXmlHttpRequestObject();
-    xhr.upload.addEventListener('progress', this._onXHRProgress.bind(this), false);
+    xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this), false);
     this.xhrs.push(xhr);
     return xhr;
   },
@@ -190,7 +190,7 @@ LiteUploader.prototype = {
     $.ajax({
       xhr: this._buildXhrObject.bind(this),
       url: this.options.script,
-      type: 'POST',
+      type: "POST",
       data: formData,
       headers: this.options.headers || {},
       processData: false,
@@ -202,15 +202,15 @@ LiteUploader.prototype = {
   },
 
   _onXHRProgress: function (e) {
-    if (e.lengthComputable) this.el.trigger('lu:progress', Math.floor((e.loaded / e.total) * 100));
+    if (e.lengthComputable) this.el.trigger("lu:progress", Math.floor((e.loaded / e.total) * 100));
   },
 
   _onXHRSuccess: function (response) {
-    this.el.trigger('lu:success', response);
+    this.el.trigger("lu:success", response);
   },
 
   _onXHRFailure: function (jqXHR) {
-    this.el.trigger('lu:fail', jqXHR);
+    this.el.trigger("lu:fail", jqXHR);
   },
 
   _onXHRAlways: function () {
@@ -227,7 +227,7 @@ LiteUploader.prototype = {
     this.xhrs.forEach(function (xhr) {
       xhr.abort();
     });
-    this.el.trigger('lu:cancelled');
+    this.el.trigger("lu:cancelled");
     this._resetInput();
   }
 };
