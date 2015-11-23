@@ -54,7 +54,6 @@ describe("Lite Uploader", function () {
 
       expect(liteUploader.options.beforeRequest).to.be.a("function");
       expect(liteUploader.options.changeHandler).to.eql(true);
-      expect(liteUploader.options.clickElement).to.eql(null);
       expect(liteUploader.options.headers).to.eql({});
       expect(liteUploader.options.params).to.eql({});
       expect(liteUploader.options.rules).to.eql({allowedFileTypes: null, maxSize: null});
@@ -77,24 +76,13 @@ describe("Lite Uploader", function () {
       LiteUploader.prototype._validateOptionsAndFiles.restore();
     });
 
-    it("should continue with plugin on file input change when changeHandler option is false", function () {
+    it("should not continue with plugin on file input change when changeHandler option is false", function () {
       sinon.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
       var liteUploader = new LiteUploader(fileInput, {changeHandler: false}, "tester");
 
       liteUploader.el.triggerHandler("change");
 
       expect(liteUploader._validateOptionsAndFiles).not.to.have.been.called;
-
-      LiteUploader.prototype._validateOptionsAndFiles.restore();
-    });
-
-    it("should continue with plugin on element click when clickElement option is set", function () {
-      sinon.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
-      var liteUploader = new LiteUploader(fileInput, {clickElement: clickElement}, "tester");
-
-      clickElement.triggerHandler("click");
-
-      expect(liteUploader._validateOptionsAndFiles).to.have.been.called;
 
       LiteUploader.prototype._validateOptionsAndFiles.restore();
     });

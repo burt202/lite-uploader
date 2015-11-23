@@ -25,12 +25,6 @@ LiteUploader.prototype = {
         this._validateOptionsAndFiles();
       }.bind(this));
     }
-
-    if (this.options.clickElement) {
-      this.options.clickElement.click(function () {
-        this._validateOptionsAndFiles();
-      }.bind(this));
-    }
   },
 
   _getFiles: function () {
@@ -47,7 +41,6 @@ LiteUploader.prototype = {
       params: {},
       headers: {},
       changeHandler: true,
-      clickElement: null,
       singleFileUploads: false,
       beforeRequest: function (files, formData) { return $.when(formData); }
     }, options);
@@ -212,6 +205,10 @@ LiteUploader.prototype = {
   },
 
   /* Public Methods */
+
+  startUpload: function () {
+    this._validateOptionsAndFiles();
+  },
 
   addParam: function (key, value) {
     this.options.params[key] = value;
