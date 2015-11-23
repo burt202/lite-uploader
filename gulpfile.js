@@ -31,6 +31,6 @@ gulp.task("tests", ["coverage"], function () {
     .pipe(mocha())
     .pipe(istanbul.writeReports())
     .on("finish", function () {
-      console.log("Breakdown: file://" + __dirname + "/coverage/index.html");
+      console.log("Breakdown: file://" + __dirname + "/coverage/lcov-report/index.html");
     });
 });
