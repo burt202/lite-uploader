@@ -1,22 +1,26 @@
 /* liteUploader v2.3.0 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
 $.fn.liteUploader = function (options) {
-  var getFiles = function () {
-    return this.el.get(0).files;
-  };
-
   return this.each(function () {
-    $.data(this, "liteUploader", new LiteUploader(this, options, $(this).attr("name"), getFiles));
+    var getFiles = function () {
+      return $(this).get(0).files;
+    }.bind(this);
+
+    $.data(this, "liteUploader", new LiteUploader(
+      options,
+      $(this).attr("name"),
+      getFiles,
+      $(this).trigger.bind($(this))
+    ));
   });
 };
 
-function LiteUploader (element, opts, ref, getFiles) {
-  this.el = $(element);
-  this.options = this._applyDefaults(opts);
+function LiteUploader (options, ref, getFiles, onEvent) {
+  this.options = this._applyDefaults(options);
   this.ref = ref;
-  this.onEvent = this.el.trigger.bind($);
-  this.xhrs = [];
   this._getFiles = getFiles;
+  this._triggerEvent = onEvent;
+  this.xhrs = [];
 }
 
 window.LiteUploader = LiteUploader;
@@ -34,10 +38,6 @@ LiteUploader.prototype = {
       singleFileUploads: false,
       beforeRequest: function (files, formData) { return $.when(formData); }
     }, options);
-  },
-
-  _triggerEvent: function (name, value) {
-    this.onEvent(name, value);
   },
 
   _validateOptionsAndFiles: function () {
@@ -101,15 +101,17 @@ LiteUploader.prototype = {
 
   _getFileErrors: function (files) {
     var errorsCount = 0;
+    var fileErrors = [];
 
-    var fileErrors = files.map(function (file) {
-      var errorsFound = this._findErrorsForFile(file);
-      errorsCount += errorsFound.length;
+    $.each(files, function (i) {
+      var errorsFound = this._findErrorsForFile(files[i]);
 
-      return {
-        name: file.name,
+      fileErrors.push({
+        name: files[i].name,
         errors: errorsFound
-      };
+      });
+
+      errorsCount += errorsFound.length;
     }.bind(this));
 
     return (errorsCount > 0) ? [fileErrors] : null;
@@ -150,8 +152,8 @@ LiteUploader.prototype = {
       formData.append(key, value);
     });
 
-    files.forEach(function (file) {
-      formData.append(this.ref, file);
+    $.each(files, function (i) {
+      formData.append(this.ref, files[i]);
     }.bind(this));
 
     return formData;
