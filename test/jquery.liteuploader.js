@@ -34,7 +34,6 @@ describe("Lite Uploader", function () {
 
   describe("basic instantiation", function () {
     it("should be able to be instantiated", function () {
-      sandbox.stub(LiteUploader.prototype, "_init");
       sandbox.stub(LiteUploader.prototype, "_applyDefaults").returns({tester: "abc", params: {foo: "123"}});
       var liteUploader = new LiteUploader(fileInput, {tester: "abc", params: {foo: "123"}}, "tester", function () {});
 
@@ -45,40 +44,17 @@ describe("Lite Uploader", function () {
       expect(liteUploader.onEvent).to.be.a("function");
       expect(liteUploader._getFiles).to.be.a("function");
       expect(liteUploader.xhrs).to.eql([]);
-      expect(liteUploader._init).to.have.been.called;
     });
 
     it("should fallback to defaults if not all options are passed in", function () {
-      sandbox.stub(LiteUploader.prototype, "_init");
       var liteUploader = new LiteUploader(fileInput, {}, "tester", function () {});
 
       expect(liteUploader.options.beforeRequest).to.be.a("function");
-      expect(liteUploader.options.changeHandler).to.eql(true);
       expect(liteUploader.options.headers).to.eql({});
       expect(liteUploader.options.params).to.eql({});
       expect(liteUploader.options.rules).to.eql({allowedFileTypes: null, maxSize: null});
       expect(liteUploader.options.script).to.eql(null);
       expect(liteUploader.options.singleFileUploads).to.eql(false);
-    });
-  });
-
-  describe("starting handlers", function () {
-    it("should continue with plugin on file input change when changeHandler option is true", function () {
-      sandbox.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
-      var liteUploader = new LiteUploader(fileInput, {changeHandler: true}, "tester", function () {});
-
-      liteUploader.el.triggerHandler("change");
-
-      expect(liteUploader._validateOptionsAndFiles).to.have.been.called;
-    });
-
-    it("should not continue with plugin on file input change when changeHandler option is false", function () {
-      sandbox.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
-      var liteUploader = new LiteUploader(fileInput, {changeHandler: false}, "tester", function () {});
-
-      liteUploader.el.triggerHandler("change");
-
-      expect(liteUploader._validateOptionsAndFiles).not.to.have.been.called;
     });
   });
 

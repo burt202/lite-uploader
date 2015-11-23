@@ -17,21 +17,11 @@ function LiteUploader (element, opts, ref, getFiles) {
   this.onEvent = this.el.trigger.bind($);
   this.xhrs = [];
   this._getFiles = getFiles;
-
-  this._init();
 }
 
 window.LiteUploader = LiteUploader;
 
 LiteUploader.prototype = {
-  _init: function () {
-    if (this.options.changeHandler) {
-      this.el.change(function () {
-        this._validateOptionsAndFiles();
-      }.bind(this));
-    }
-  },
-
   _applyDefaults: function (options) {
     return $.extend({
       script: null,
@@ -41,7 +31,6 @@ LiteUploader.prototype = {
       },
       params: {},
       headers: {},
-      changeHandler: true,
       singleFileUploads: false,
       beforeRequest: function (files, formData) { return $.when(formData); }
     }, options);
