@@ -1,31 +1,17 @@
 /* liteUploader v2.3.0 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
 $.fn.liteUploader = function (options) {
-  var defaults = {
-    script: null,
-    rules: {
-      allowedFileTypes: null,
-      maxSize: null
-    },
-    params: {},
-    headers: {},
-    changeHandler: true,
-    clickElement: null,
-    singleFileUploads: false,
-    beforeRequest: function (files, formData) { return $.when(formData); }
-  };
-
   return this.each(function () {
-    $.data(this, "liteUploader", new LiteUploader(this, $.extend(defaults, options)));
+    $.data(this, "liteUploader", new LiteUploader(this, options, $(this).attr("name")));
   });
 };
 
-function LiteUploader (element, options) {
+function LiteUploader (element, opts, ref) {
   this.el = $(element);
-  this.options = options;
-  this.params = options.params;
+  this.options = this._applyDefaults(opts);
+  this.ref = ref;
+  this.onEvent = this.el.trigger.bind($);
   this.xhrs = [];
-  this.ref = this.el.attr("name");
 
   this._init();
 }
@@ -51,8 +37,24 @@ LiteUploader.prototype = {
     return this.el.get(0).files;
   },
 
+  _applyDefaults: function (options) {
+    return $.extend({
+      script: null,
+      rules: {
+        allowedFileTypes: null,
+        maxSize: null
+      },
+      params: {},
+      headers: {},
+      changeHandler: true,
+      clickElement: null,
+      singleFileUploads: false,
+      beforeRequest: function (files, formData) { return $.when(formData); }
+    }, options);
+  },
+
   _triggerEvent: function (name, value) {
-    this.el.trigger(name, value);
+    this.onEvent(name, value);
   },
 
   _validateOptionsAndFiles: function () {
@@ -161,7 +163,7 @@ LiteUploader.prototype = {
   _collateFormData: function (files) {
     var formData = this._getFormDataObject();
 
-    $.each(this.params, function (key, value) {
+    $.each(this.options.params, function (key, value) {
       formData.append(key, value);
     });
 
@@ -189,7 +191,7 @@ LiteUploader.prototype = {
       url: this.options.script,
       type: "POST",
       data: formData,
-      headers: this.options.headers || {},
+      headers: this.options.headers,
       processData: false,
       contentType: false
     })
@@ -212,7 +214,7 @@ LiteUploader.prototype = {
   /* Public Methods */
 
   addParam: function (key, value) {
-    this.params[key] = value;
+    this.options.params[key] = value;
   },
 
   cancelUpload: function () {
