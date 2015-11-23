@@ -1,17 +1,22 @@
 /* liteUploader v2.3.0 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
 $.fn.liteUploader = function (options) {
+  var getFiles = function () {
+    return this.el.get(0).files;
+  };
+
   return this.each(function () {
-    $.data(this, "liteUploader", new LiteUploader(this, options, $(this).attr("name")));
+    $.data(this, "liteUploader", new LiteUploader(this, options, $(this).attr("name"), getFiles));
   });
 };
 
-function LiteUploader (element, opts, ref) {
+function LiteUploader (element, opts, ref, getFiles) {
   this.el = $(element);
   this.options = this._applyDefaults(opts);
   this.ref = ref;
   this.onEvent = this.el.trigger.bind($);
   this.xhrs = [];
+  this._getFiles = getFiles;
 
   this._init();
 }
@@ -25,10 +30,6 @@ LiteUploader.prototype = {
         this._validateOptionsAndFiles();
       }.bind(this));
     }
-  },
-
-  _getFiles: function () {
-    return this.el.get(0).files;
   },
 
   _applyDefaults: function (options) {

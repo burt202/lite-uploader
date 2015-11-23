@@ -36,20 +36,21 @@ describe("Lite Uploader", function () {
     it("should be able to be instantiated", function () {
       sandbox.stub(LiteUploader.prototype, "_init");
       sandbox.stub(LiteUploader.prototype, "_applyDefaults").returns({tester: "abc", params: {foo: "123"}});
-      var liteUploader = new LiteUploader(fileInput, {tester: "abc", params: {foo: "123"}}, "tester");
+      var liteUploader = new LiteUploader(fileInput, {tester: "abc", params: {foo: "123"}}, "tester", function () {});
 
       expect(liteUploader).to.be.defined;
       expect(liteUploader.el).to.be.an("object");
       expect(liteUploader.options).to.eql({tester: "abc", params: {foo: "123"}});
       expect(liteUploader.ref).to.eql("tester");
       expect(liteUploader.onEvent).to.be.a("function");
+      expect(liteUploader._getFiles).to.be.a("function");
       expect(liteUploader.xhrs).to.eql([]);
       expect(liteUploader._init).to.have.been.called;
     });
 
     it("should fallback to defaults if not all options are passed in", function () {
       sandbox.stub(LiteUploader.prototype, "_init");
-      var liteUploader = new LiteUploader(fileInput, {}, "tester");
+      var liteUploader = new LiteUploader(fileInput, {}, "tester", function () {});
 
       expect(liteUploader.options.beforeRequest).to.be.a("function");
       expect(liteUploader.options.changeHandler).to.eql(true);
@@ -64,7 +65,7 @@ describe("Lite Uploader", function () {
   describe("starting handlers", function () {
     it("should continue with plugin on file input change when changeHandler option is true", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
-      var liteUploader = new LiteUploader(fileInput, {changeHandler: true}, "tester");
+      var liteUploader = new LiteUploader(fileInput, {changeHandler: true}, "tester", function () {});
 
       liteUploader.el.triggerHandler("change");
 
@@ -73,7 +74,7 @@ describe("Lite Uploader", function () {
 
     it("should not continue with plugin on file input change when changeHandler option is false", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
-      var liteUploader = new LiteUploader(fileInput, {changeHandler: false}, "tester");
+      var liteUploader = new LiteUploader(fileInput, {changeHandler: false}, "tester", function () {});
 
       liteUploader.el.triggerHandler("change");
 
@@ -85,7 +86,7 @@ describe("Lite Uploader", function () {
     it("should not proceed with upload if there are input errors", function () {
       sandbox.stub(LiteUploader.prototype, "_getGeneralErrors").returns("foo");
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester");
+      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester", function () {});
 
       liteUploader._validateOptionsAndFiles();
 
@@ -96,7 +97,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_getGeneralErrors").returns(null);
       sandbox.stub(LiteUploader.prototype, "_getFileErrors").returns("bar");
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester");
+      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester", function () {});
 
       liteUploader._validateOptionsAndFiles();
 
@@ -105,7 +106,7 @@ describe("Lite Uploader", function () {
 
     it("should emit event containing errors", function () {
       sandbox.stub(LiteUploader.prototype, "_getGeneralErrors").returns("foo");
-      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester");
+      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester", function () {});
 
       liteUploader.el.on("lu:errors", function (e, errors) {
         expect(errors).to.eql("foo");
@@ -115,11 +116,10 @@ describe("Lite Uploader", function () {
     });
 
     it("should proceed with upload if no errors are found", function () {
-      sandbox.stub(LiteUploader.prototype, "_getFiles").returns("files");
       sandbox.stub(LiteUploader.prototype, "_getGeneralErrors").returns(null);
       sandbox.stub(LiteUploader.prototype, "_getFileErrors").returns(null);
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader(fileInput, {script: "script"});
+      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester", function () { return "files"; });
 
       liteUploader._validateOptionsAndFiles();
 
@@ -127,11 +127,10 @@ describe("Lite Uploader", function () {
     });
 
     it("should emit event if no errors are found", function () {
-      sandbox.stub(LiteUploader.prototype, "_getFiles").returns("files");
       sandbox.stub(LiteUploader.prototype, "_getGeneralErrors").returns(null);
       sandbox.stub(LiteUploader.prototype, "_getFileErrors").returns(null);
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader(fileInput, {script: "script"});
+      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester", function () { return "files"; });
 
       liteUploader.el.on("lu:start", function (e, files) {
         expect(files).to.eql("files");
@@ -144,7 +143,7 @@ describe("Lite Uploader", function () {
   describe("upload start", function () {
     it("should upload all files in one request by default", function () {
       sandbox.stub(LiteUploader.prototype, "_beforeUpload");
-      var liteUploader = new LiteUploader(fileInput, {script: "script"});
+      var liteUploader = new LiteUploader(fileInput, {script: "script"}, "tester", function () {});
       var files = ["file1", "file2"];
 
       liteUploader._startUploadWithFiles(files);

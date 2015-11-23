@@ -7,6 +7,10 @@ var istanbul = require("gulp-istanbul");
 var PATH_TO_SRC = "jquery.liteuploader.js";
 var MINIFIED_FILE_NAME = "jquery.liteuploader.min.js";
 
+function handleError () {
+  this.emit("end");
+}
+
 gulp.task("default", ["watch", "tests"]);
 
 gulp.task("watch", function () {
@@ -29,6 +33,7 @@ gulp.task("coverage", function () {
 gulp.task("tests", ["coverage"], function () {
   return gulp.src(["test/*.js"])
     .pipe(mocha())
+    .on("error", handleError)
     .pipe(istanbul.writeReports())
     .on("finish", function () {
       console.log("Breakdown: file://" + __dirname + "/coverage/lcov-report/index.html");
