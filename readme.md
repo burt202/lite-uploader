@@ -1,4 +1,4 @@
-## LiteUploader - HTML5 jQuery File Uploader <sup>v2.3.0</sup>
+## LiteUploader - HTML5 jQuery File Uploader <sup>v3.0.0</sup>
 
 This is a small jQuery plugin which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
 
@@ -201,6 +201,15 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
 * `gulp`
 
 ### Changelog
+
+3.0.0 (24 November 2015)
+
+* adds 'startUpload' public method
+* removed 'changeHandler' option (use 'startUpload' method instead)
+* removed 'clickElement' option (use 'startUpload' method instead)
+* renamed 'fileInputNameRequired' error to 'refRequired'
+* the file input is now not reset at all by the plugin, this should be managed externally from now on
+* removed addition of 'liteUploader_id' param to form data, add unique identifier externally using 'params' option
 
 2.3.0 (18 November 2015)
 
