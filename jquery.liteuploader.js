@@ -55,8 +55,8 @@ LiteUploader.prototype = {
 
   _startUploadWithFiles: function (files) {
     if (this.options.singleFileUploads) {
-      files.forEach(function (file) {
-        this._beforeUpload([file]);
+      $.each(files, function (i) {
+        this._beforeUpload([files[i]]);
       }.bind(this));
     } else {
       this._beforeUpload(files);
