@@ -181,7 +181,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._getGeneralErrors([1]);
 
-      expect(result).to.eql([[{name: "_general", errors: [{type: "fileRefRequired"}]}]]);
+      expect(result).to.eql([[{name: "_general", errors: [{type: "refRequired"}]}]]);
     });
 
     it("should return error if the script option is blank", function () {

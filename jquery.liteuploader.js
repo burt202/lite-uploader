@@ -75,7 +75,7 @@ LiteUploader.prototype = {
 
     if (!this.ref) {
       errors.push({
-        type: "fileRefRequired"
+        type: "refRequired"
       });
     }
 
