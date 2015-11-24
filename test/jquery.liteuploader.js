@@ -52,6 +52,15 @@ describe("Lite Uploader", function () {
       expect(liteUploader.options.script).to.eql(null);
       expect(liteUploader.options.singleFileUploads).to.eql(false);
     });
+
+    it("default beforeRequest method should return a promise", function () {
+      var liteUploader = new LiteUploader({}, "tester", noop, noop);
+
+      liteUploader.options.beforeRequest([], "formData")
+        .then(function (res) {
+          expect(res).to.eql("formData");
+        });
+    });
   });
 
   describe("validation", function () {
@@ -430,6 +439,17 @@ describe("Lite Uploader", function () {
     });
   });
 
+  describe("start upload", function () {
+    it("should call _validateOptionsAndFiles", function () {
+      sandbox.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
+      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
+
+      liteUploader.startUpload();
+
+      expect(liteUploader._validateOptionsAndFiles).to.have.been.called;
+    });
+  });
+
   describe("cancel upload", function () {
     it("should abort the xhr object", function () {
       var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
@@ -450,6 +470,28 @@ describe("Lite Uploader", function () {
 
       expect(mockOnEvent.callCount).to.eql(1);
       expect(mockOnEvent).to.have.been.calledWith("lu:cancelled");
+    });
+  });
+
+  describe("global object methods", function () {
+    it("_getXmlHttpRequestObject should return an object", function () {
+      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
+
+      global.XMLHttpRequest = function () {};
+      var res = liteUploader._getXmlHttpRequestObject();
+
+      expect(res).to.be.an("object");
+      global.XMLHttpRequest = undefined;
+    });
+
+    it("_getFormDataObject should return an object", function () {
+      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
+
+      global.FormData = function () {};
+      var res = liteUploader._getFormDataObject();
+
+      expect(res).to.be.an("object");
+      global.FormData = undefined;
     });
   });
 });
