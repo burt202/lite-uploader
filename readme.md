@@ -2,7 +2,7 @@
 
 This is a small jQuery plugin which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
 
-The aim was to see, at its absolute minimum, how little code do you need to make a small, but very usable and easily expandable jQuery upload plugin. With some useful options including basic validation it turns out not many. After minification it is very small in size and is a good choice for any developer who is not so worried about supporting legacy browsers.
+With some useful options including basic validation, it is a good choice for any developer who is not so worried about supporting legacy browsers.
 
 ### Bower
 
@@ -45,18 +45,6 @@ The aim was to see, at its absolute minimum, how little code do you need to make
     <td>Object</td>
     <td>{}</td>
     <td>object of headers to be sent to the server</td>
-  </tr>
-  <tr>
-    <td>changeHandler</td>
-    <td>Boolean</td>
-    <td>true</td>
-    <td>initiate the upload on file input change</td>
-  </tr>
-  <tr>
-    <td>clickElement</td>
-    <td>jQuery Element</td>
-    <td>null</td>
-    <td>initiate the upload on the click event of the jQuery element passed here</td>
   </tr>
   <tr>
     <td>singleFileUploads</td>
@@ -122,11 +110,27 @@ Below is an overview of the error types that can be returned when validating fil
 
 * type - when file mime type does not match any mime types supplied in the rule.allowedFileTypes option
 * size - when file size is above the size (in bytes) supplied in the rule.maxSize option
-* fileInputNameRequired - when there is no name attribute on the file input
+* refRequired - when there is no name attribute on the file input
 * scriptOptionRequired - when no 'script' option is passed to the plugin
 * noFilesSelected - when no files have been selected for the file input
 
 ### Public API
+
+#### startUpload()
+
+Starts the upload
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Type</th>
+    <th>Default</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td colspan="4">No parameters</td>
+  </tr>
+</table>
 
 #### addParam(key, value)
 
