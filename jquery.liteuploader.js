@@ -6,18 +6,18 @@ $.fn.liteUploader = function (options) {
       return $(this).get(0).files;
     }.bind(this);
 
+    options.paramName = options.paramName || $(this).attr("name");
+
     $.data(this, "liteUploader", new LiteUploader(
       options,
-      $(this).attr("name"),
       getFiles,
       $(this).trigger.bind($(this))
     ));
   });
 };
 
-function LiteUploader (options, ref, getFiles, onEvent) {
+function LiteUploader (options, getFiles, onEvent) {
   this.options = this._applyDefaults(options);
-  this.ref = ref;
   this._getFiles = getFiles;
   this._triggerEvent = onEvent;
   this.xhrs = [];
@@ -33,6 +33,7 @@ LiteUploader.prototype = {
         allowedFileTypes: null,
         maxSize: null
       },
+      paramName: null,
       params: {},
       headers: {},
       singleFileUploads: false,
@@ -73,7 +74,7 @@ LiteUploader.prototype = {
     var errors = [];
     var generalErrors = [];
 
-    if (!this.ref) {
+    if (!this.options.paramName) {
       errors.push({
         type: "refRequired"
       });
@@ -153,7 +154,7 @@ LiteUploader.prototype = {
     });
 
     $.each(files, function (i) {
-      formData.append(this.ref, files[i]);
+      formData.append(this.options.paramName, files[i]);
     }.bind(this));
 
     return formData;

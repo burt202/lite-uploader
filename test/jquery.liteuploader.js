@@ -32,18 +32,17 @@ describe("Lite Uploader", function () {
   describe("basic instantiation", function () {
     it("should be able to be instantiated", function () {
       sandbox.stub(LiteUploader.prototype, "_applyDefaults").returns({tester: "abc"});
-      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
 
       expect(liteUploader).to.be.defined;
       expect(liteUploader.options).to.eql({tester: "abc"});
-      expect(liteUploader.ref).to.eql("tester");
       expect(liteUploader._getFiles).to.be.a("function");
       expect(liteUploader._triggerEvent).to.be.a("function");
       expect(liteUploader.xhrs).to.eql([]);
     });
 
     it("should fallback to defaults if not all options are passed in", function () {
-      var liteUploader = new LiteUploader({}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({}, noop, noop);
 
       expect(liteUploader.options.beforeRequest).to.be.a("function");
       expect(liteUploader.options.headers).to.eql({});
@@ -54,7 +53,7 @@ describe("Lite Uploader", function () {
     });
 
     it("default beforeRequest method should return a promise", function () {
-      var liteUploader = new LiteUploader({}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({}, noop, noop);
 
       liteUploader.options.beforeRequest([], "formData")
         .then(function (res) {
@@ -67,7 +66,7 @@ describe("Lite Uploader", function () {
     it("should not proceed with upload if there are input errors", function () {
       sandbox.stub(LiteUploader.prototype, "_getGeneralErrors").returns("foo");
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader({script: "script"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       liteUploader._validateOptionsAndFiles();
 
@@ -78,7 +77,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_getGeneralErrors").returns(null);
       sandbox.stub(LiteUploader.prototype, "_getFileErrors").returns("bar");
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader({script: "script"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       liteUploader._validateOptionsAndFiles();
 
@@ -88,7 +87,7 @@ describe("Lite Uploader", function () {
     it("should emit event containing errors", function () {
       sandbox.stub(LiteUploader.prototype, "_getGeneralErrors").returns("foo");
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "script"}, "tester", noop, mockOnEvent);
+      var liteUploader = new LiteUploader({script: "script"}, noop, mockOnEvent);
 
       liteUploader._validateOptionsAndFiles();
 
@@ -101,7 +100,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_getFileErrors").returns(null);
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
       var mockGetFiles = function () { return mockFileList; };
-      var liteUploader = new LiteUploader({script: "script"}, "tester", mockGetFiles, noop);
+      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, noop);
 
       liteUploader._validateOptionsAndFiles();
 
@@ -114,7 +113,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
       var mockGetFiles = function () { return mockFileList; };
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "script"}, "tester", mockGetFiles, mockOnEvent);
+      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, mockOnEvent);
 
       liteUploader._validateOptionsAndFiles();
 
@@ -126,7 +125,7 @@ describe("Lite Uploader", function () {
   describe("upload start", function () {
     it("should upload all files in one request by default", function () {
       sandbox.stub(LiteUploader.prototype, "_beforeUpload");
-      var liteUploader = new LiteUploader({script: "script"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       liteUploader._startUploadWithFiles(mockFileList);
 
@@ -136,7 +135,7 @@ describe("Lite Uploader", function () {
 
     it("should upload all files as separate requests if singleFileUploads option is true", function () {
       sandbox.stub(LiteUploader.prototype, "_beforeUpload");
-      var liteUploader = new LiteUploader({script: "script", singleFileUploads: true}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script", singleFileUploads: true}, noop, noop);
 
       liteUploader._startUploadWithFiles(mockFileList);
 
@@ -152,7 +151,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
       var beforeRequest = sandbox.stub().returns($.Deferred().resolve("resolved"));
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, "tester", noop, mockOnEvent);
+      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, mockOnEvent);
 
       liteUploader._beforeUpload(mockFileList);
 
@@ -164,7 +163,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_performUpload");
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
       var beforeRequest = sandbox.stub().returns($.Deferred().resolve("resolved"));
-      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
 
       liteUploader._beforeUpload(mockFileList);
 
@@ -176,7 +175,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_performUpload");
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
       var beforeRequest = sandbox.stub().returns($.Deferred().reject());
-      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
 
       liteUploader._beforeUpload();
 
@@ -186,7 +185,7 @@ describe("Lite Uploader", function () {
 
   describe("input errors", function () {
     it("should return error if the file input has no name attribute", function () {
-      var liteUploader = new LiteUploader({script: "script"}, null, noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       var result = liteUploader._getGeneralErrors([1]);
 
@@ -194,7 +193,7 @@ describe("Lite Uploader", function () {
     });
 
     it("should return error if the script option is blank", function () {
-      var liteUploader = new LiteUploader({}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({paramName: "tester"}, noop, noop);
 
       var result = liteUploader._getGeneralErrors([1]);
 
@@ -202,7 +201,7 @@ describe("Lite Uploader", function () {
     });
 
     it("should return error if the file array is empty", function () {
-      var liteUploader = new LiteUploader({script: "script"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script", paramName: "tester"}, noop, noop);
 
       var result = liteUploader._getGeneralErrors([]);
 
@@ -210,7 +209,7 @@ describe("Lite Uploader", function () {
     });
 
     it("should return null if no input errors are found", function () {
-      var liteUploader = new LiteUploader({script: "script"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       var result = liteUploader._getGeneralErrors([1]);
 
@@ -222,7 +221,7 @@ describe("Lite Uploader", function () {
     it("should return errors if any are found", function () {
       var files = [{name: "name"}];
       sandbox.stub(LiteUploader.prototype, "_findErrorsForFile").returns([{error: "here"}]);
-      var liteUploader = new LiteUploader({script: "script"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       var result = liteUploader._getFileErrors(files);
 
@@ -232,7 +231,7 @@ describe("Lite Uploader", function () {
     it("should return null if no errors are found", function () {
       var files = [{name: "name"}];
       sandbox.stub(LiteUploader.prototype, "_findErrorsForFile").returns([]);
-      var liteUploader = new LiteUploader({script: "script"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       var result = liteUploader._getFileErrors(files);
 
@@ -249,7 +248,6 @@ describe("Lite Uploader", function () {
             allowedFileTypes: "a,b,c"
           }
         },
-        "tester",
         noop,
         noop
       );
@@ -268,7 +266,6 @@ describe("Lite Uploader", function () {
             maxSize: 99
           }
         },
-        "tester",
         noop,
         noop
       );
@@ -304,7 +301,7 @@ describe("Lite Uploader", function () {
     });
 
     it("should add extra params onto params hash defined on instantiation", function () {
-      var liteUploader = new LiteUploader({params: {foo: "123"}}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({params: {foo: "123"}}, noop, noop);
 
       liteUploader.addParam("bar", "456");
 
@@ -312,7 +309,7 @@ describe("Lite Uploader", function () {
     });
 
     it("should add any params to form data", function () {
-      var liteUploader = new LiteUploader({params: {tester: 123, another: "abc"}}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({params: {tester: 123, another: "abc"}}, noop, noop);
 
       var result = liteUploader._collateFormData([]);
 
@@ -320,7 +317,7 @@ describe("Lite Uploader", function () {
     });
 
     it("should add any files to form data", function () {
-      var liteUploader = new LiteUploader({params: {}}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({params: {}, paramName: "tester"}, noop, noop);
 
       var result = liteUploader._collateFormData(["tester1", "tester2"]);
 
@@ -347,7 +344,7 @@ describe("Lite Uploader", function () {
     });
 
     it("should return a new instance of XMLHttpRequest with progress listener", function () {
-      var liteUploader = new LiteUploader({tester: "abc", params: {foo: "123"}}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({tester: "abc", params: {foo: "123"}}, noop, noop);
 
       expect(liteUploader.xhrs.length).to.eql(0);
       var result = liteUploader._buildXhrObject();
@@ -363,7 +360,7 @@ describe("Lite Uploader", function () {
 
   describe("perform upload", function () {
     it("should setup the ajax call correctly", function () {
-      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
 
       sandbox.stub($, "ajax").returns($.Deferred());
       liteUploader._performUpload("form-data");
@@ -381,7 +378,7 @@ describe("Lite Uploader", function () {
     it("should setup the ajax call with header if supplied", function () {
       var headers = {"x-my-custom-header": "some value"};
       var options = {script: "abc", params: {foo: "123"}, headers: headers};
-      var liteUploader = new LiteUploader(options, "tester", noop, noop);
+      var liteUploader = new LiteUploader(options, noop, noop);
 
       sandbox.stub($, "ajax").returns($.Deferred());
       liteUploader._performUpload("form-data");
@@ -391,7 +388,7 @@ describe("Lite Uploader", function () {
 
     it("should emit event on success", function () {
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "abc"}, "tester", noop, mockOnEvent);
+      var liteUploader = new LiteUploader({script: "abc"}, noop, mockOnEvent);
       var deferred = $.Deferred();
 
       sandbox.stub($, "ajax").returns(deferred);
@@ -404,7 +401,7 @@ describe("Lite Uploader", function () {
 
     it("should emit event on failure", function () {
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "abc"}, "tester", noop, mockOnEvent);
+      var liteUploader = new LiteUploader({script: "abc"}, noop, mockOnEvent);
       var deferred = $.Deferred();
 
       sandbox.stub($, "ajax").returns(deferred);
@@ -417,7 +414,7 @@ describe("Lite Uploader", function () {
 
     it("should not trigger progress event if lengthComputable is false", function () {
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, mockOnEvent);
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
 
       liteUploader._onXHRProgress({lengthComputable: false});
 
@@ -426,7 +423,7 @@ describe("Lite Uploader", function () {
 
     it("should trigger progress event if lengthComputable is true", function () {
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, mockOnEvent);
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
 
       liteUploader._onXHRProgress({
         lengthComputable: true,
@@ -442,7 +439,7 @@ describe("Lite Uploader", function () {
   describe("start upload", function () {
     it("should call _validateOptionsAndFiles", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptionsAndFiles");
-      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
 
       liteUploader.startUpload();
 
@@ -452,7 +449,7 @@ describe("Lite Uploader", function () {
 
   describe("cancel upload", function () {
     it("should abort the xhr object", function () {
-      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
       liteUploader.xhrs = [{
         abort: sandbox.spy()
       }];
@@ -464,7 +461,7 @@ describe("Lite Uploader", function () {
 
     it("should emit event", function () {
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, mockOnEvent);
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
 
       liteUploader.cancelUpload();
 
@@ -475,7 +472,7 @@ describe("Lite Uploader", function () {
 
   describe("global object methods", function () {
     it("_getXmlHttpRequestObject should return an object", function () {
-      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
 
       global.XMLHttpRequest = function () {};
       var res = liteUploader._getXmlHttpRequestObject();
@@ -485,7 +482,7 @@ describe("Lite Uploader", function () {
     });
 
     it("_getFormDataObject should return an object", function () {
-      var liteUploader = new LiteUploader({tester: "abc"}, "tester", noop, noop);
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
 
       global.FormData = function () {};
       var res = liteUploader._getFormDataObject();
