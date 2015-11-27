@@ -281,9 +281,9 @@ describe("Lite Uploader", function () {
 
   describe("file media type validator", function () {
     it("should return true if the file passes through the subtype validator", function () {
-      var fileJpeg = {type: "media/jpeg"};
-      var filePng = {type: "media/png"};
-      var allowedFileTypes = "media/jpeg,media/png";
+      var fileJpeg = {type: "image/jpeg"};
+      var filePng = {type: "image/png"};
+      var allowedFileTypes = "image/jpeg,image/png";
       var liteUploader = new LiteUploader();
 
       expect(liteUploader._isAllowedFileType(allowedFileTypes, fileJpeg.type)).to.eq(true);
@@ -291,9 +291,9 @@ describe("Lite Uploader", function () {
     });
 
     it("should return false if the file does not pass through the subtype validator", function () {
-      var fileJpeg = {type: "media/jpeg"};
-      var filePng = {type: "media/png"};
-      var allowedFileTypes = "media/gif";
+      var fileJpeg = {type: "image/jpeg"};
+      var filePng = {type: "image/png"};
+      var allowedFileTypes = "image/gif";
       var liteUploader = new LiteUploader();
 
       expect(liteUploader._isAllowedFileType(allowedFileTypes, filePng.type)).to.eq(false);
@@ -301,8 +301,8 @@ describe("Lite Uploader", function () {
     });
 
     it("should return true if the file passes through the media validator", function () {
-      var file = {type: "media/jpeg"};
-      var allowedFileTypes = "media/*";
+      var file = {type: "image/jpeg"};
+      var allowedFileTypes = "image/*";
       var liteUploader = new LiteUploader();
 
       expect(liteUploader._isAllowedFileType(allowedFileTypes, file.type)).to.eq(true);
@@ -310,7 +310,7 @@ describe("Lite Uploader", function () {
 
     it("should return false if the file does not pass through the media validator", function () {
       var file = {type: "text/plain"};
-      var allowedFileTypes = "media/*";
+      var allowedFileTypes = "image/*";
       var liteUploader = new LiteUploader();
 
       expect(liteUploader._isAllowedFileType(allowedFileTypes, file.type)).to.eq(false);

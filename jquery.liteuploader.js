@@ -121,7 +121,7 @@ LiteUploader.prototype = {
     var errorsArray = [];
 
     $.each(this.options.rules, function (key, value) {
-      if (key === 'allowedFileTypes' && value && !this._isAllowedFileType(value, file.type)) {
+      if (key === "allowedFileTypes" && value && !this._isAllowedFileType(value, file.type)) {
         errorsArray.push({
           type: "type",
           rule: value,
@@ -142,7 +142,7 @@ LiteUploader.prototype = {
   },
 
   _isAllowedFileType: function(rules, type) {
-    var allowedTypes = rules.split(','),
+    var allowedTypes = rules.split(","),
       mediaClassLike = /\/\*$/;
 
     if ($.inArray(type, allowedTypes) !== -1) {
