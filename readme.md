@@ -29,7 +29,7 @@ With some useful options including basic validation, it is a good choice for any
     <td>{allowedFileTypes: null, maxSize: null}</td>
     <td>object where you can specify validation rules for the files to be uploaded - current supported rules are:
       <ul>
-        <li>allowedFileTypes (list of comma-separated mime-types)</li>
+        <li>allowedFileTypes (list of comma-separated mime-types, wildcards such as image/* are also supported)</li>
         <li>maxSize (in bytes)</li>
       </ul>
     </td>

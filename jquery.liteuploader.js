@@ -121,7 +121,7 @@ LiteUploader.prototype = {
     var errorsArray = [];
 
     $.each(this.options.rules, function (key, value) {
-      if (key === "allowedFileTypes" && value && value.split(",").indexOf(file.type) === -1) {
+      if (key === "allowedFileTypes" && value && !this._isAllowedFileType(value, file.type)) {
         errorsArray.push({
           type: "type",
           rule: value,
@@ -136,9 +136,27 @@ LiteUploader.prototype = {
           given: file.size
         });
       }
-    });
+    }.bind(this));
 
     return errorsArray;
+  },
+
+  _isAllowedFileType: function(rules, type) {
+    var allowedTypes = rules.split(",");
+    var isWildcardType = /([a-z]+)\/\*$/;
+
+    if ($.inArray(type, allowedTypes) !== -1) {
+      return true;
+    }
+
+    return allowedTypes.reduce(function(result, allowedType) {
+      if (result) {
+        return result;
+      } else {
+        var matches = allowedType.match(isWildcardType) || [];
+        return matches[1] === type.split("/")[0];
+      }
+    }, false);
   },
 
   _getFormDataObject: function () {

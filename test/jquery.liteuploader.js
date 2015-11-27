@@ -279,6 +279,40 @@ describe("Lite Uploader", function () {
     });
   });
 
+  describe("file type validator", function () {
+    it("should return true if the file type exactly matches an allowed type", function () {
+      var liteUploader = new LiteUploader();
+
+      var res = liteUploader._isAllowedFileType("image/jpeg,image/png", "image/jpeg");
+
+      expect(res).to.eq(true);
+    });
+
+    it("should return false if the file type is not a match for the allowed file type", function () {
+      var liteUploader = new LiteUploader();
+
+      var res = liteUploader._isAllowedFileType("image/gif", "image/jpeg");
+
+      expect(res).to.eq(false);
+    });
+
+    it("should return true if the file type matches a wildcard allowed type", function () {
+      var liteUploader = new LiteUploader();
+
+      var res = liteUploader._isAllowedFileType("image/*,video/*", "image/jpeg");
+
+      expect(res).to.eq(true);
+    });
+
+    it("should return false if the file type does not match a wildcard allowed type", function () {
+      var liteUploader = new LiteUploader();
+
+      var res = liteUploader._isAllowedFileType("image/*", "text/plain");
+
+      expect(res).to.eq(false);
+    });
+  });
+
   describe("form data", function () {
     var formDataObject;
 
