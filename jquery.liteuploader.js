@@ -44,10 +44,10 @@
       }, options);
     },
 
-    _validateOptionsAndFiles: function () {
+    _init: function () {
       var files = this._getFiles();
-      var errors = this._getGeneralErrors(files);
-      if (!errors) errors = this._getFileErrors(files);
+      var errors = this._validateOptions(files);
+      if (!errors) errors = this._validateFiles(files);
 
       if (errors) {
         this._triggerEvent("lu:errors", errors);
@@ -73,7 +73,7 @@
         .done(this._performUpload.bind(this));
     },
 
-    _getGeneralErrors: function (files) {
+    _validateOptions: function (files) {
       var errors = [];
       var generalErrors = [];
 
@@ -103,7 +103,7 @@
       return (errors.length > 0) ? [generalErrors] : null;
     },
 
-    _getFileErrors: function (files) {
+    _validateFiles: function (files) {
       var fileErrors = Object.keys(files).reduce(function (acc, i) {
         var errors = this._findErrorsForFile(files[i]);
 
@@ -220,7 +220,7 @@
     /* Public Methods */
 
     startUpload: function () {
-      this._validateOptionsAndFiles();
+      this._init();
     },
 
     addParam: function (key, value) {
