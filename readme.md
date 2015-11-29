@@ -35,6 +35,12 @@ With some useful options including basic validation, it is a good choice for any
     </td>
   </tr>
   <tr>
+    <td>ref</td>
+    <td>String</td>
+    <td>null</td>
+    <td>The request argument name for the file form data. Will fallback to the name property of the file input field if not supplied.</td>
+  </tr>
+  <tr>
     <td>params</td>
     <td>Object</td>
     <td>{}</td>
