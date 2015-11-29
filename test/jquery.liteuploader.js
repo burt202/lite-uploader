@@ -42,10 +42,11 @@ describe("Lite Uploader", function () {
       var liteUploader = new LiteUploader({}, noop, noop);
 
       expect(liteUploader.options.beforeRequest).to.be.a("function");
+      expect(liteUploader.options.script).to.eql(null);
+      expect(liteUploader.options.ref).to.eql(null);
       expect(liteUploader.options.headers).to.eql({});
       expect(liteUploader.options.params).to.eql({});
-      expect(liteUploader.options.rules).to.eql({allowedFileTypes: null, maxSize: null});
-      expect(liteUploader.options.script).to.eql(null);
+      expect(liteUploader.options.rules).to.eql({});
       expect(liteUploader.options.singleFileUploads).to.eql(false);
     });
 

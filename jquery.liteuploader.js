@@ -35,10 +35,7 @@
     _applyDefaults: function (options) {
       return $.extend({
         script: null,
-        rules: {
-          allowedFileTypes: null,
-          maxSize: null
-        },
+        rules: {},
         ref: null,
         params: {},
         headers: {},
@@ -107,29 +104,28 @@
     },
 
     _getFileErrors: function (files) {
-      var errorsCount = 0;
-      var fileErrors = [];
+      var fileErrors = Object.keys(files).reduce(function (acc, i) {
+        var errors = this._findErrorsForFile(files[i]);
 
-      $.each(files, function (i) {
-        var errorsFound = this._findErrorsForFile(files[i]);
+        if (errors.length) {
+          acc.push({
+            name: files[i].name,
+            errors: errors
+          });
+        }
 
-        fileErrors.push({
-          name: files[i].name,
-          errors: errorsFound
-        });
+        return acc;
+      }.bind(this), []);
 
-        errorsCount += errorsFound.length;
-      }.bind(this));
-
-      return (errorsCount > 0) ? [fileErrors] : null;
+      return (fileErrors.length) ? [fileErrors] : null;
     },
 
     _findErrorsForFile: function (file) {
-      var errorsArray = [];
+      return Object.keys(this.options.rules).reduce(function (acc, key) {
+        var value = this.options.rules[key];
 
-      $.each(this.options.rules, function (key, value) {
         if (key === "allowedFileTypes" && value && !this._isAllowedFileType(value, file.type)) {
-          errorsArray.push({
+          acc.push({
             type: "type",
             rule: value,
             given: file.type
@@ -137,15 +133,15 @@
         }
 
         if (key === "maxSize" && value && file.size > value) {
-          errorsArray.push({
+          acc.push({
             type: "size",
             rule: value,
             given: file.size
           });
         }
-      }.bind(this));
 
-      return errorsArray;
+        return acc;
+      }.bind(this), []);
     },
 
     _isAllowedFileType: function(rules, type) {
