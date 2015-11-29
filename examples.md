@@ -185,3 +185,19 @@ You can split multiple files into separate requests if required using the single
         $(this).data("liteUploader").startUpload();
       });
     </script>
+
+### As Standalone Class
+
+You can use it within node context. Useful if you are using a module bundling tool or if you dont want to use as a pure jquery plugin.
+
+    var LiteUploader = require("lite-uploader");
+
+    var options = {script: "test.php"};  // takes all of the documented options
+    var getFiles = function () {
+      // return a FileList
+    };
+    var onEvent = function (name, value) {
+      // called on all documented events
+    };
+
+    var liteUploader = new LiteUploader(options, getFiles, onEvent)

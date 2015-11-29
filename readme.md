@@ -8,6 +8,12 @@ With some useful options including basic validation, it is a good choice for any
 
 `bower install lite-uploader --save`
 
+### Node
+
+This plugin can also be used within node context (with browserify or webpack etc) as a jquery plugin or as a standalone file upload class. See examples for basic usage.
+
+`npm install lite-uploader --save`
+
 ### Options
 
 <table>
