@@ -22,7 +22,7 @@
     "url": "git://github.com/burt202/lite-uploader.git"
   },
   "dependencies": {
-    "jquery": "^2.1.4",
+    "jquery": "^2.1.4"
   },
   "devDependencies": {
     "chai": "^3.4.1",
