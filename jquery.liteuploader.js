@@ -35,8 +35,8 @@
     _applyDefaults: function (options) {
       return $.extend({
         script: null,
-        rules: {},
         ref: null,
+        rules: {},
         params: {},
         headers: {},
         singleFileUploads: false,
@@ -46,7 +46,7 @@
 
     _init: function () {
       var files = this._getFiles();
-      var errors = this._validateOptions(files);
+      var errors = this._validateOptions();
       if (!errors) errors = this._validateFiles(files);
 
       if (errors) {
@@ -73,34 +73,22 @@
         .done(this._performUpload.bind(this));
     },
 
-    _validateOptions: function (files) {
-      var errors = [];
-      var generalErrors = [];
+    _validateOptions: function () {
+      var requiredOptions = ["script", "ref"];
 
-      if (!this.options.ref) {
-        errors.push({
-          type: "refRequired"
-        });
+      var errors = requiredOptions.reduce(function (acc, option) {
+        if (!this.options[option]) acc.push({ type: option + "Required" });
+        return acc;
+      }.bind(this), []);
+
+      if (errors.length) {
+        return [[{
+          name: "_general",
+          errors: errors
+        }]];
+      } else {
+        return null;
       }
-
-      if (!this.options.script) {
-        errors.push({
-          type: "scriptOptionRequired"
-        });
-      }
-
-      if (files.length === 0) {
-        errors.push({
-          type: "noFilesSelected"
-        });
-      }
-
-      generalErrors.push ({
-        name: "_general",
-        errors: errors
-      });
-
-      return (errors.length > 0) ? [generalErrors] : null;
     },
 
     _validateFiles: function (files) {

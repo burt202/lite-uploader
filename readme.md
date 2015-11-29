@@ -30,6 +30,12 @@ This plugin can also be used within node context (with browserify or webpack etc
     <td>the path to the script file that will handle the upload</td>
   </tr>
   <tr>
+    <td>ref</td>
+    <td>String</td>
+    <td>null</td>
+    <td>The request argument name for the file form data. Will fallback to the name property of the file input field if not supplied.</td>
+  </tr>
+  <tr>
     <td>rules</td>
     <td>Object</td>
     <td>{allowedFileTypes: null, maxSize: null}</td>
@@ -39,12 +45,6 @@ This plugin can also be used within node context (with browserify or webpack etc
         <li>maxSize (in bytes)</li>
       </ul>
     </td>
-  </tr>
-  <tr>
-    <td>ref</td>
-    <td>String</td>
-    <td>null</td>
-    <td>The request argument name for the file form data. Will fallback to the name property of the file input field if not supplied.</td>
   </tr>
   <tr>
     <td>params</td>
@@ -122,9 +122,8 @@ Below is an overview of the error types that can be returned when validating fil
 
 * type - when file mime type does not match any mime types supplied in the rule.allowedFileTypes option
 * size - when file size is above the size (in bytes) supplied in the rule.maxSize option
-* refRequired - when there is no name attribute on the file input
-* scriptOptionRequired - when no 'script' option is passed to the plugin
-* noFilesSelected - when no files have been selected for the file input
+* refRequired - when there is no name attribute on the file input and no 'ref' options is passed to the plugin
+* scriptRequired - when no 'script' option is passed to the plugin
 
 ### Public API
 

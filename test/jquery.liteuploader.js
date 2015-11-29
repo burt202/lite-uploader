@@ -195,15 +195,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._validateOptions([1]);
 
-      expect(result).to.eql([[{name: "_general", errors: [{type: "scriptOptionRequired"}]}]]);
-    });
-
-    it("should return error if the file array is empty", function () {
-      var liteUploader = new LiteUploader({script: "script", ref: "tester"}, noop, noop);
-
-      var result = liteUploader._validateOptions([]);
-
-      expect(result).to.eql([[{name: "_general", errors: [{type: "noFilesSelected"}]}]]);
+      expect(result).to.eql([[{name: "_general", errors: [{type: "scriptRequired"}]}]]);
     });
 
     it("should return null if no general errors are found", function () {
