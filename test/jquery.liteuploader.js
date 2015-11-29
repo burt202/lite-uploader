@@ -14,19 +14,16 @@ chai.use(sinonChai);
 var sandbox;
 var noop = function () {};
 var mockFileList = {0: {name: "file1"}, 1: {name: "file2"}};
-var LiteUploader;
-require("../jquery.liteuploader");
+var LiteUploader = require("../jquery.liteuploader");
 
 describe("Lite Uploader", function () {
 
   beforeEach(function () {
     sandbox = sinon.sandbox.create();
-    LiteUploader = window.LiteUploader;
   });
 
   afterEach(function () {
     sandbox.restore();
-    LiteUploader = undefined;
   });
 
   describe("basic instantiation", function () {
