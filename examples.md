@@ -188,7 +188,7 @@ You can split multiple files into separate requests if required using the single
 
 ### As Standalone Class
 
-You can use it within node context. Useful if you are using a module bundling tool or if you dont want to use as a pure jquery plugin.
+You can use it within node context. Useful if you are using a module bundling tool or if you dont want to use it as a pure jquery plugin.
 
     var LiteUploader = require("lite-uploader");
 
