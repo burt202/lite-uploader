@@ -82,10 +82,10 @@
       }.bind(this), []);
 
       if (errors.length) {
-        return [[{
+        return [{
           name: "_general",
           errors: errors
-        }]];
+        }];
       } else {
         return null;
       }
@@ -105,7 +105,7 @@
         return acc;
       }.bind(this), []);
 
-      return (fileErrors.length) ? [fileErrors] : null;
+      return (fileErrors.length) ? fileErrors : null;
     },
 
     _findErrorsForFile: function (file) {

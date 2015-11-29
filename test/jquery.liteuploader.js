@@ -187,7 +187,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._validateOptions([1]);
 
-      expect(result).to.eql([[{name: "_general", errors: [{type: "refRequired"}]}]]);
+      expect(result).to.eql([{name: "_general", errors: [{type: "refRequired"}]}]);
     });
 
     it("should return error if the script option is blank", function () {
@@ -195,7 +195,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._validateOptions([1]);
 
-      expect(result).to.eql([[{name: "_general", errors: [{type: "scriptRequired"}]}]]);
+      expect(result).to.eql([{name: "_general", errors: [{type: "scriptRequired"}]}]);
     });
 
     it("should return null if no general errors are found", function () {
@@ -215,7 +215,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._validateFiles(files);
 
-      expect(result).to.eql([[{name: "name", errors: [{error: "here"}]}]]);
+      expect(result).to.eql([{name: "name", errors: [{error: "here"}]}]);
     });
 
     it("should return null if no errors are found", function () {
