@@ -13,7 +13,14 @@ chai.use(sinonChai);
 
 var sandbox;
 var noop = function () {};
-var mockFileList = {0: {name: "file1"}, 1: {name: "file2"}};
+
+var mockGetFiles = function () {
+  return {0: {name: "file1"}, 1: {name: "file2"}, length: 2};
+};
+
+var mockEmptyGetFiles = function () {
+  return {length: 0};
+};
 var LiteUploader = require("../jquery.liteuploader");
 
 describe("Lite Uploader", function () {
@@ -61,21 +68,21 @@ describe("Lite Uploader", function () {
   });
 
   describe("validation", function () {
-    it("should not proceed with upload if there are general errors", function () {
+    it("should not proceed with upload if there are options errors", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns("foo");
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, mockEmptyGetFiles, noop);
 
       liteUploader._init();
 
       expect(liteUploader._startUploadWithFiles).not.to.have.been.called;
     });
 
-    it("should not proceed with upload if the files do not pass file validation", function () {
+    it("should not proceed with upload if there are file errors", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns("bar");
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, mockEmptyGetFiles, noop);
 
       liteUploader._init();
 
@@ -85,7 +92,7 @@ describe("Lite Uploader", function () {
     it("should emit event containing errors", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns("foo");
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "script"}, noop, mockOnEvent);
+      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, mockOnEvent);
 
       liteUploader._init();
 
@@ -97,7 +104,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var mockGetFiles = function () { return mockFileList; };
+      var mockFileList = mockGetFiles();
       var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, noop);
 
       liteUploader._init();
@@ -109,7 +116,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var mockGetFiles = function () { return mockFileList; };
+      var mockFileList = mockGetFiles();
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, mockOnEvent);
 
@@ -124,6 +131,7 @@ describe("Lite Uploader", function () {
     it("should upload all files in one request by default", function () {
       sandbox.stub(LiteUploader.prototype, "_beforeUpload");
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
+      var mockFileList = mockGetFiles();
 
       liteUploader._startUploadWithFiles(mockFileList);
 
@@ -134,6 +142,7 @@ describe("Lite Uploader", function () {
     it("should upload all files as separate requests if singleFileUploads option is true", function () {
       sandbox.stub(LiteUploader.prototype, "_beforeUpload");
       var liteUploader = new LiteUploader({script: "script", singleFileUploads: true}, noop, noop);
+      var mockFileList = mockGetFiles();
 
       liteUploader._startUploadWithFiles(mockFileList);
 
@@ -149,6 +158,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
       var beforeRequest = sandbox.stub().returns($.Deferred().resolve("resolved"));
       var mockOnEvent = sandbox.stub();
+      var mockFileList = mockGetFiles();
       var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, mockOnEvent);
 
       liteUploader._beforeUpload(mockFileList);
@@ -162,6 +172,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
       var beforeRequest = sandbox.stub().returns($.Deferred().resolve("resolved"));
       var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
+      var mockFileList = mockGetFiles();
 
       liteUploader._beforeUpload(mockFileList);
 
@@ -181,13 +192,13 @@ describe("Lite Uploader", function () {
     });
   });
 
-  describe("general errors", function () {
+  describe("options errors", function () {
     it("should return error if there is no ref set", function () {
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       var result = liteUploader._validateOptions([1]);
 
-      expect(result).to.eql([{name: "_general", errors: [{type: "refRequired"}]}]);
+      expect(result).to.eql([{name: "_options", errors: [{type: "refRequired"}]}]);
     });
 
     it("should return error if the script option is blank", function () {
@@ -195,10 +206,10 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._validateOptions([1]);
 
-      expect(result).to.eql([{name: "_general", errors: [{type: "scriptRequired"}]}]);
+      expect(result).to.eql([{name: "_options", errors: [{type: "scriptRequired"}]}]);
     });
 
-    it("should return null if no general errors are found", function () {
+    it("should return null if no options errors are found", function () {
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
       var result = liteUploader._validateOptions([1]);

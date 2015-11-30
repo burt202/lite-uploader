@@ -44,8 +44,10 @@
       }, options);
     },
 
-    _init: function () {
-      var files = this._getFiles();
+    _init: function (files) {
+      files = files || this._getFiles();
+      if (!files.length) return;
+
       var errors = this._validateOptions();
       if (!errors) errors = this._validateFiles(files);
 
@@ -83,7 +85,7 @@
 
       if (errors.length) {
         return [{
-          name: "_general",
+          name: "_options",
           errors: errors
         }];
       } else {
@@ -207,8 +209,8 @@
 
     /* Public Methods */
 
-    startUpload: function () {
-      this._init();
+    startUpload: function (files) {
+      this._init(files);
     },
 
     addParam: function (key, value) {
