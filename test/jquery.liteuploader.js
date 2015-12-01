@@ -38,7 +38,7 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_applyDefaults").returns({tester: "abc"});
       var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
 
-      expect(liteUploader).to.be.defined;
+      expect(liteUploader).to.exist;
       expect(liteUploader.options).to.eql({tester: "abc"});
       expect(liteUploader._getFiles).to.be.a("function");
       expect(liteUploader._triggerEvent).to.be.a("function");
@@ -110,6 +110,17 @@ describe("Lite Uploader", function () {
       liteUploader._init();
 
       expect(liteUploader._startUploadWithFiles).to.have.been.calledWith(mockFileList);
+    });
+
+    it("should proceed with upload with injected files if no errors are found", function () {
+      sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
+      sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
+      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
+      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, noop);
+
+      liteUploader._init("foo");
+
+      expect(liteUploader._startUploadWithFiles).to.have.been.calledWith("foo");
     });
 
     it("should emit event if no errors are found", function () {
@@ -196,25 +207,25 @@ describe("Lite Uploader", function () {
     it("should return error if there is no ref set", function () {
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
-      var result = liteUploader._validateOptions([1]);
+      var result = liteUploader._validateOptions();
 
       expect(result).to.eql([{name: "_options", errors: [{type: "refRequired"}]}]);
     });
 
     it("should return error if the script option is blank", function () {
-      var liteUploader = new LiteUploader({ref: "tester"}, noop, noop);
+      var liteUploader = new LiteUploader({ref: "ref"}, noop, noop);
 
-      var result = liteUploader._validateOptions([1]);
+      var result = liteUploader._validateOptions();
 
       expect(result).to.eql([{name: "_options", errors: [{type: "scriptRequired"}]}]);
     });
 
     it("should return null if no options errors are found", function () {
-      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
+      var liteUploader = new LiteUploader({script: "script", ref: "ref"}, noop, noop);
 
-      var result = liteUploader._validateOptions([1]);
+      var result = liteUploader._validateOptions();
 
-      expect(result).not.to.be.defined;
+      expect(result).to.eql(null);
     });
   });
 
@@ -236,7 +247,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._validateFiles(files);
 
-      expect(result).not.to.be.defined;
+      expect(result).to.eql(null);
     });
   });
 
