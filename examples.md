@@ -201,3 +201,34 @@ You can use it within node context. Useful if you are using a module bundling to
     };
 
     var liteUploader = new LiteUploader(options, getFiles, onEvent)
+
+### Passing A FileList In As A Parameter
+
+Use startUpload method by passing in a FileList. Works well for drag/drop file upload
+
+    <div class="dropZone" style="height: 100px; width: 100px; border: 1px solid #000;"></div>
+
+    <script>
+
+      $(".dropZone").liteUploader({
+        script: "http://localhost:8081/test.php",
+        ref: "fileUpload"
+      })
+      .on("lu:success", function () {
+        alert("uploaded");
+      })
+      .on("drag dragstart dragend dragover dragenter dragleave drop", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      })
+      .on("dragover dragenter", function () {
+        $(this).addClass("hover");
+      })
+      .on("dragleave dragend drop", function () {
+        $(this).removeClass("hover");
+      })
+      .on("drop", function(e) {
+        $(this).data("liteUploader").startUpload(e.originalEvent.dataTransfer.files);
+      });
+
+    </script>
