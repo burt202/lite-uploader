@@ -109,23 +109,20 @@ Basic validation is built-in for file types and size
           maxSize: 250000
         }
       })
-      .on("lu:errors", function (e, errors) {
+      .on("lu:errors", function (e, err1, err2....) {
         /*
-          example errors content:
-          [
-            {
-              name: "fileName",
-              errors: [
-                {
-                  type: "size",
-                  rule: 250000,
-                  given: 300000
-                }
-              ]
-            }
-          ]
+          example err1 content:
+          {
+            name: "fileName",
+            errors: [
+              {
+                type: "size",
+                rule: 250000,
+                given: 300000
+              }
+            ]
+          }
         */
-        console.log(errors);
       });
 
       $(".fileUpload").change(function () {
