@@ -1,4 +1,4 @@
-## LiteUploader - HTML5 jQuery File Uploader <sup>v3.1.0</sup>
+## LiteUploader - HTML5 jQuery File Uploader <sup>v3.2.0</sup>
 
 This is a small jQuery plugin which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
 
@@ -139,7 +139,10 @@ Starts the upload
     <th>Description</th>
   </tr>
   <tr>
-    <td colspan="4">No parameters</td>
+    <td>files</td>
+    <td>FileList (optional)</td>
+    <td>null</td>
+    <td>a list of files to be uploaded, takes priority over default mechanism if supplied</td>
   </tr>
 </table>
 
@@ -212,6 +215,14 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
 * `gulp`
 
 ### Changelog
+
+3.2.0 (02 December 2015)
+
+* adds ability to pass a FileList into 'startUpload' method
+* removes 'noFilesSelected' error
+* removes outer array for errors
+* renames 'scriptOptionRequired' to 'scriptRequired'
+* renames general errors from '_general' to '_options'
 
 3.1.0 (29 November 2015)
 
