@@ -286,6 +286,16 @@ describe("Lite Uploader", function () {
 
       expect(result).to.eql([{"type": "size", "rule": 99, "given": 100}]);
     });
+
+    it("should tolerate both FileList and Array as an input type", function () {
+      var file = {name: "name", type: 'a/a'};
+      var fileList = {"0": file, length: 0};
+      var liteUploader = new LiteUploader({script: "script", rules: {allowedFileTypes: 'a/*'}}, noop, noop);
+
+      var result = liteUploader._validateFiles(fileList);
+
+      expect(result).to.eql(null);
+    });
   });
 
   describe("file type validator", function () {
