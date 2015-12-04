@@ -94,18 +94,18 @@
     },
 
     _validateFiles: function (files) {
-      var fileErrors = Object.keys(files).reduce(function (acc, i) {
+      var fileErrors = [];
+
+      for (var i = 0; i < files.length; i++) {
         var errors = this._findErrorsForFile(files[i]);
 
         if (errors.length) {
-          acc.push({
+          fileErrors.push({
             name: files[i].name,
             errors: errors
           });
         }
-
-        return acc;
-      }.bind(this), []);
+      }
 
       return (fileErrors.length) ? fileErrors : null;
     },
