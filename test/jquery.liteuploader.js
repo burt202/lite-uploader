@@ -231,21 +231,24 @@ describe("Lite Uploader", function () {
 
   describe("file errors", function () {
     it("should return errors if any are found", function () {
-      var files = [{name: "name"}];
-      sandbox.stub(LiteUploader.prototype, "_findErrorsForFile").returns([{error: "here"}]);
+      var stub = sandbox.stub(LiteUploader.prototype, "_findErrorsForFile");
+      stub.onCall(0).returns([{error: "foo"}]);
+      stub.onCall(1).returns([{error: "bar"}]);
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
-      var result = liteUploader._validateFiles(files);
+      var result = liteUploader._validateFiles(mockGetFiles());
 
-      expect(result).to.eql([{name: "name", errors: [{error: "here"}]}]);
+      expect(result).to.eql([
+        {name: "file1", errors: [{error: "foo"}]},
+        {name: "file2", errors: [{error: "bar"}]}
+      ]);
     });
 
     it("should return null if no errors are found", function () {
-      var files = [{name: "name"}];
       sandbox.stub(LiteUploader.prototype, "_findErrorsForFile").returns([]);
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
 
-      var result = liteUploader._validateFiles(files);
+      var result = liteUploader._validateFiles(mockGetFiles());
 
       expect(result).to.eql(null);
     });
