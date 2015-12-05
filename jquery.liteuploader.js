@@ -46,7 +46,7 @@
 
     _init: function (files) {
       files = files || this._getFiles();
-      if (!files.length) return;
+      if (!files || !files.length) return;
 
       var errors = this._validateOptions();
       if (!errors) errors = this._validateFiles(files);

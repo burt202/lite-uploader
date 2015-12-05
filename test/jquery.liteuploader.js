@@ -68,6 +68,19 @@ describe("Lite Uploader", function () {
   });
 
   describe("validation", function () {
+    it("should not proceed with upload if there are no files", function () {
+      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
+      sandbox.stub(LiteUploader.prototype, "_validateOptions");
+      sandbox.stub(LiteUploader.prototype, "_validateFiles");
+      var liteUploader = new LiteUploader({script: "script"}, function () { return undefined; }, noop);
+
+      liteUploader._init();
+
+      expect(liteUploader._startUploadWithFiles).not.to.have.been.called;
+      expect(liteUploader._validateOptions).not.to.have.been.called;
+      expect(liteUploader._validateFiles).not.to.have.been.called;
+    });
+
     it("should not proceed with upload if there are options errors", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns("foo");
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
