@@ -216,7 +216,7 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
 
 ### Changelog
 
-3.3.0 (26 April 2016)
+3.3.0 (26 March 2016)
 
 * return errors in one array param rather than as an individual param for each error
 
