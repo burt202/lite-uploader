@@ -110,7 +110,7 @@ describe("Lite Uploader", function () {
       liteUploader._init();
 
       expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:errors", "foo");
+      expect(mockOnEvent).to.have.been.calledWith("lu:errors", ["foo"]);
     });
 
     it("should proceed with upload if no errors are found", function () {

@@ -109,7 +109,7 @@ Basic validation is built-in for file types and size
           maxSize: 250000
         }
       })
-      .on("lu:errors", function (e, err1, err2....) {
+      .on("lu:errors", function (e, errors) {
         /*
           example err1 content:
           {

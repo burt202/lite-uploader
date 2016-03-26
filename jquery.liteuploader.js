@@ -52,7 +52,7 @@
       if (!errors) errors = this._validateFiles(files);
 
       if (errors) {
-        this._triggerEvent("lu:errors", errors);
+        this._triggerEvent("lu:errors", [errors]);
       } else {
         this._triggerEvent("lu:start", files);
         this._startUploadWithFiles(files);
