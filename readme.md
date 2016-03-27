@@ -1,6 +1,14 @@
-## LiteUploader - Lightweight nodeJS/jQuery File Uploader
+## LiteUploader
 
-This is a small library for NodeJS and jQuery, aiming to make uploading files a doddle. With some useful options including basic validation, it is a good choice for any developer who is not so worried about supporting legacy browsers.
+This is a lightweight library for NodeJS and jQuery, aiming to make uploading files a doddle. With some useful options including basic validation, it is a good choice for any developer who is not so worried about supporting legacy browsers.
+
+### Features
+
+- file type and size validation
+- hooks for all major events like progress, success, fail etc
+- drag/drop support
+- ability dynamically update the form data packet before each upload
+- upload multiple files as individual requests
 
 ### NodeJS
 
@@ -308,5 +316,3 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 
 * adds 'fail' function option
 * updates ajax call to use new jquery methods (always, done, fail etc)
-
-### Suggestions, comments and queries welcome, send to aaron@burtdev.net
