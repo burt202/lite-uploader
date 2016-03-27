@@ -1,7 +1,7 @@
 {
   "name": "lite-uploader",
   "description": "Lightweight nodeJS/jQuery File Uploader",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "keywords": [
     "lightweight",
     "html5",

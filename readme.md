@@ -216,6 +216,10 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 
 ### Changelog
 
+3.3.1 (27 March 2016)
+
+* become less reliant on jQuery methods
+
 3.3.0 (26 March 2016)
 
 * return errors in one array param rather than as an individual param for each error
