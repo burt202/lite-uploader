@@ -316,3 +316,9 @@ Using [this tool I built](http://browser.burtdev.net) which is based on stats fr
 
 * adds 'fail' function option
 * updates ajax call to use new jquery methods (always, done, fail etc)
+
+### License
+
+Licensed under the MIT License.
+
+View the full license [here](https://raw.githubusercontent.com/burt202/lite-uploader/master/LICENSE).
