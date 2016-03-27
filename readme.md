@@ -1,18 +1,18 @@
-## LiteUploader - HTML5 jQuery File Uploader <sup>v3.3.0</sup>
+## LiteUploader - Lightweight nodeJS/jQuery File Uploader
 
-This is a small jQuery plugin which utilises the HTML5 features ([File API](http://www.html5rocks.com/en/tutorials/file/dndfiles/) and [XHR2](http://www.html5rocks.com/en/tutorials/file/xhr2/)) to make uploading files a doddle.
+This is a small library for NodeJS and jQuery, aiming to make uploading files a doddle. With some useful options including basic validation, it is a good choice for any developer who is not so worried about supporting legacy browsers.
 
-With some useful options including basic validation, it is a good choice for any developer who is not so worried about supporting legacy browsers.
+### NodeJS
+
+`npm install lite-uploader --save`
 
 ### Bower
 
 `bower install lite-uploader --save`
 
-### Node
+### Examples
 
-This plugin can also be used within node context (with browserify or webpack etc) as a jquery plugin or as a standalone file upload class. See examples for basic usage.
-
-`npm install lite-uploader --save`
+See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.md)
 
 ### Options
 
@@ -187,10 +187,6 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
   </tr>
 </table>
 
-### Gotchas
-
-* make sure your uploads directory is writable: `chmod 777`
-
 ### Browser Support
 
 The two main HTML5 dependencies for the plugin are the File API and XHR2, and using caniuse ([File API](http://caniuse.com/fileapi), [XHR2](http://caniuse.com/xhr2)) as a reference, if you are using any of the following browser versions you shouldn't have any problem with the code:
@@ -202,10 +198,6 @@ The two main HTML5 dependencies for the plugin are the File API and XHR2, and us
 * Opera 12+
 
 Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of October 2015, the browser versions listed above should account for approx 86% of all internet users
-
-### Examples
-
-See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.md)
 
 ### Tests & Coverage
 

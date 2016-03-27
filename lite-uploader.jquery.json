@@ -12,7 +12,7 @@
       "url": "http://opensource.org/licenses/MIT"
     }
   ],
-  "description": "Lightweight HTML5 jQuery File Uploader",
+  "description": "Lightweight nodeJS/jQuery File Uploader",
   "keywords": [
     "lightweight",
     "html5",
@@ -22,7 +22,9 @@
     "upload",
     "AJAX",
     "lite",
-    "jquery-plugin"
+    "jquery-plugin",
+    "node",
+    "nodeJS"
   ],
   "homepage": "https://github.com/burt202/lite-uploader",
   "dependencies": {
