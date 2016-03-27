@@ -40,7 +40,7 @@
         params: {},
         headers: {},
         singleFileUploads: false,
-        beforeRequest: function (files, formData) { return $.when(formData); }
+        beforeRequest: function (files, formData) { return Promise.resolve(formData); }
       }, options);
     },
 
@@ -61,9 +61,9 @@
 
     _startUploadWithFiles: function (files) {
       if (this.options.singleFileUploads) {
-        $.each(files, function (i) {
+        for (var i = 0; i < files.length; i++) {
           this._beforeUpload([files[i]]);
-        }.bind(this));
+        }
       } else {
         this._beforeUpload(files);
       }
@@ -138,9 +138,7 @@
       var allowedTypes = rules.split(",");
       var isWildcardType = /([a-z]+)\/\*$/;
 
-      if ($.inArray(type, allowedTypes) !== -1) {
-        return true;
-      }
+      if (allowedTypes.indexOf(type) !== -1) return true;
 
       return allowedTypes.reduce(function(result, allowedType) {
         if (result) {
@@ -159,13 +157,13 @@
     _collateFormData: function (files) {
       var formData = this._getFormDataObject();
 
-      $.each(this.options.params, function (key, value) {
-        formData.append(key, value);
-      });
+      for (var key in this.options.params) {
+        formData.append(key, this.options.params[key]);
+      }
 
-      $.each(files, function (i) {
+      for (var i = 0; i < files.length; i++) {
         formData.append(this.options.ref, files[i]);
-      }.bind(this));
+      }
 
       return formData;
     },
