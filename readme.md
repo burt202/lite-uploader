@@ -197,15 +197,12 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 
 ### Browser Support
 
-The two main HTML5 dependencies for the plugin are the File API and XHR2, and using caniuse ([File API](http://caniuse.com/fileapi), [XHR2](http://caniuse.com/xhr2)) as a reference, if you are using any of the following browser versions you shouldn't have any problem with the code:
-
-* Chrome 13+
-* Firefox 4+
-* Internet Explorer 10+
-* Safari 6+
-* Opera 12+
-
-Using [this tool I built](http://browser.burtdev.net) which is based on stats from [gs.statcounter.com](http://gs.statcounter.com), as of October 2015, the browser versions listed above should account for approx 86% of all internet users
+* Chrome 32+
+* Firefox 29+
+* Edge 12+
+* Internet Explorer 11 (up to v3.3.0)
+* Safari 7.1+
+* Opera 19+
 
 ### Tests & Coverage
 
