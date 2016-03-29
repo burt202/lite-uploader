@@ -144,7 +144,7 @@ You can dynamically change/update the form data packet before each upload using 
         },
         beforeRequest: function (files, formData) {
           formData.append("abc", 123);
-          return $.Deferred().resolve(formData);
+          return Promise.resolve(formData);
         }
       });
 
