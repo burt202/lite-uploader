@@ -71,8 +71,8 @@
 
     _beforeUpload: function (files) {
       this._triggerEvent("lu:before", files);
-      this.options.beforeRequest(files, this._collateFormData(files))
-        .done(this._performUpload.bind(this));
+      return this.options.beforeRequest(files, this._collateFormData(files))
+        .then(this._performUpload.bind(this));
     },
 
     _validateOptions: function () {

@@ -60,7 +60,7 @@ describe("Lite Uploader", function () {
     it("default beforeRequest method should return a promise", function () {
       var liteUploader = new LiteUploader({}, noop, noop);
 
-      liteUploader.options.beforeRequest([], "formData")
+      return liteUploader.options.beforeRequest([], "formData")
         .then(function (res) {
           expect(res).to.eql("formData");
         });
@@ -180,7 +180,7 @@ describe("Lite Uploader", function () {
     it("should emit event", function () {
       sandbox.stub(LiteUploader.prototype, "_performUpload");
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
-      var beforeRequest = sandbox.stub().returns($.Deferred().resolve("resolved"));
+      var beforeRequest = sandbox.stub().returns(Promise.resolve("resolved"));
       var mockOnEvent = sandbox.stub();
       var mockFileList = mockGetFiles();
       var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, mockOnEvent);
@@ -194,25 +194,27 @@ describe("Lite Uploader", function () {
     it("should proceed with upload if beforeRequest was resolved", function () {
       sandbox.stub(LiteUploader.prototype, "_performUpload");
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
-      var beforeRequest = sandbox.stub().returns($.Deferred().resolve("resolved"));
+      var beforeRequest = sandbox.stub().returns(Promise.resolve("resolved"));
       var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
       var mockFileList = mockGetFiles();
 
-      liteUploader._beforeUpload(mockFileList);
-
-      expect(beforeRequest).to.have.been.calledWith(mockFileList, "collated");
-      expect(liteUploader._performUpload).to.have.been.calledWith("resolved");
+      return liteUploader._beforeUpload(mockFileList)
+        .then(function () {
+           expect(beforeRequest).to.have.been.calledWith(mockFileList, "collated");
+           expect(liteUploader._performUpload).to.have.been.calledWith("resolved");
+        })
     });
 
     it("should not proceed with upload if beforeRequest was rejected", function () {
       sandbox.stub(LiteUploader.prototype, "_performUpload");
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
-      var beforeRequest = sandbox.stub().returns($.Deferred().reject());
+      var beforeRequest = sandbox.stub().returns(Promise.reject());
       var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
 
-      liteUploader._beforeUpload();
-
-      expect(liteUploader._performUpload).not.to.have.been.called;
+      return liteUploader._beforeUpload()
+        .catch(function () {
+          expect(liteUploader._performUpload).not.to.have.been.called;
+        })
     });
   });
 
