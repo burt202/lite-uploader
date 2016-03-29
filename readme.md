@@ -213,6 +213,10 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 
 ### Changelog
 
+3.3.2 (29 March 2016)
+
+* fix promise chain by using .then()
+
 3.3.1 (27 March 2016)
 
 * become less reliant on jQuery methods
@@ -269,7 +273,7 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 
 2.1.1 (09 June 2014)
 
-* form data construction fix (thanks to [@aFarkas](https://github.com/aFarkas) for spotting this one)
+* form data construction fix
 
 2.1.0 (12 May 2014)
 
