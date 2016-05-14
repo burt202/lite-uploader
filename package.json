@@ -12,6 +12,7 @@
     "AJAX",
     "lite",
     "jquery-plugin",
+    "ecosystem:jquery",
     "node",
     "nodeJS"
   ],
