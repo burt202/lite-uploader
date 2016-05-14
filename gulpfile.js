@@ -4,8 +4,8 @@ var rename = require("gulp-rename");
 var mocha = require("gulp-mocha");
 var istanbul = require("gulp-istanbul");
 
-var PATH_TO_SRC = "jquery.liteuploader.js";
-var MINIFIED_FILE_NAME = "jquery.liteuploader.min.js";
+var PATH_TO_SRC = "liteuploader.js";
+var MINIFIED_FILE_NAME = "liteuploader.min.js";
 
 function handleError () {
   this.emit("end");

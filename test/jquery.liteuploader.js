@@ -21,7 +21,7 @@ var mockGetFiles = function () {
 var mockEmptyGetFiles = function () {
   return {length: 0};
 };
-var LiteUploader = require("../jquery.liteuploader");
+var LiteUploader = require("../liteuploader");
 
 describe("Lite Uploader", function () {
 
