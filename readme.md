@@ -213,6 +213,10 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 
 ### Changelog
 
+3.3.3 (15 May 2016)
+
+* only wrap error data for jquery
+
 3.3.2 (29 March 2016)
 
 * fix promise chain by using .then()
