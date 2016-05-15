@@ -10,17 +10,17 @@
 
   $.fn.liteUploader = function (options) {
     return this.each(function () {
+      options.ref = options.ref || $(this).attr("name");
+
       var getFiles = function () {
         return $(this).get(0).files;
       }.bind(this);
 
-      options.ref = options.ref || $(this).attr("name");
+      var onEvent = function (name, data) {
+        $(this).trigger.bind($(this))(name, [data]);
+      }.bind(this)
 
-      $.data(this, "liteUploader", new LiteUploader(
-        options,
-        getFiles,
-        $(this).trigger.bind($(this))
-      ));
+      $.data(this, "liteUploader", new LiteUploader(options, getFiles, onEvent));
     });
   };
 
@@ -52,7 +52,7 @@
       if (!errors) errors = this._validateFiles(files);
 
       if (errors) {
-        this._triggerEvent("lu:errors", [errors]);
+        this._triggerEvent("lu:errors", errors);
       } else {
         this._triggerEvent("lu:start", files);
         this._startUploadWithFiles(files);
