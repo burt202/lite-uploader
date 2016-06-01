@@ -91,61 +91,68 @@
       }];
     },
 
-    _validateFiles: function (files) {
-      var fileErrors = [];
-
-      for (var i = 0; i < files.length; i++) {
-        var errors = this._findErrorsForFile(files[i]);
-
-        if (errors.length) {
-          fileErrors.push({
-            name: files[i].name,
-            errors: errors
-          });
-        }
-      }
-
-      return (fileErrors.length) ? fileErrors : null;
-    },
-
-    _findErrorsForFile: function (file) {
-      return Object.keys(this.options.rules).reduce(function (acc, key) {
-        var value = this.options.rules[key];
-
-        if (key === "allowedFileTypes" && value && !this._isAllowedFileType(value, file.type)) {
-          acc.push({
-            type: "type",
-            rule: value,
-            given: file.type
-          });
-        }
-
-        if (key === "maxSize" && value && file.size > value) {
-          acc.push({
-            type: "size",
-            rule: value,
-            given: file.size
-          });
-        }
-
-        return acc;
-      }.bind(this), []);
-    },
-
-    _isAllowedFileType: function(rules, type) {
-      var allowedTypes = rules.split(",");
+    _allowedFileTypeValidator: function (rule, file) {
+      var allowedTypes = rule.split(",");
       var isWildcardType = /([a-z]+)\/\*$/;
 
-      if (allowedTypes.indexOf(type) !== -1) return true;
+      if (allowedTypes.indexOf(file.type) !== -1) return;
 
-      return allowedTypes.reduce(function(result, allowedType) {
+      var allowed = allowedTypes.reduce(function(result, allowedType) {
         if (result) {
           return result;
         } else {
           var matches = allowedType.match(isWildcardType) || [];
-          return matches[1] === type.split("/")[0];
+          return matches[1] === file.type.split("/")[0];
         }
       }, false);
+
+      if (!allowed) {
+        return {
+          type: "type",
+          rule: rule,
+          given: file.type
+        };
+      }
+    },
+
+    _maxSizeValidator: function (rule, file) {
+      if (file.size > rule) {
+        return {
+          type: "size",
+          rule: rule,
+          given: file.size
+        };
+      }
+    },
+
+    _validateFiles: function (files) {
+      var allErrors = [];
+
+      var validatorMap = {
+        "allowedFileTypes": this._allowedFileTypeValidator,
+        "maxSize": this._maxSizeValidator
+      };
+
+      for (var i = 0; i < files.length; i++) {
+        var fileErrors = Object.keys(this.options.rules).reduce(function (acc, key) {
+          var rule = this.options.rules[key];
+
+          if (rule && validatorMap[key]) {
+            var errors = validatorMap[key](rule, files[i]);
+            if (errors) acc.push(errors);
+          }
+          return acc;
+        }.bind(this), []);
+
+        if (fileErrors.length) {
+          allErrors.push({
+            name: files[i].name,
+            errors: fileErrors
+          });
+        }
+      }
+
+      return (allErrors.length) ? allErrors : null;
     },
 
     _getFormDataObject: function () {

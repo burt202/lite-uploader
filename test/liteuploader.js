@@ -246,22 +246,35 @@ describe("Lite Uploader", function () {
 
   describe("file errors", function () {
     it("should return errors if any are found", function () {
-      var stub = sandbox.stub(LiteUploader.prototype, "_findErrorsForFile");
-      stub.onCall(0).returns([{error: "foo"}]);
-      stub.onCall(1).returns([{error: "bar"}]);
-      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
+      var allowedFileTypeValidatorStub = sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator")
+      allowedFileTypeValidatorStub.onCall(0).returns("foo");
+      allowedFileTypeValidatorStub.onCall(1).returns(undefined);
+      var maxSizeValidatorStub = sandbox.stub(LiteUploader.prototype, "_maxSizeValidator")
+      maxSizeValidatorStub.onCall(0).returns("bar");
+      maxSizeValidatorStub.onCall(1).returns("bar");
+      var liteUploader = new LiteUploader({
+        script: "script",
+        rules: {
+          allowedFileTypes: "a,b,c",
+          maxSize: 20
+        }}, noop, noop);
 
       var result = liteUploader._validateFiles(mockGetFiles());
 
       expect(result).to.eql([
-        {name: "file1", errors: [{error: "foo"}]},
-        {name: "file2", errors: [{error: "bar"}]}
+        {name: "file1", errors: ["foo", "bar"]},
+        {name: "file2", errors: ["bar"]}
       ]);
     });
 
     it("should return null if no errors are found", function () {
-      sandbox.stub(LiteUploader.prototype, "_findErrorsForFile").returns([]);
-      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
+      sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator").returns(undefined);
+      sandbox.stub(LiteUploader.prototype, "_maxSizeValidator").returns(undefined);
+      var liteUploader = new LiteUploader({
+        script: "script",
+        rules: {
+          allowedFileTypes: "a,b,c"
+        }}, noop, noop);
 
       var result = liteUploader._validateFiles(mockGetFiles());
 
@@ -269,74 +282,67 @@ describe("Lite Uploader", function () {
     });
   });
 
-  describe("find errors in file", function () {
-    it("should return error if file is an invalid type", function () {
-      var file = {name: "name", type: "d", size: 100};
-      var liteUploader = new LiteUploader({
-          script: "script",
-          rules: {
-            allowedFileTypes: "a,b,c"
-          }
-        },
-        noop,
-        noop
-      );
+  describe("file type validator", function () {
+    it("should return undefined if the file type exactly matches an allowed type", function () {
+      var liteUploader = new LiteUploader();
 
-      var result = liteUploader._findErrorsForFile(file);
+      var res = liteUploader._allowedFileTypeValidator("image/jpeg,image/png", {type: "image/jpeg"});
 
-      expect(result).to.eql([{"type": "type", "rule": "a,b,c", "given": "d"}]);
+      expect(res).to.eq(undefined);
     });
 
-    it("should return error if file has an invalid size", function () {
-      var file = {name: "name", type: "a", size: 100};
-      var liteUploader = new LiteUploader({
-          script: "script",
-          rules: {
-            allowedFileTypes: "a,b,c",
-            maxSize: 99
-          }
-        },
-        noop,
-        noop
-      );
+    it("should return error object if the file type is not a match for the allowed file type", function () {
+      var liteUploader = new LiteUploader();
 
-      var result = liteUploader._findErrorsForFile(file);
+      var res = liteUploader._allowedFileTypeValidator("image/gif", {type: "image/jpeg"});
 
-      expect(result).to.eql([{"type": "size", "rule": 99, "given": 100}]);
+      expect(res).to.eql({
+        type: "type",
+        rule: "image/gif",
+        given: "image/jpeg"
+      });
+    });
+
+    it("should return undefined if the file type matches a wildcard allowed type", function () {
+      var liteUploader = new LiteUploader();
+
+      var res = liteUploader._allowedFileTypeValidator("image/*,video/*", {type: "image/jpeg"});
+
+      expect(res).to.eq(undefined);
+    });
+
+    it("should return error object if the file type does not match a wildcard allowed type", function () {
+      var liteUploader = new LiteUploader();
+
+      var res = liteUploader._allowedFileTypeValidator("image/*", {type: "text/plain"});
+
+      expect(res).to.eql({
+        type: "type",
+        rule: "image/*",
+        given: "text/plain"
+      });
     });
   });
 
-  describe("file type validator", function () {
-    it("should return true if the file type exactly matches an allowed type", function () {
+  describe("file size validator", function () {
+    it("should return undefined if the file size is below limit", function () {
       var liteUploader = new LiteUploader();
 
-      var res = liteUploader._isAllowedFileType("image/jpeg,image/png", "image/jpeg");
+      var res = liteUploader._maxSizeValidator(200, {size: 199});
 
-      expect(res).to.eq(true);
+      expect(res).to.eq(undefined);
     });
 
-    it("should return false if the file type is not a match for the allowed file type", function () {
+    it("should return error object if the file is above limit", function () {
       var liteUploader = new LiteUploader();
 
-      var res = liteUploader._isAllowedFileType("image/gif", "image/jpeg");
+      var res = liteUploader._maxSizeValidator(200, {size: 201});
 
-      expect(res).to.eq(false);
-    });
-
-    it("should return true if the file type matches a wildcard allowed type", function () {
-      var liteUploader = new LiteUploader();
-
-      var res = liteUploader._isAllowedFileType("image/*,video/*", "image/jpeg");
-
-      expect(res).to.eq(true);
-    });
-
-    it("should return false if the file type does not match a wildcard allowed type", function () {
-      var liteUploader = new LiteUploader();
-
-      var res = liteUploader._isAllowedFileType("image/*", "text/plain");
-
-      expect(res).to.eq(false);
+      expect(res).to.eql({
+        type: "size",
+        rule: 200,
+        given: 201
+      });
     });
   });
 
