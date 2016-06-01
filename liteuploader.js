@@ -83,14 +83,12 @@
         return acc;
       }.bind(this), []);
 
-      if (errors.length) {
-        return [{
-          name: "_options",
-          errors: errors
-        }];
-      } else {
-        return null;
-      }
+      if (!errors.length) return null;
+
+      return [{
+        name: "_options",
+        errors: errors
+      }];
     },
 
     _validateFiles: function (files) {

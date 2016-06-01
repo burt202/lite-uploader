@@ -17,7 +17,7 @@ gulp.task("watch", function () {
   gulp.watch(["test/*.js", PATH_TO_SRC], ["minify", "tests"]);
 });
 
-gulp.task("minify", function() {
+gulp.task("minify", function () {
   return gulp.src(PATH_TO_SRC)
     .pipe(uglify({preserveComments: "license"}))
     .pipe(rename(MINIFIED_FILE_NAME))
