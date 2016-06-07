@@ -3,7 +3,6 @@
 var jsdom = require("jsdom");
 global.document = jsdom.jsdom("<html><body></body></html>");
 global.window = global.document.parentWindow;
-global.$ = require("jquery");
 
 var sinon = require("sinon");
 var chai = require("chai");

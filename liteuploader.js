@@ -1,10 +1,12 @@
 /* liteUploader v3.3.3 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
 
 (function (factory) {
+  var noop = {fn: {}};
+
   if (typeof module === "object" && typeof module.exports === "object") {
-    module.exports = factory(require("jquery"));
+    module.exports = factory(noop);
   } else {
-    factory($);
+    factory($ || noop);
   }
 }(function ($) {
 
