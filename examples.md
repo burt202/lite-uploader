@@ -13,6 +13,7 @@ The most basic usage of the plugin
         script: "http://localhost:8081/test.php"
       })
       .on("lu:success", function (e, response) {
+        console.log(response);
         alert("uploaded");
       });
 
@@ -40,6 +41,28 @@ Send extra params to your server script on and after instantiation
       });
 
       $(".fileUpload").data("liteUploader").addParam("another", "here");
+
+      $(".fileUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+      });
+    </script>
+
+### Add Headers
+
+Add custom headers to your request by using the headers option
+
+    <input type="file" name="fileUpload" class="fileUpload" />
+
+    <script>
+      $(".fileUpload").liteUploader({
+        script: "http://localhost:8081/test.php",
+        headers: {
+          "xxx": "foobar"
+        }
+      })
+      .on("lu:success", function (e, response) {
+        alert("uploaded");
+      });
 
       $(".fileUpload").change(function () {
         $(this).data("liteUploader").startUpload();
