@@ -347,10 +347,8 @@ describe("Lite Uploader", function () {
   });
 
   describe("form data", function () {
-    var formDataObject;
-
     beforeEach(function () {
-      formDataObject = {
+      var formDataObject = {
         data: [],
         append: function (key, value) {
           var obj = {};
@@ -363,11 +361,6 @@ describe("Lite Uploader", function () {
       };
 
       sandbox.stub(LiteUploader.prototype, "_getFormDataObject").returns(formDataObject);
-    });
-
-    afterEach(function () {
-      formDataObject = undefined;
-      LiteUploader.prototype._getFormDataObject.restore();
     });
 
     it("should add extra params onto params hash defined on instantiation", function () {
@@ -396,92 +389,91 @@ describe("Lite Uploader", function () {
   });
 
   describe("building xhr object", function () {
-    var xmlHttpRequestObject;
+    var mockXmlHttpRequestObject;
 
     beforeEach(function () {
-      xmlHttpRequestObject = {
+      mockXmlHttpRequestObject = {
+        open: sandbox.spy(),
+        setRequestHeader: sandbox.spy(),
+        addEventListener: sandbox.spy(),
         upload: {
           addEventListener: sandbox.spy()
         }
       };
 
-      sandbox.stub(LiteUploader.prototype, "_getXmlHttpRequestObject").returns(xmlHttpRequestObject);
+      sandbox.stub(LiteUploader.prototype, "_getXmlHttpRequestObject").returns(mockXmlHttpRequestObject);
     });
 
     afterEach(function () {
-      xmlHttpRequestObject = undefined;
-      LiteUploader.prototype._getXmlHttpRequestObject.restore();
+      mockXmlHttpRequestObject = null;
+    })
+
+    it("should open it with correct method and url", function () {
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
+
+      liteUploader._buildXhrObject();
+
+      expect(mockXmlHttpRequestObject.open).to.have.been.calledWith("POST", "abc");
     });
 
-    it("should return a new instance of XMLHttpRequest with progress listener", function () {
-      var liteUploader = new LiteUploader({tester: "abc", params: {foo: "123"}}, noop, noop);
+    it("should set headers using passed in option", function () {
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}, headers: {foo: "bar", abc: "def"}}, noop, noop);
+
+      liteUploader._buildXhrObject();
+
+      expect(mockXmlHttpRequestObject.setRequestHeader.callCount).to.eql(2);
+      expect(mockXmlHttpRequestObject.setRequestHeader.getCall(0)).to.have.been.calledWith("foo", "bar");
+      expect(mockXmlHttpRequestObject.setRequestHeader.getCall(1)).to.have.been.calledWith("abc", "def");
+    });
+
+    it("should add listeners for progress and error events", function () {
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}, headers: {foo: "bar", abc: "def"}}, noop, noop);
+
+      liteUploader._buildXhrObject();
+
+      expect(mockXmlHttpRequestObject.upload.addEventListener).to.have.been.calledOnce;
+      expect(mockXmlHttpRequestObject.upload.addEventListener.getCall(0).args[0]).to.eql("progress");
+      expect(mockXmlHttpRequestObject.upload.addEventListener.getCall(0).args[1]).to.be.a("function");
+      expect(mockXmlHttpRequestObject.upload.addEventListener.getCall(0).args[2]).to.eql(false);
+      expect(mockXmlHttpRequestObject.addEventListener).to.have.been.calledOnce;
+      expect(mockXmlHttpRequestObject.addEventListener.getCall(0).args[0]).to.eql("error");
+      expect(mockXmlHttpRequestObject.addEventListener.getCall(0).args[1]).to.be.a("function");
+      expect(mockXmlHttpRequestObject.addEventListener.getCall(0).args[2]).to.eql(false);
+    });
+
+    it("should add xhr instance to xhr array an", function () {
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
 
       expect(liteUploader.xhrs.length).to.eql(0);
-      var result = liteUploader._buildXhrObject();
+      liteUploader._buildXhrObject();
 
       expect(liteUploader.xhrs.length).to.eql(1);
-      expect(result).to.eql(xmlHttpRequestObject);
-      expect(xmlHttpRequestObject.upload.addEventListener).to.have.been.called;
-      expect(xmlHttpRequestObject.upload.addEventListener.getCall(0).args[0]).to.eql("progress");
-      expect(xmlHttpRequestObject.upload.addEventListener.getCall(0).args[1]).to.be.a("function");
-      expect(xmlHttpRequestObject.upload.addEventListener.getCall(0).args[2]).to.eql(false);
+    });
+
+    it("should return xhr instance", function () {
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
+
+      var result = liteUploader._buildXhrObject();
+
+      expect(result).to.eql(mockXmlHttpRequestObject);
     });
   });
 
   describe("perform upload", function () {
-    it("should setup the ajax call correctly", function () {
+    it("should send form data using build xhr object", function () {
+      var mockXhrObject = {
+        send: sandbox.spy()
+      };
+      sandbox.stub(LiteUploader.prototype, "_buildXhrObject").returns(mockXhrObject);
       var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
 
-      sandbox.stub($, "ajax").returns($.Deferred());
       liteUploader._performUpload("form-data");
 
-      expect($.ajax).to.have.been.called;
-      expect($.ajax.getCall(0).args[0].xhr).to.be.a("function");
-      expect($.ajax.getCall(0).args[0].url).to.eql("abc");
-      expect($.ajax.getCall(0).args[0].type).to.eql("POST");
-      expect($.ajax.getCall(0).args[0].data).to.eql("form-data");
-      expect($.ajax.getCall(0).args[0].headers).to.eql({});
-      expect($.ajax.getCall(0).args[0].processData).to.eql(false);
-      expect($.ajax.getCall(0).args[0].contentType).to.eql(false);
+      expect(mockXhrObject.send).to.have.been.calledWith("form-data");
     });
+  });
 
-    it("should setup the ajax call with header if supplied", function () {
-      var headers = {"x-my-custom-header": "some value"};
-      var options = {script: "abc", params: {foo: "123"}, headers: headers};
-      var liteUploader = new LiteUploader(options, noop, noop);
-
-      sandbox.stub($, "ajax").returns($.Deferred());
-      liteUploader._performUpload("form-data");
-
-      expect($.ajax.getCall(0).args[0].headers).to.eql(headers);
-    });
-
-    it("should emit event on success", function () {
-      var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "abc"}, noop, mockOnEvent);
-      var deferred = $.Deferred();
-
-      sandbox.stub($, "ajax").returns(deferred);
-      liteUploader._performUpload("form-data");
-      deferred.resolve("response");
-
-      expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:success", "response");
-    });
-
-    it("should emit event on failure", function () {
-      var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "abc"}, noop, mockOnEvent);
-      var deferred = $.Deferred();
-
-      sandbox.stub($, "ajax").returns(deferred);
-      liteUploader._performUpload("form-data");
-      deferred.reject("response");
-
-      expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:fail", "response");
-    });
-
+  describe("progress event", function () {
     it("should not trigger progress event if lengthComputable is false", function () {
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
@@ -503,6 +495,30 @@ describe("Lite Uploader", function () {
 
       expect(mockOnEvent.callCount).to.eql(1);
       expect(mockOnEvent).to.have.been.calledWith("lu:progress", 20);
+    });
+  })
+
+  describe("success event", function () {
+    it("should trigger success event with response", function () {
+      var mockOnEvent = sandbox.stub();
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
+
+      liteUploader._onXHRSuccess("response");
+
+      expect(mockOnEvent.callCount).to.eql(1);
+      expect(mockOnEvent).to.have.been.calledWith("lu:success", "response");
+    });
+  });
+
+  describe("failure event", function () {
+    it("should trigger fail event with response", function () {
+      var mockOnEvent = sandbox.stub();
+      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
+
+      liteUploader._onXHRFailure("jqXHR");
+
+      expect(mockOnEvent.callCount).to.eql(1);
+      expect(mockOnEvent).to.have.been.calledWith("lu:fail", "jqXHR");
     });
   });
 

@@ -187,23 +187,26 @@
 
     _buildXhrObject: function () {
       var xhr = this._getXmlHttpRequestObject();
+      xhr.open("POST", this.options.script);
+
+      for (var key in this.options.headers) {
+        xhr.setRequestHeader(key, this.options.headers[key]);
+      }
+
       xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this), false);
+      xhr.addEventListener("error", this._onXHRFailure.bind(this), false);
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) this._onXHRSuccess(xhr.responseText);
+      }.bind(this);
+
       this.xhrs.push(xhr);
       return xhr;
     },
 
     _performUpload: function (formData) {
-      $.ajax({
-        xhr: this._buildXhrObject.bind(this),
-        url: this.options.script,
-        type: "POST",
-        data: formData,
-        headers: this.options.headers,
-        processData: false,
-        contentType: false
-      })
-      .done(this._onXHRSuccess.bind(this))
-      .fail(this._onXHRFailure.bind(this));
+      var xhr = this._buildXhrObject();
+      xhr.send(formData);
     },
 
     _onXHRProgress: function (e) {
