@@ -65,6 +65,7 @@
         this._triggerEvent("lu:errors", errors);
       } else {
         this._triggerEvent("lu:start", files);
+        this.xhrs = [];
         this._startUploadWithFiles(files);
       }
     },

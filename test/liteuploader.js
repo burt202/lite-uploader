@@ -32,7 +32,7 @@ describe("Lite Uploader", function () {
     sandbox.restore();
   });
 
-  describe("basic instantiation", function () {
+  describe("uploader creation", function () {
     it("should be able to be instantiated", function () {
       sandbox.stub(LiteUploader.prototype, "_applyDefaults").returns({tester: "abc"});
       var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
@@ -66,7 +66,7 @@ describe("Lite Uploader", function () {
     });
   });
 
-  describe("validation", function () {
+  describe("instantiation", function () {
     it("should not proceed with upload if there are no files", function () {
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
       sandbox.stub(LiteUploader.prototype, "_validateOptions");
@@ -101,7 +101,7 @@ describe("Lite Uploader", function () {
       expect(liteUploader._startUploadWithFiles).not.to.have.been.called;
     });
 
-    it("should emit event containing errors", function () {
+    it("should trigger 'errors' event with errors when there are errors", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns("foo");
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, mockOnEvent);
@@ -135,7 +135,7 @@ describe("Lite Uploader", function () {
       expect(liteUploader._startUploadWithFiles).to.have.been.calledWith("foo");
     });
 
-    it("should emit event if no errors are found", function () {
+    it("should trigger 'start' event if no errors are found", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
       sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
@@ -147,6 +147,19 @@ describe("Lite Uploader", function () {
 
       expect(mockOnEvent.callCount).to.eql(1);
       expect(mockOnEvent).to.have.been.calledWith("lu:start", mockFileList);
+    });
+
+    it("should clear any previous references to built xhr objects", function () {
+      sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
+      sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
+      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
+      var mockOnEvent = sandbox.stub();
+      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, mockOnEvent);
+
+      liteUploader.xhrs = ["foo"];
+      liteUploader._init();
+
+      expect(liteUploader.xhrs.length).to.eql(0);
     });
   });
 
@@ -176,7 +189,7 @@ describe("Lite Uploader", function () {
   });
 
   describe("before each request", function () {
-    it("should emit event", function () {
+    it("should trigger 'before' event with files", function () {
       sandbox.stub(LiteUploader.prototype, "_performUpload");
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
       var beforeRequest = sandbox.stub().returns(Promise.resolve("resolved"));
@@ -238,44 +251,6 @@ describe("Lite Uploader", function () {
       var liteUploader = new LiteUploader({script: "script", ref: "ref"}, noop, noop);
 
       var result = liteUploader._validateOptions();
-
-      expect(result).to.eql(null);
-    });
-  });
-
-  describe("file errors", function () {
-    it("should return errors if any are found", function () {
-      var allowedFileTypeValidatorStub = sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator")
-      allowedFileTypeValidatorStub.onCall(0).returns("foo");
-      allowedFileTypeValidatorStub.onCall(1).returns(undefined);
-      var maxSizeValidatorStub = sandbox.stub(LiteUploader.prototype, "_maxSizeValidator")
-      maxSizeValidatorStub.onCall(0).returns("bar");
-      maxSizeValidatorStub.onCall(1).returns("bar");
-      var liteUploader = new LiteUploader({
-        script: "script",
-        rules: {
-          allowedFileTypes: "a,b,c",
-          maxSize: 20
-        }}, noop, noop);
-
-      var result = liteUploader._validateFiles(mockGetFiles());
-
-      expect(result).to.eql([
-        {name: "file1", errors: ["foo", "bar"]},
-        {name: "file2", errors: ["bar"]}
-      ]);
-    });
-
-    it("should return null if no errors are found", function () {
-      sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator").returns(undefined);
-      sandbox.stub(LiteUploader.prototype, "_maxSizeValidator").returns(undefined);
-      var liteUploader = new LiteUploader({
-        script: "script",
-        rules: {
-          allowedFileTypes: "a,b,c"
-        }}, noop, noop);
-
-      var result = liteUploader._validateFiles(mockGetFiles());
 
       expect(result).to.eql(null);
     });
@@ -345,6 +320,44 @@ describe("Lite Uploader", function () {
     });
   });
 
+  describe("file errors", function () {
+    it("should return errors if any are found", function () {
+      var allowedFileTypeValidatorStub = sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator")
+      allowedFileTypeValidatorStub.onCall(0).returns("foo");
+      allowedFileTypeValidatorStub.onCall(1).returns(undefined);
+      var maxSizeValidatorStub = sandbox.stub(LiteUploader.prototype, "_maxSizeValidator")
+      maxSizeValidatorStub.onCall(0).returns("bar");
+      maxSizeValidatorStub.onCall(1).returns("bar");
+      var liteUploader = new LiteUploader({
+        script: "script",
+        rules: {
+          allowedFileTypes: "a,b,c",
+          maxSize: 20
+        }}, noop, noop);
+
+      var result = liteUploader._validateFiles(mockGetFiles());
+
+      expect(result).to.eql([
+        {name: "file1", errors: ["foo", "bar"]},
+        {name: "file2", errors: ["bar"]}
+      ]);
+    });
+
+    it("should return null if no errors are found", function () {
+      sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator").returns(undefined);
+      sandbox.stub(LiteUploader.prototype, "_maxSizeValidator").returns(undefined);
+      var liteUploader = new LiteUploader({
+        script: "script",
+        rules: {
+          allowedFileTypes: "a,b,c"
+        }}, noop, noop);
+
+      var result = liteUploader._validateFiles(mockGetFiles());
+
+      expect(result).to.eql(null);
+    });
+  });
+
   describe("form data", function () {
     beforeEach(function () {
       var formDataObject = {
@@ -360,14 +373,6 @@ describe("Lite Uploader", function () {
       };
 
       sandbox.stub(LiteUploader.prototype, "_getFormDataObject").returns(formDataObject);
-    });
-
-    it("should add extra params onto params hash defined on instantiation", function () {
-      var liteUploader = new LiteUploader({params: {foo: "123"}}, noop, noop);
-
-      liteUploader.addParam("bar", "456");
-
-      expect(liteUploader.options.params).to.eql({foo: "123", bar: "456"});
     });
 
     it("should add any params to form data", function () {
@@ -440,7 +445,27 @@ describe("Lite Uploader", function () {
       expect(mockXmlHttpRequestObject.addEventListener.getCall(0).args[2]).to.eql(false);
     });
 
-    it("should add xhr instance to xhr array an", function () {
+    it("should call success function with response when xhr object indicates success", function () {
+      sandbox.stub(LiteUploader.prototype, "_onXHRSuccess");
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
+
+      liteUploader._buildXhrObject();
+      expect(liteUploader._onXHRSuccess.callCount).to.eql(0);
+
+      liteUploader.xhrs[0].readyState = 3;
+      liteUploader.xhrs[0].status = 199;
+      liteUploader.xhrs[0].onreadystatechange()
+      expect(liteUploader._onXHRSuccess.callCount).to.eql(0);
+
+      liteUploader.xhrs[0].readyState = 4;
+      liteUploader.xhrs[0].status = 200;
+      liteUploader.xhrs[0].responseText = "responseText";
+      liteUploader.xhrs[0].onreadystatechange()
+      expect(liteUploader._onXHRSuccess.callCount).to.eql(1);
+      expect(liteUploader._onXHRSuccess).to.have.been.calledWith("responseText");
+    });
+
+    it("should keep a reference to the built object for later use", function () {
       var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
 
       expect(liteUploader.xhrs.length).to.eql(0);
@@ -459,7 +484,7 @@ describe("Lite Uploader", function () {
   });
 
   describe("perform upload", function () {
-    it("should send form data using build xhr object", function () {
+    it("should send form data using built xhr object", function () {
       var mockXhrObject = {
         send: sandbox.spy()
       };
@@ -473,16 +498,7 @@ describe("Lite Uploader", function () {
   });
 
   describe("progress event", function () {
-    it("should not trigger progress event if lengthComputable is false", function () {
-      var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
-
-      liteUploader._onXHRProgress({lengthComputable: false});
-
-      expect(mockOnEvent).not.to.have.been.called;
-    });
-
-    it("should trigger progress event if lengthComputable is true", function () {
+    it("should trigger 'progress' event when possible", function () {
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
 
@@ -498,7 +514,7 @@ describe("Lite Uploader", function () {
   })
 
   describe("success event", function () {
-    it("should trigger success event with response", function () {
+    it("should trigger 'success' event with response", function () {
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
 
@@ -510,7 +526,7 @@ describe("Lite Uploader", function () {
   });
 
   describe("failure event", function () {
-    it("should trigger fail event with response", function () {
+    it("should trigger 'fail' event with response", function () {
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
 
@@ -522,7 +538,7 @@ describe("Lite Uploader", function () {
   });
 
   describe("start upload", function () {
-    it("should call _init", function () {
+    it("should initiate the upload", function () {
       sandbox.stub(LiteUploader.prototype, "_init");
       var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
 
@@ -532,8 +548,18 @@ describe("Lite Uploader", function () {
     });
   });
 
+  describe("add params", function () {
+    it("should add extra params onto params hash defined on instantiation", function () {
+      var liteUploader = new LiteUploader({params: {foo: "123"}}, noop, noop);
+
+      liteUploader.addParam("bar", "456");
+
+      expect(liteUploader.options.params).to.eql({foo: "123", bar: "456"});
+    });
+  });
+
   describe("cancel upload", function () {
-    it("should abort the xhr object", function () {
+    it("should abort the upload", function () {
       var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
       liteUploader.xhrs = [{
         abort: sandbox.spy()
@@ -544,7 +570,7 @@ describe("Lite Uploader", function () {
       expect(liteUploader.xhrs[0].abort).to.have.been.called;
     });
 
-    it("should emit event", function () {
+    it("should trigger 'cancelled' event", function () {
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
 
@@ -556,24 +582,28 @@ describe("Lite Uploader", function () {
   });
 
   describe("global object methods", function () {
-    it("_getXmlHttpRequestObject should return an object", function () {
-      var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
+    describe("_getXmlHttpRequestObject", function () {
+      it("should return an object", function () {
+        var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
 
-      global.XMLHttpRequest = function () {};
-      var res = liteUploader._getXmlHttpRequestObject();
+        global.XMLHttpRequest = function () {};
+        var res = liteUploader._getXmlHttpRequestObject();
 
-      expect(res).to.be.an("object");
-      global.XMLHttpRequest = undefined;
+        expect(res).to.be.an("object");
+        global.XMLHttpRequest = undefined;
+      });
     });
 
-    it("_getFormDataObject should return an object", function () {
-      var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
+    describe("_getFormDataObject", function () {
+      it("should return an object", function () {
+        var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
 
-      global.FormData = function () {};
-      var res = liteUploader._getFormDataObject();
+        global.FormData = function () {};
+        var res = liteUploader._getFormDataObject();
 
-      expect(res).to.be.an("object");
-      global.FormData = undefined;
+        expect(res).to.be.an("object");
+        global.FormData = undefined;
+      });
     });
   });
 });
