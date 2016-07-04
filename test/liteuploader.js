@@ -32,7 +32,7 @@ describe("Lite Uploader", function () {
     sandbox.restore();
   });
 
-  describe("uploader creation", function () {
+  describe("uploader object and options defaults", function () {
     it("should be able to be instantiated", function () {
       sandbox.stub(LiteUploader.prototype, "_applyDefaults").returns({tester: "abc"});
       var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
@@ -68,37 +68,33 @@ describe("Lite Uploader", function () {
 
   describe("instantiation", function () {
     it("should not proceed with upload if there are no files", function () {
-      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      sandbox.stub(LiteUploader.prototype, "_validateOptions");
-      sandbox.stub(LiteUploader.prototype, "_validateFiles");
+      sandbox.stub(LiteUploader.prototype, "_startUpload");
       var liteUploader = new LiteUploader({script: "script"}, function () { return undefined; }, noop);
 
       liteUploader._init();
 
-      expect(liteUploader._startUploadWithFiles).not.to.have.been.called;
-      expect(liteUploader._validateOptions).not.to.have.been.called;
-      expect(liteUploader._validateFiles).not.to.have.been.called;
+      expect(liteUploader._startUpload).not.to.have.been.called;
     });
 
     it("should not proceed with upload if there are options errors", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns("foo");
-      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
+      sandbox.stub(LiteUploader.prototype, "_startUpload");
       var liteUploader = new LiteUploader({script: "script"}, mockEmptyGetFiles, noop);
 
       liteUploader._init();
 
-      expect(liteUploader._startUploadWithFiles).not.to.have.been.called;
+      expect(liteUploader._startUpload).not.to.have.been.called;
     });
 
     it("should not proceed with upload if there are file errors", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns("bar");
-      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
+      sandbox.stub(LiteUploader.prototype, "_startUpload");
       var liteUploader = new LiteUploader({script: "script"}, mockEmptyGetFiles, noop);
 
       liteUploader._init();
 
-      expect(liteUploader._startUploadWithFiles).not.to.have.been.called;
+      expect(liteUploader._startUpload).not.to.have.been.called;
     });
 
     it("should trigger 'errors' event with errors when there are errors", function () {
@@ -112,33 +108,10 @@ describe("Lite Uploader", function () {
       expect(mockOnEvent).to.have.been.calledWith("lu:errors", "foo");
     });
 
-    it("should proceed with upload if no errors are found", function () {
-      sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
-      sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
-      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var mockFileList = mockGetFiles();
-      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, noop);
-
-      liteUploader._init();
-
-      expect(liteUploader._startUploadWithFiles).to.have.been.calledWith(mockFileList);
-    });
-
-    it("should proceed with upload with injected files if no errors are found", function () {
-      sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
-      sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
-      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
-      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, noop);
-
-      liteUploader._init("foo");
-
-      expect(liteUploader._startUploadWithFiles).to.have.been.calledWith("foo");
-    });
-
     it("should trigger 'start' event if no errors are found", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
-      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
+      sandbox.stub(LiteUploader.prototype, "_startUpload");
       var mockFileList = mockGetFiles();
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, mockOnEvent);
@@ -149,10 +122,10 @@ describe("Lite Uploader", function () {
       expect(mockOnEvent).to.have.been.calledWith("lu:start", mockFileList);
     });
 
-    it("should clear any previous references to built xhr objects", function () {
+    it("should clear any previous references to built xhr objects before starting another upload", function () {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
-      sandbox.stub(LiteUploader.prototype, "_startUploadWithFiles");
+      sandbox.stub(LiteUploader.prototype, "_startUpload");
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, mockOnEvent);
 
@@ -161,72 +134,90 @@ describe("Lite Uploader", function () {
 
       expect(liteUploader.xhrs.length).to.eql(0);
     });
+
+    it("should proceed with upload if no errors are found", function () {
+      sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
+      sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
+      sandbox.stub(LiteUploader.prototype, "_startUpload");
+      var mockFileList = mockGetFiles();
+      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, noop);
+
+      liteUploader._init();
+
+      expect(liteUploader._startUpload).to.have.been.calledWith(mockFileList);
+    });
+
+    it("should proceed with upload with injected files if no errors are found", function () {
+      sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null);
+      sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null);
+      sandbox.stub(LiteUploader.prototype, "_startUpload");
+      var liteUploader = new LiteUploader({script: "script"}, mockGetFiles, noop);
+
+      liteUploader._init("foo");
+
+      expect(liteUploader._startUpload).to.have.been.calledWith("foo");
+    });
   });
 
-  describe("upload start", function () {
+  describe("split files", function () {
     it("should upload all files in one request by default", function () {
-      sandbox.stub(LiteUploader.prototype, "_beforeUpload");
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
       var mockFileList = mockGetFiles();
 
-      liteUploader._startUploadWithFiles(mockFileList);
+      var result = liteUploader._splitFiles(mockFileList);
 
-      expect(liteUploader._beforeUpload).to.have.been.calledOnce;
-      expect(liteUploader._beforeUpload).to.have.been.calledWith(mockFileList);
+      expect(result.length).to.eql(1);
+      expect(result[0]).to.eql(mockFileList);
     });
 
-    it("should upload all files as separate requests if singleFileUploads option is true", function () {
-      sandbox.stub(LiteUploader.prototype, "_beforeUpload");
+    it("should split all files into separate requests if singleFileUploads option is true", function () {
       var liteUploader = new LiteUploader({script: "script", singleFileUploads: true}, noop, noop);
       var mockFileList = mockGetFiles();
 
-      liteUploader._startUploadWithFiles(mockFileList);
+      var result = liteUploader._splitFiles(mockFileList);
 
-      expect(liteUploader._beforeUpload).to.have.been.calledTwice;
-      expect(liteUploader._beforeUpload.getCall(0).args[0]).to.eql([mockFileList["0"]]);
-      expect(liteUploader._beforeUpload.getCall(1).args[0]).to.eql([mockFileList["1"]]);
+      expect(result.length).to.eql(2);
+      expect(result[0]).to.eql([mockFileList["0"]]);
+      expect(result[1]).to.eql([mockFileList["1"]]);
     });
   });
 
-  describe("before each request", function () {
+  describe("before request", function () {
     it("should trigger 'before' event with files", function () {
-      sandbox.stub(LiteUploader.prototype, "_performUpload");
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
-      var beforeRequest = sandbox.stub().returns(Promise.resolve("resolved"));
+      var beforeRequest = sandbox.stub().returns("resolved");
       var mockOnEvent = sandbox.stub();
       var mockFileList = mockGetFiles();
       var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, mockOnEvent);
 
-      liteUploader._beforeUpload(mockFileList);
+      liteUploader._beforeRequest(mockFileList);
 
       expect(mockOnEvent.callCount).to.eql(1);
       expect(mockOnEvent).to.have.been.calledWith("lu:before", mockFileList);
     });
 
-    it("should proceed with upload if beforeRequest was resolved", function () {
-      sandbox.stub(LiteUploader.prototype, "_performUpload");
+    it("should collate form data and pass it to beforeRequest function with files", function () {
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
-      var beforeRequest = sandbox.stub().returns(Promise.resolve("resolved"));
-      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
+      var beforeRequest = sandbox.stub().returns("resolved");
+      var mockOnEvent = sandbox.stub();
       var mockFileList = mockGetFiles();
+      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, mockOnEvent);
 
-      return liteUploader._beforeUpload(mockFileList)
-        .then(function () {
-           expect(beforeRequest).to.have.been.calledWith(mockFileList, "collated");
-           expect(liteUploader._performUpload).to.have.been.calledWith("resolved");
-        })
+      liteUploader._beforeRequest(mockFileList);
+
+      expect(beforeRequest).to.have.been.calledWith(mockFileList, "collated");
     });
 
-    it("should not proceed with upload if beforeRequest was rejected", function () {
-      sandbox.stub(LiteUploader.prototype, "_performUpload");
+    it("should return beforeRequest response", function () {
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated");
-      var beforeRequest = sandbox.stub().returns(Promise.reject());
-      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
+      var beforeRequest = sandbox.stub().returns("resolved");
+      var mockOnEvent = sandbox.stub();
+      var mockFileList = mockGetFiles();
+      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, mockOnEvent);
 
-      return liteUploader._beforeUpload()
-        .catch(function () {
-          expect(liteUploader._performUpload).not.to.have.been.called;
-        })
+      var result = liteUploader._beforeRequest(mockFileList);
+
+      expect(result).to.eql("resolved");
     });
   });
 
@@ -480,20 +471,6 @@ describe("Lite Uploader", function () {
       var result = liteUploader._buildXhrObject();
 
       expect(result).to.eql(mockXmlHttpRequestObject);
-    });
-  });
-
-  describe("perform upload", function () {
-    it("should send form data using built xhr object", function () {
-      var mockXhrObject = {
-        send: sandbox.spy()
-      };
-      sandbox.stub(LiteUploader.prototype, "_buildXhrObject").returns(mockXhrObject);
-      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
-
-      liteUploader._performUpload("form-data");
-
-      expect(mockXhrObject.send).to.have.been.calledWith("form-data");
     });
   });
 

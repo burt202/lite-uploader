@@ -66,24 +66,39 @@
       } else {
         this._triggerEvent("lu:start", files);
         this.xhrs = [];
-        this._startUploadWithFiles(files);
+        this._startUpload(files);
       }
     },
 
-    _startUploadWithFiles: function (files) {
+    _startUpload: function (files) {
+      this._splitFiles(files).forEach(function (files) {
+        var xhr = this._buildXhrObject();
+
+        this._beforeRequest(files)
+        .then(function (formData) {
+          xhr.send(formData);
+        });
+      }.bind(this));
+    },
+
+    _splitFiles: function (files) {
+      var uploads = [];
+
       if (this.options.singleFileUploads) {
         for (var i = 0; i < files.length; i++) {
-          this._beforeUpload([files[i]]);
+          uploads.push([files[i]]);
         }
       } else {
-        this._beforeUpload(files);
+        uploads.push(files);
       }
+
+      return uploads;
     },
 
-    _beforeUpload: function (files) {
+    _beforeRequest: function (files) {
       this._triggerEvent("lu:before", files);
-      return this.options.beforeRequest(files, this._collateFormData(files))
-        .then(this._performUpload.bind(this));
+      var formData = this._collateFormData(files);
+      return this.options.beforeRequest(files, formData);
     },
 
     _validateOptions: function () {
@@ -207,11 +222,6 @@
       return xhr;
     },
 
-    _performUpload: function (formData) {
-      var xhr = this._buildXhrObject();
-      xhr.send(formData);
-    },
-
     _onXHRProgress: function (e) {
       if (e.lengthComputable) this._triggerEvent("lu:progress", Math.floor((e.loaded / e.total) * 100));
     },
@@ -235,10 +245,11 @@
     },
 
     cancelUpload: function () {
+      this._triggerEvent("lu:cancelled");
+
       this.xhrs.forEach(function (xhr) {
         xhr.abort();
       });
-      this._triggerEvent("lu:cancelled");
     }
   };
 
