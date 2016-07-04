@@ -3,6 +3,7 @@
 (function (factory) {
   var noop = {fn: {}};
 
+  /* istanbul ignore else */
   if (typeof module === "object" && typeof module.exports === "object") {
     module.exports = factory(noop);
   } else {
@@ -10,6 +11,7 @@
   }
 }(function ($) {
 
+  /* istanbul ignore next */
   $.fn.liteUploader = function (options) {
     return this.each(function () {
       options.ref = options.ref || $(this).attr("name");
@@ -71,12 +73,12 @@
     },
 
     _startUpload: function (files) {
-      this._splitFiles(files).forEach(function (files) {
+      return this._splitFiles(files).map(function (files) {
         var xhr = this._buildXhrObject();
 
-        this._beforeRequest(files)
+        return this._beforeRequest(files)
         .then(function (formData) {
-          xhr.send(formData);
+          return xhr.send(formData);
         });
       }.bind(this));
     },

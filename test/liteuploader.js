@@ -159,26 +159,50 @@ describe("Lite Uploader", function () {
     });
   });
 
-  describe("split files", function () {
+  describe("start upload", function () {
     it("should upload all files in one request by default", function () {
+      var mockXhrObject = {
+        send: sandbox.spy()
+      };
+      sandbox.stub(LiteUploader.prototype, "_buildXhrObject").returns(mockXhrObject);
+      sandbox.stub(LiteUploader.prototype, "_beforeRequest").returns(Promise.resolve("foo"));
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
       var mockFileList = mockGetFiles();
 
-      var result = liteUploader._splitFiles(mockFileList);
-
-      expect(result.length).to.eql(1);
-      expect(result[0]).to.eql(mockFileList);
+      return Promise.all(liteUploader._startUpload(mockFileList))
+      .then(function () {
+        expect(mockXhrObject.send).to.have.been.calledOnce;
+      });
     });
 
     it("should split all files into separate requests if singleFileUploads option is true", function () {
+      var mockXhrObject = {
+        send: sandbox.spy()
+      };
+      sandbox.stub(LiteUploader.prototype, "_buildXhrObject").returns(mockXhrObject);
+      sandbox.stub(LiteUploader.prototype, "_beforeRequest").returns(Promise.resolve("foo"));
       var liteUploader = new LiteUploader({script: "script", singleFileUploads: true}, noop, noop);
       var mockFileList = mockGetFiles();
 
-      var result = liteUploader._splitFiles(mockFileList);
+      return Promise.all(liteUploader._startUpload(mockFileList))
+      .then(function () {
+        expect(mockXhrObject.send).to.have.been.calledTwice;
+      });
+    });
 
-      expect(result.length).to.eql(2);
-      expect(result[0]).to.eql([mockFileList["0"]]);
-      expect(result[1]).to.eql([mockFileList["1"]]);
+    it("should send formData with xhr request", function () {
+      var mockXhrObject = {
+        send: sandbox.spy()
+      };
+      sandbox.stub(LiteUploader.prototype, "_buildXhrObject").returns(mockXhrObject);
+      sandbox.stub(LiteUploader.prototype, "_beforeRequest").returns(Promise.resolve("foo"));
+      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
+      var mockFileList = mockGetFiles();
+
+      return Promise.all(liteUploader._startUpload(mockFileList))
+      .then(function () {
+        expect(mockXhrObject.send).to.have.been.calledWith("foo");
+      });
     });
   });
 
