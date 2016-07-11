@@ -10,7 +10,7 @@ The most basic usage of the plugin
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8081/test.php"
+        script: "http://localhost:8000/test.php"
       })
       .on("lu:success", function (e, response) {
         console.log(response);
@@ -30,7 +30,7 @@ Send extra params to your server script on and after instantiation
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8081/test.php",
+        script: "http://localhost:8000/test.php",
         params: {
           foo: "bar",
           abc: 123
@@ -55,7 +55,7 @@ Add custom headers to your request by using the headers option
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8081/test.php",
+        script: "http://localhost:8000/test.php",
         headers: {
           "xxx": "foobar"
         }
@@ -78,7 +78,7 @@ There is a build-in method to allow cancellation of the upload
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8081/test.php"
+        script: "http://localhost:8000/test.php"
       })
       .on("lu:success", function (e, response) {
         alert("uploaded");
@@ -104,7 +104,7 @@ Use the progress event to get the completion percentage whilst uploading
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8081/test.php"
+        script: "http://localhost:8000/test.php"
       })
       .on("lu:success", function (e, response) {
         alert("uploaded");
@@ -126,7 +126,7 @@ Basic validation is built-in for file types and size
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8081/test.php",
+        script: "http://localhost:8000/test.php",
         rules: {
           allowedFileTypes: "image/jpeg,image/png,image/gif",
           maxSize: 250000
@@ -153,6 +153,45 @@ Basic validation is built-in for file types and size
       });
     </script>
 
+### Custom Validators
+
+Use the validators option to add custom rules for your files. Each custom validator gets a file passed in and should return a error message if the rule doesnt pass, or null/undefined if no issue is found. Custom validators can return promises.
+
+    <script>
+
+      var enforceMaximumWidth = function (file) {
+        return new Promise(function (resolve) {
+          var reader = new FileReader();
+
+          reader.onload = function (evt) {
+            var image = new Image();
+
+            image.onload = function () {
+              var error = (this.width > 100) ? "Error: rule: 100, given: " + this.width : null;
+              resolve(error);
+            };
+
+            image.src = evt.target.result;
+          };
+
+          reader.readAsDataURL(file);
+        });
+      }
+
+      $(".fileUpload").liteUploader({
+        script: "http://localhost:8000/test.php",
+        validators: [enforceMaximumWidth]
+      })
+      .on("lu:errors", function (e, errors) {
+        console.log(errors);
+      });
+
+      $(".fileUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+      });
+
+    </script>
+
 ### Before Upload Request
 
 You can dynamically change/update the form data packet before each upload using the beforeRequest option. This function must return a promise, where the resolved value is the ammended form data. Reject the promise to cancel the upload.
@@ -161,7 +200,7 @@ You can dynamically change/update the form data packet before each upload using 
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8081/test.php",
+        script: "http://localhost:8000/test.php",
         params: {
           foo: "bar"
         },
@@ -227,7 +266,7 @@ You can split multiple files into separate requests if required using the single
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8081/test.php",
+        script: "http://localhost:8000/test.php",
         singleFileUploads: true
       });
 
@@ -265,7 +304,7 @@ Use startUpload method by passing in a FileList. Works well for drag/drop file u
     <script>
 
       $(".dropZone").liteUploader({
-        script: "http://localhost:8081/test.php",
+        script: "http://localhost:8000/test.php",
         ref: "fileUpload"
       })
       .on("lu:success", function () {
