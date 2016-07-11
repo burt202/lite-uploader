@@ -5,6 +5,7 @@ This is a lightweight library for NodeJS and jQuery, aiming to make uploading fi
 ### Features
 
 - file type and size validation
+- support for custom validators
 - hooks for all major events like progress, success, fail etc
 - drag/drop support
 - ability dynamically update the form data packet before each upload
@@ -67,6 +68,12 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
     <td>object of headers to be sent to the server</td>
   </tr>
   <tr>
+    <td>validators</td>
+    <td>Array</td>
+    <td>[]</td>
+    <td>an array of functions that can take a File and return a validation result on it, see examples for usage</td>
+  </tr>
+  <tr>
     <td>singleFileUploads</td>
     <td>Boolean</td>
     <td>false</td>
@@ -95,12 +102,12 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
   <tr>
     <td>lu:start</td>
     <td>event, files</td>
-    <td>triggered before any uploading starts, after the clickElement click event or the change handler - fires once per file selection</td>
+    <td>triggered before any uploading starts</td>
   </tr>
   <tr>
     <td>lu:before</td>
     <td>event, files</td>
-    <td>triggered before the uploading starts</td>
+    <td>triggered before any request to the server</td>
   </tr>
   <tr>
     <td>lu:progress</td>
@@ -197,12 +204,12 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 
 ### Browser Support
 
-* Chrome 32+
-* Firefox 29+
+* Chrome 45+
+* Firefox 34+
 * Edge 12+
-* Internet Explorer 11 (up to v3.3.0)
-* Safari 7.1+
-* Opera 19+
+* Internet Explorer NO
+* Safari 9+
+* Opera 32+
 
 ### Tests & Coverage
 
@@ -212,6 +219,12 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 * `gulp`
 
 ### Changelog
+
+4.0.0 (11 July 2016)
+
+* remove jquery dependency
+* add custom validators
+* remove support for older browsers by using Promises and Object.assign
 
 3.3.3 (15 May 2016)
 
