@@ -1,5 +1,3 @@
-/* liteUploader v3.3.3 | https://github.com/burt202/lite-uploader | Aaron Burtnyk (http://www.burtdev.net) */
-
 (function (factory) {
   var noop = {fn: {}};
 
