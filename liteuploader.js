@@ -51,6 +51,7 @@
         rules: {},
         params: {},
         headers: {},
+        validators: [],
         singleFileUploads: false,
         beforeRequest: function (files, formData) { return Promise.resolve(formData); }
       }, options);
@@ -167,7 +168,7 @@
       .then(function (fileErrors) {
         var allErrors = fileErrors.filter(function (file) {
           return file.errors.length;
-        })
+        });
 
         return (allErrors.length) ? allErrors : null;
       });
@@ -179,21 +180,23 @@
         "maxSize": this._maxSizeValidator
       };
 
-      var promises = Object.keys(this.options.rules).reduce(function (acc, key) {
+      var builtIn = Object.keys(this.options.rules).reduce(function (acc, key) {
         var rule = this.options.rules[key];
-
-        if (rule && validatorMap[key]) {
-          var errors = validatorMap[key](rule, file);
-          if (errors) acc.push(errors);
-        }
+        if (rule && validatorMap[key]) acc.push(validatorMap[key](rule, file));
         return acc;
       }.bind(this), []);
 
-      return Promise.all(promises)
+      var custom = this.options.validators.map(function (fn) {
+        return fn(file);
+      });
+
+      return Promise.all(builtIn.concat(custom))
       .then(function (fileErrors) {
         return {
           name: file.name,
-          errors: fileErrors
+          errors: fileErrors.filter(function (error) {
+            return !!error;
+          })
         }
       });
     },

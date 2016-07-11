@@ -53,6 +53,7 @@ describe("Lite Uploader", function () {
       expect(liteUploader.options.headers).to.eql({});
       expect(liteUploader.options.params).to.eql({});
       expect(liteUploader.options.rules).to.eql({});
+      expect(liteUploader.options.validators).to.eql([]);
       expect(liteUploader.options.singleFileUploads).to.eql(false);
     });
 
@@ -385,6 +386,25 @@ describe("Lite Uploader", function () {
         expect(result).to.eql(null);
       });
     });
+
+    it("should return errors from a custom validator if one is supplied", function () {
+      sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator").returns(undefined);
+      sandbox.stub(LiteUploader.prototype, "_maxSizeValidator").returns(undefined);
+      var customValidator = sandbox.stub();
+      customValidator.onCall(0).returns(Promise.resolve(null));
+      customValidator.onCall(1).returns(Promise.resolve("error"));
+
+      var liteUploader = new LiteUploader({
+        validators: [customValidator]
+      }, noop, noop);
+
+      return liteUploader._validateFiles(mockGetFiles())
+      .then(function (result) {
+        expect(result).to.eql([
+          {name: "file2", errors: ["error"] }
+        ]);
+      });
+    })
   });
 
   describe("form data", function () {
