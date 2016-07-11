@@ -157,6 +157,8 @@ Basic validation is built-in for file types and size
 
 Use the validators option to add custom rules for your files. Each custom validator gets a file passed in and should return a error message if the rule doesnt pass, or null/undefined if no issue is found. Custom validators can return promises.
 
+    <input type="file" name="fileUpload" class="fileUpload" />
+
     <script>
 
       var enforceMaximumWidth = function (file) {
