@@ -185,6 +185,40 @@ You can dynamically change/update the form data packet before each upload using 
       });
     </script>
 
+### Image Preview
+
+Use the before event to get a hold of the files to be uploaded, and display them on screen as a preview
+
+    <input type="file" name="fileUpload[]" class="fileUpload" multiple />
+    <div class="preview"></div>
+
+    <script>
+
+      $(".fileUpload").liteUploader({
+        script: "http://localhost:8000/test.php"
+      })
+      .on("lu:before", function (e, files) {
+        var el = document.querySelector(".preview");
+
+        Array.prototype.forEach.call(files, function (file) {
+          var reader = new FileReader();
+
+          reader.onload = function (e) {
+            var image = document.createElement("img");
+            image.src = e.target.result;
+            el.appendChild(image);
+          };
+
+          reader.readAsDataURL(file);
+        });
+      });
+
+      $(".fileUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+      });
+
+    </script>
+
 ### Multiple Files With Multiple Requests
 
 You can split multiple files into separate requests if required using the singleFileUploads option
