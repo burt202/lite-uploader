@@ -97,7 +97,7 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
   <tr>
     <td>lu:errors</td>
     <td>event, errors</td>
-    <td>triggered after input and file validation - see 'File Error Types' section for more</td>
+    <td>triggered when errors are found, including built-in and custom validators - see 'Error Types' section for more</td>
   </tr>
   <tr>
     <td>lu:start</td>
@@ -133,7 +133,7 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
 
 ### Error Types
 
-Below is an overview of the error types that can be returned when validating files
+Below is an overview of the built-in error types that can be returned when validating files
 
 * type - when file mime type does not match any mime types supplied in the rule.allowedFileTypes option
 * size - when file size is above the size (in bytes) supplied in the rule.maxSize option
