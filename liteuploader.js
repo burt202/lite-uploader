@@ -78,17 +78,13 @@
     },
 
     _splitFiles: function (files) {
-      var uploads = [];
-
       if (this.options.singleFileUploads) {
-        for (var i = 0; i < files.length; i++) {
-          uploads.push([files[i]]);
-        }
+        return Array.prototype.map.call(files, function (file) {
+          return [file];
+        });
       } else {
-        uploads.push(files);
+        return [files];
       }
-
-      return uploads;
     },
 
     _beforeRequest: function (files) {
@@ -148,11 +144,9 @@
     },
 
     _validateFiles: function (files) {
-      var promises = []
-
-      for (var i = 0; i < files.length; i++) {
-        promises.push(this._validateFile(files[i]));
-      }
+      var promises = Array.prototype.map.call(files, function (file) {
+        return this._validateFile(file);
+      }.bind(this));
 
       return Promise.all(promises)
       .then(function (fileErrors) {
@@ -202,9 +196,9 @@
         formData.append(key, this.options.params[key]);
       }
 
-      for (var i = 0; i < files.length; i++) {
-        formData.append(this.options.ref, files[i]);
-      }
+      Array.prototype.forEach.call(files, function (file) {
+        formData.append(this.options.ref, file);
+      }.bind(this));
 
       return formData;
     },
