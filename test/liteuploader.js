@@ -1,6 +1,6 @@
 var jsdom = require("jsdom");
-global.document = jsdom.jsdom("<html><body></body></html>");
-global.window = global.document.parentWindow;
+global.window = jsdom.jsdom().defaultView;
+global.FormData = window.FormData;
 
 var sinon = require("sinon");
 var chai = require("chai");
@@ -406,36 +406,21 @@ describe("Lite Uploader", function () {
   });
 
   describe("form data", function () {
-    beforeEach(function () {
-      var formDataObject = {
-        data: [],
-        append: function (key, value) {
-          var obj = {};
-          obj[key] = value;
-          this.data.push(obj);
-        },
-        get: function () {
-          return this.data;
-        }
-      };
-
-      sandbox.stub(LiteUploader.prototype, "_getFormDataObject").returns(formDataObject);
-    });
-
     it("should add any params to form data", function () {
-      var liteUploader = new LiteUploader({params: {tester: 123, another: "abc"}}, noop, noop);
+      var liteUploader = new LiteUploader({params: {foo: "bar", another: "abc"}}, noop, noop);
 
       var result = liteUploader._collateFormData([]);
 
-      expect(result.get()).to.eql([{tester: 123}, {another: "abc"}]);
+      expect(result.get("foo")).to.eql("bar");
+      expect(result.get("another")).to.eql("abc");
     });
 
-    it("should add any files to form data", function () {
+    it("should add any files to form data keyed by ref", function () {
       var liteUploader = new LiteUploader({params: {}, ref: "tester"}, noop, noop);
 
       var result = liteUploader._collateFormData(["tester1", "tester2"]);
 
-      expect(result.get()).to.eql([{"tester": "tester1"}, {"tester": "tester2"}]);
+      expect(result.getAll("tester")).to.eql(["tester1", "tester2"]);
     });
   });
 
@@ -446,9 +431,21 @@ describe("Lite Uploader", function () {
       mockXmlHttpRequestObject = {
         open: sandbox.spy(),
         setRequestHeader: sandbox.spy(),
-        addEventListener: sandbox.spy(),
+        events: {},
+        addEventListener: function (name, fn) {
+          mockXmlHttpRequestObject.events[name] = fn;
+        },
+        dispatchEvent: function (name) {
+          mockXmlHttpRequestObject.events[name].apply(this, Array.prototype.slice.call(arguments, 1));
+        },
         upload: {
-          addEventListener: sandbox.spy()
+          events: {},
+          addEventListener: function (name, fn) {
+            mockXmlHttpRequestObject.upload.events[name] = fn;
+          },
+          dispatchEvent: function (name) {
+            mockXmlHttpRequestObject.upload.events[name].apply(this, Array.prototype.slice.call(arguments, 1));
+          }
         }
       };
 
@@ -477,39 +474,57 @@ describe("Lite Uploader", function () {
       expect(mockXmlHttpRequestObject.setRequestHeader.getCall(1)).to.have.been.calledWith("abc", "def");
     });
 
-    it("should add listeners for progress and error events", function () {
-      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}, headers: {foo: "bar", abc: "def"}}, noop, noop);
+    it("should trigger 'progress' event with percentage on xhr progress", function () {
+      var mockOnEvent = sandbox.stub();
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}, headers: {foo: "bar", abc: "def"}}, noop, mockOnEvent);
 
       liteUploader._buildXhrObject();
 
-      expect(mockXmlHttpRequestObject.upload.addEventListener).to.have.been.calledOnce;
-      expect(mockXmlHttpRequestObject.upload.addEventListener.getCall(0).args[0]).to.eql("progress");
-      expect(mockXmlHttpRequestObject.upload.addEventListener.getCall(0).args[1]).to.be.a("function");
-      expect(mockXmlHttpRequestObject.upload.addEventListener.getCall(0).args[2]).to.eql(false);
-      expect(mockXmlHttpRequestObject.addEventListener).to.have.been.calledOnce;
-      expect(mockXmlHttpRequestObject.addEventListener.getCall(0).args[0]).to.eql("error");
-      expect(mockXmlHttpRequestObject.addEventListener.getCall(0).args[1]).to.be.a("function");
-      expect(mockXmlHttpRequestObject.addEventListener.getCall(0).args[2]).to.eql(false);
+      mockXmlHttpRequestObject.upload.dispatchEvent("progress", {
+        lengthComputable: true,
+        loaded: 2,
+        total: 10
+      });
+
+      expect(mockOnEvent.callCount).to.eql(1);
+      expect(mockOnEvent).to.have.been.calledWith("lu:progress", 20);
     });
 
-    it("should call success function with response when xhr object indicates success", function () {
-      sandbox.stub(LiteUploader.prototype, "_onXHRSuccess");
-      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, noop);
+    it("should trigger 'success' event with response on xhr success", function () {
+      var mockOnEvent = sandbox.stub();
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, mockOnEvent);
 
       liteUploader._buildXhrObject();
-      expect(liteUploader._onXHRSuccess.callCount).to.eql(0);
+      expect(mockOnEvent.callCount).to.eql(0);
 
       liteUploader.xhrs[0].readyState = 3;
-      liteUploader.xhrs[0].status = 199;
       liteUploader.xhrs[0].onreadystatechange()
-      expect(liteUploader._onXHRSuccess.callCount).to.eql(0);
+      expect(mockOnEvent.callCount).to.eql(0);
 
       liteUploader.xhrs[0].readyState = 4;
       liteUploader.xhrs[0].status = 200;
       liteUploader.xhrs[0].responseText = "responseText";
       liteUploader.xhrs[0].onreadystatechange()
-      expect(liteUploader._onXHRSuccess.callCount).to.eql(1);
-      expect(liteUploader._onXHRSuccess).to.have.been.calledWith("responseText");
+      expect(mockOnEvent.callCount).to.eql(1);
+      expect(mockOnEvent).to.have.been.calledWith("lu:success", "responseText");
+    });
+
+    it("should trigger 'fail' event when a non-successful http status code is encountered", function () {
+      var mockOnEvent = sandbox.stub();
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}}, noop, mockOnEvent);
+
+      liteUploader._buildXhrObject();
+      expect(mockOnEvent.callCount).to.eql(0);
+
+      liteUploader.xhrs[0].readyState = 3;
+      liteUploader.xhrs[0].onreadystatechange()
+      expect(mockOnEvent.callCount).to.eql(0);
+
+      liteUploader.xhrs[0].readyState = 4;
+      liteUploader.xhrs[0].status = 400;
+      liteUploader.xhrs[0].onreadystatechange()
+      expect(mockOnEvent.callCount).to.eql(1);
+      expect(mockOnEvent).to.have.been.calledWith("lu:fail", liteUploader.xhrs[0]);
     });
 
     it("should keep a reference to the built object for later use", function () {
@@ -527,46 +542,6 @@ describe("Lite Uploader", function () {
       var result = liteUploader._buildXhrObject();
 
       expect(result).to.eql(mockXmlHttpRequestObject);
-    });
-  });
-
-  describe("progress event", function () {
-    it("should trigger 'progress' event when possible", function () {
-      var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
-
-      liteUploader._onXHRProgress({
-        lengthComputable: true,
-        loaded: 2.1,
-        total: 10.3
-      });
-
-      expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:progress", 20);
-    });
-  })
-
-  describe("success event", function () {
-    it("should trigger 'success' event with response", function () {
-      var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
-
-      liteUploader._onXHRSuccess("response");
-
-      expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:success", "response");
-    });
-  });
-
-  describe("failure event", function () {
-    it("should trigger 'fail' event with response", function () {
-      var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({tester: "abc"}, noop, mockOnEvent);
-
-      liteUploader._onXHRFailure("jqXHR");
-
-      expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:fail", "jqXHR");
     });
   });
 
@@ -611,32 +586,6 @@ describe("Lite Uploader", function () {
 
       expect(mockOnEvent.callCount).to.eql(1);
       expect(mockOnEvent).to.have.been.calledWith("lu:cancelled");
-    });
-  });
-
-  describe("global object methods", function () {
-    describe("_getXmlHttpRequestObject", function () {
-      it("should return an object", function () {
-        var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
-
-        global.XMLHttpRequest = function () {};
-        var res = liteUploader._getXmlHttpRequestObject();
-
-        expect(res).to.be.an("object");
-        global.XMLHttpRequest = undefined;
-      });
-    });
-
-    describe("_getFormDataObject", function () {
-      it("should return an object", function () {
-        var liteUploader = new LiteUploader({tester: "abc"}, noop, noop);
-
-        global.FormData = function () {};
-        var res = liteUploader._getFormDataObject();
-
-        expect(res).to.be.an("object");
-        global.FormData = undefined;
-      });
     });
   });
 });

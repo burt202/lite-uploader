@@ -185,12 +185,8 @@
       });
     },
 
-    _getFormDataObject: function () {
-      return new FormData();
-    },
-
     _collateFormData: function (files) {
-      var formData = this._getFormDataObject();
+      var formData = new FormData();
 
       for (var key in this.options.params) {
         formData.append(key, this.options.params[key]);
@@ -216,10 +212,9 @@
       }
 
       xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this), false);
-      xhr.addEventListener("error", this._onXHRFailure.bind(this), false);
 
       xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) this._onXHRSuccess(xhr.responseText);
+        this._onXHRResponse(xhr);
       }.bind(this);
 
       this.xhrs.push(xhr);
@@ -230,12 +225,14 @@
       if (e.lengthComputable) this._triggerEvent("lu:progress", Math.floor((e.loaded / e.total) * 100));
     },
 
-    _onXHRSuccess: function (response) {
-      this._triggerEvent("lu:success", response);
-    },
+    _onXHRResponse: function (xhr) {
+      if (xhr.readyState !== 4) return;
 
-    _onXHRFailure: function (jqXHR) {
-      this._triggerEvent("lu:fail", jqXHR);
+      if (xhr.status === 200) {
+        this._triggerEvent("lu:success", xhr.responseText);
+      } else {
+        this._triggerEvent("lu:fail", xhr);
+      }
     },
 
     /* Public Methods */
