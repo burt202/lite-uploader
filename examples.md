@@ -10,11 +10,29 @@ The most basic usage of the plugin
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php"
+        script: "http://localhost:8000/test/test.php"
       })
       .on("lu:success", function (e, response) {
         console.log(response);
-        alert("uploaded");
+      });
+
+      $(".fileUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+      });
+    </script>
+
+### Script Errors
+
+Use the fail event to track if your upload script encounters any errors
+
+    <input type="file" name="fileUpload" class="fileUpload" />
+
+    <script>
+      $(".fileUpload").liteUploader({
+        script: "http://localhost:8000/test/error.php"
+      })
+      .on("lu:fail", function (e, xhr) {
+        console.log(xhr.status, JSON.parse(xhr.responseText));
       });
 
       $(".fileUpload").change(function () {
@@ -30,14 +48,14 @@ Send extra params to your server script on and after instantiation
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php",
+        script: "http://localhost:8000/test/test.php",
         params: {
           foo: "bar",
           abc: 123
         }
       })
       .on("lu:success", function (e, response) {
-        alert("uploaded");
+        console.log(response);
       });
 
       $(".fileUpload").data("liteUploader").addParam("another", "here");
@@ -55,13 +73,13 @@ Add custom headers to your request by using the headers option
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php",
+        script: "http://localhost:8000/test/test.php",
         headers: {
           "xxx": "foobar"
         }
       })
       .on("lu:success", function (e, response) {
-        alert("uploaded");
+        console.log(response);
       });
 
       $(".fileUpload").change(function () {
@@ -78,13 +96,13 @@ There is a build-in method to allow cancellation of the upload
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php"
+        script: "http://localhost:8000/test/test.php"
       })
       .on("lu:success", function (e, response) {
-        alert("uploaded");
+        console.log(response);
       })
       .on("lu:cancelled", function () {
-        alert("upload aborted");
+        console.log("upload aborted");
       });
 
       $(".fileUpload").change(function () {
@@ -104,10 +122,10 @@ Use the progress event to get the completion percentage whilst uploading
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php"
+        script: "http://localhost:8000/test/test.php"
       })
       .on("lu:success", function (e, response) {
-        alert("uploaded");
+        console.log(response);
       })
       .on("lu:progress", function (e, percentage) {
         console.log(percentage);
@@ -126,15 +144,16 @@ Basic validation is built-in for file types and size
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php",
+        script: "http://localhost:8000/test/test.php",
         rules: {
           allowedFileTypes: "image/jpeg,image/png,image/gif",
           maxSize: 250000
         }
       })
       .on("lu:errors", function (e, errors) {
+        console.log(errors);
         /*
-          example err1 content:
+          example errors content:
           {
             name: "fileName",
             errors: [
@@ -160,7 +179,6 @@ Use the validators option to add custom rules for your files. Each custom valida
     <input type="file" name="fileUpload" class="fileUpload" />
 
     <script>
-
       var enforceMaximumWidth = function (file) {
         return new Promise(function (resolve) {
           var reader = new FileReader();
@@ -181,7 +199,7 @@ Use the validators option to add custom rules for your files. Each custom valida
       }
 
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php",
+        script: "http://localhost:8000/test/test.php",
         validators: [enforceMaximumWidth]
       })
       .on("lu:errors", function (e, errors) {
@@ -191,7 +209,6 @@ Use the validators option to add custom rules for your files. Each custom valida
       $(".fileUpload").change(function () {
         $(this).data("liteUploader").startUpload();
       });
-
     </script>
 
 ### Before Upload Request
@@ -202,7 +219,7 @@ You can dynamically change/update the form data packet before each upload using 
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php",
+        script: "http://localhost:8000/test/test.php",
         params: {
           foo: "bar"
         },
@@ -234,9 +251,8 @@ Use the before event to get a hold of the files to be uploaded, and display them
     <div class="preview"></div>
 
     <script>
-
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php"
+        script: "http://localhost:8000/test/test.php"
       })
       .on("lu:before", function (e, files) {
         var el = document.querySelector(".preview");
@@ -257,7 +273,6 @@ Use the before event to get a hold of the files to be uploaded, and display them
       $(".fileUpload").change(function () {
         $(this).data("liteUploader").startUpload();
       });
-
     </script>
 
 ### Multiple Files With Multiple Requests
@@ -268,7 +283,7 @@ You can split multiple files into separate requests if required using the single
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test.php",
+        script: "http://localhost:8000/test/test.php",
         singleFileUploads: true
       });
 
@@ -304,13 +319,12 @@ Use startUpload method by passing in a FileList. Works well for drag/drop file u
     <div class="dropZone" style="height: 100px; width: 100px; border: 1px solid #000;"></div>
 
     <script>
-
       $(".dropZone").liteUploader({
-        script: "http://localhost:8000/test.php",
+        script: "http://localhost:8000/test/test.php",
         ref: "fileUpload"
       })
-      .on("lu:success", function () {
-        alert("uploaded");
+      .on("lu:success", function (e, response) {
+        console.log(response);
       })
       .on("drag dragstart dragend dragover dragenter dragleave drop", function (e) {
         e.preventDefault();
@@ -325,5 +339,4 @@ Use startUpload method by passing in a FileList. Works well for drag/drop file u
       .on("drop", function(e) {
         $(this).data("liteUploader").startUpload(e.originalEvent.dataTransfer.files);
       });
-
     </script>

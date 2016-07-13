@@ -2,6 +2,9 @@
   "name": "lite-uploader",
   "description": "Lightweight nodeJS/jQuery File Uploader",
   "version": "3.3.3",
+  "scripts": {
+    "php-server": "php -S localhost:8000"
+  },
   "keywords": [
     "lightweight",
     "html5",
