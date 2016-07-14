@@ -220,7 +220,7 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 
 ### Changelog
 
-4.0.0 (11 July 2016)
+4.0.0 (14 July 2016)
 
 * remove jquery dependency
 * add custom validators
