@@ -215,6 +215,26 @@ describe("Lite Uploader", function () {
         expect(mockXhrObject.send).to.have.been.calledWith("foo");
       });
     });
+
+    it("should not continue with upload if beforeRequest rejects", function () {
+      var mockXhrObject = {
+        send: sandbox.spy()
+      };
+      sandbox.stub(LiteUploader.prototype, "_buildXhrObject").returns(mockXhrObject);
+      var beforeRequest = function () { return Promise.reject(new Error("bar")); }
+      var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
+      var mockFileList = mockGetFiles();
+
+      return Promise.all(liteUploader._startUpload(mockFileList))
+      .then(function () {
+        expect("thisnot").to.eql("topass");
+      })
+      .catch(function (error) {
+        expect(error).to.be.instanceof(Error);
+        expect(error.message).to.eql("bar");
+        expect(mockXhrObject.send).not.to.have.been.called;
+      });
+    });
   });
 
   describe("before request", function () {

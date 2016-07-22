@@ -211,13 +211,6 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 * Safari 9+
 * Opera 32+
 
-### Tests & Coverage
-
-* `cd to project root`
-* `npm i`
-* `npm i -g gulp`
-* `gulp`
-
 ### Changelog
 
 4.0.0 (14 July 2016)
