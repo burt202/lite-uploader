@@ -207,7 +207,7 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 * Chrome 45+
 * Firefox 34+
 * Edge 12+
-* Internet Explorer NO
+* Internet Explorer NO (because [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) and [Object.assign](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) are used)
 * Safari 9+
 * Opera 32+
 
