@@ -111,7 +111,7 @@ See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.
   </tr>
   <tr>
     <td>lu:progress</td>
-    <td>event, percentage</td>
+    <td>event, percentage, files</td>
     <td>triggered whilst uploading files</td>
   </tr>
   <tr>

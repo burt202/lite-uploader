@@ -127,8 +127,8 @@ Use the progress event to get the completion percentage whilst uploading
       .on("lu:success", function (e, response) {
         console.log(response);
       })
-      .on("lu:progress", function (e, percentage) {
-        console.log(percentage);
+      .on("lu:progress", function (e, percentage, files) {
+        console.log(percentage, files);
       });
 
       $(".fileUpload").change(function () {

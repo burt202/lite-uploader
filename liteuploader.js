@@ -18,8 +18,8 @@
         return $(this).get(0).files;
       }.bind(this);
 
-      var onEvent = function (name, data) {
-        $(this).trigger.bind($(this))(name, [data]);
+      var onEvent = function (name) {
+        $(this).trigger.call($(this), name, Array.prototype.slice.call(arguments, 1));
       }.bind(this)
 
       $.data(this, "liteUploader", new LiteUploader(options, getFiles, onEvent));
@@ -67,10 +67,10 @@
     },
 
     _startUpload: function (files) {
-      return this._splitFiles(files).map(function (files) {
-        var xhr = this._buildXhrObject();
+      return this._splitFiles(files).map(function (file) {
+        var xhr = this._buildXhrObject(file);
 
-        return this._beforeRequest(files)
+        return this._beforeRequest(file)
         .then(function (formData) {
           return xhr.send(formData);
         });
@@ -203,7 +203,7 @@
       return new XMLHttpRequest();
     },
 
-    _buildXhrObject: function () {
+    _buildXhrObject: function (file) {
       var xhr = this._getXmlHttpRequestObject();
       xhr.open("POST", this.options.script);
 
@@ -211,7 +211,7 @@
         xhr.setRequestHeader(key, this.options.headers[key]);
       }
 
-      xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this), false);
+      xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this, file), false);
 
       xhr.onreadystatechange = function () {
         this._onXHRResponse(xhr);
@@ -221,8 +221,8 @@
       return xhr;
     },
 
-    _onXHRProgress: function (e) {
-      if (e.lengthComputable) this._triggerEvent("lu:progress", Math.floor((e.loaded / e.total) * 100));
+    _onXHRProgress: function (file, e) {
+      if (e.lengthComputable) this._triggerEvent("lu:progress", Math.floor((e.loaded / e.total) * 100), file);
     },
 
     _onXHRResponse: function (xhr) {
