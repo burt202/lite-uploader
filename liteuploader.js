@@ -67,10 +67,10 @@
     },
 
     _startUpload: function (files) {
-      return this._splitFiles(files).map(function (files) {
-        var xhr = this._buildXhrObject();
+      return this._splitFiles(files).map(function (fileSplit) {
+        var xhr = this._buildXhrObject(fileSplit);
 
-        return this._beforeRequest(files)
+        return this._beforeRequest(fileSplit)
         .then(function (formData) {
           return xhr.send(formData);
         });
@@ -203,7 +203,7 @@
       return new XMLHttpRequest();
     },
 
-    _buildXhrObject: function () {
+    _buildXhrObject: function (files) {
       var xhr = this._getXmlHttpRequestObject();
       xhr.open("POST", this.options.script);
 
@@ -211,7 +211,7 @@
         xhr.setRequestHeader(key, this.options.headers[key]);
       }
 
-      xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this), false);
+      xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this, files), false);
 
       xhr.onreadystatechange = function () {
         this._onXHRResponse(xhr);
@@ -221,8 +221,13 @@
       return xhr;
     },
 
-    _onXHRProgress: function (e) {
-      if (e.lengthComputable) this._triggerEvent("lu:progress", Math.floor((e.loaded / e.total) * 100));
+    _onXHRProgress: function (files, e) {
+      if (!e.lengthComputable) return;
+
+      this._triggerEvent("lu:progress", {
+        percentage: Math.floor((e.loaded / e.total) * 100),
+        files: files
+      });
     },
 
     _onXHRResponse: function (xhr) {

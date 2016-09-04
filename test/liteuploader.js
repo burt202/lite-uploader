@@ -496,9 +496,9 @@ describe("Lite Uploader", function () {
 
     it("should trigger 'progress' event with percentage on xhr progress", function () {
       var mockOnEvent = sandbox.stub();
-      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}, headers: {foo: "bar", abc: "def"}}, noop, mockOnEvent);
+      var liteUploader = new LiteUploader({script: "abc"}, noop, mockOnEvent);
 
-      liteUploader._buildXhrObject();
+      liteUploader._buildXhrObject(mockGetFiles);
 
       mockXmlHttpRequestObject.upload.dispatchEvent("progress", {
         lengthComputable: true,
@@ -507,7 +507,10 @@ describe("Lite Uploader", function () {
       });
 
       expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:progress", 20);
+      expect(mockOnEvent).to.have.been.calledWith("lu:progress", {
+        percentage: 20,
+        files: mockGetFiles
+      });
     });
 
     it("should trigger 'success' event with response on xhr success", function () {

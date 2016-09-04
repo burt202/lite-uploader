@@ -127,8 +127,41 @@ Use the progress event to get the completion percentage whilst uploading
       .on("lu:success", function (e, response) {
         console.log(response);
       })
-      .on("lu:progress", function (e, percentage) {
-        console.log(percentage);
+      .on("lu:progress", function (e, state) {
+        console.log(state.percentage);
+      });
+
+      $(".fileUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+      });
+    </script>
+
+### Mutilple Progress
+
+How to track progress on multiple files when the singleFileUploads options is set
+
+    <input type="file" name="fileUpload[]" class="fileUpload" multiple />
+    <pre></pre>
+
+    <script>
+      var progress = {};
+
+      $(".fileUpload").liteUploader({
+        script: "http://localhost:8000/test/test.php",
+        singleFileUploads: true
+      })
+      .on("lu:before", function (e, files) {
+        var fileName = files[0].name;
+        progress[fileName] = 0;
+      })
+      .on("lu:progress", function (e, state) {
+        var fileName = state.files[0].name;
+        progress[fileName] = state.percentage;
+        var el = document.querySelector("pre");
+        el.innerHTML = JSON.stringify(progress, null, 2);
+      })
+      .on("lu:success", function (e, response) {
+        console.log(response);
       });
 
       $(".fileUpload").change(function () {
