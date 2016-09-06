@@ -1,5 +1,9 @@
 ### Changelog
 
+5.0.0 (06 September 2016)
+
+* pass FileList to progress event
+
 4.0.0 (14 July 2016)
 
 * remove jquery dependency
