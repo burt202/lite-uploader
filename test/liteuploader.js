@@ -8,6 +8,8 @@ var expect = chai.expect;
 var sinonChai = require("sinon-chai");
 chai.use(sinonChai);
 
+var LiteUploader = require("../src/liteuploader");
+
 var sandbox;
 var noop = function () {};
 
@@ -18,7 +20,6 @@ var mockGetFiles = function () {
 var mockEmptyGetFiles = function () {
   return {length: 0};
 };
-var LiteUploader = require("../liteuploader");
 
 describe("Lite Uploader", function () {
 

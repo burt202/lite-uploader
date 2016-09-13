@@ -4,10 +4,8 @@
   "version": "5.0.0",
   "scripts": {
     "php-server": "php -S localhost:8000",
-    "lint": "eslint liteuploader.js",
+    "lint": "eslint src/**",
     "test": "istanbul test _mocha",
-    "minify": "uglifyjs liteuploader.js -c -m -o liteuploader.min.js",
-    "precommit": "npm run lint && npm test",
     "prepush": "npm run lint && npm test"
   },
   "keywords": [
@@ -40,7 +38,6 @@
     "jsdom": "^9.4.1",
     "mocha": "^3.0.2",
     "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0",
-    "uglify-js": "^2.7.3"
+    "sinon-chai": "^2.8.0"
   }
 }
