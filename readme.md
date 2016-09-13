@@ -21,7 +21,7 @@ This is a lightweight library for NodeJS and jQuery, aiming to make uploading fi
 
 ### Examples
 
-See [examples.md](https://github.com/burt202/lite-uploader/blob/master/examples.md)
+See [examples.md](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md)
 
 ### Options
 
@@ -213,7 +213,7 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 
 ### Changelog
 
-View the changelog [here](https://raw.githubusercontent.com/burt202/lite-uploader/master/changelog.md).
+View the changelog [here](https://raw.githubusercontent.com/burt202/lite-uploader/master/docs/changelog.md).
 
 ### License
 
