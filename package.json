@@ -4,7 +4,8 @@
   "version": "5.0.0",
   "scripts": {
     "php-server": "php -S localhost:8000",
-    "test": "mocha"
+    "test": "mocha",
+    "minify": "uglifyjs liteuploader.js -c -m -o liteuploader.min.js"
   },
   "keywords": [
     "lightweight",
@@ -39,6 +40,7 @@
     "jsdom": "^9.4.1",
     "mocha": "^3.0.2",
     "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "uglify-js": "^2.7.3"
   }
 }
