@@ -1,5 +1,10 @@
 ### Changelog
 
+5.0.1 (01 November 2016)
+
+* add travis build badge
+* remove gulp in favour of npm scripts
+
 5.0.0 (06 September 2016)
 
 * pass FileList to progress event
