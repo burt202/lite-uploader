@@ -1,7 +1,7 @@
 {
   "name": "lite-uploader",
   "description": "Lightweight nodeJS/jQuery File Uploader",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "scripts": {
     "php-server": "php -S localhost:8000",
     "lint": "eslint src/**",
