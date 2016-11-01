@@ -6,6 +6,7 @@
     "php-server": "php -S localhost:8000",
     "lint": "eslint src/**",
     "test": "istanbul test _mocha",
+    "coverage": "npm test --coverage",
     "prepush": "npm run lint && npm test"
   },
   "keywords": [
