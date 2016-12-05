@@ -3,7 +3,7 @@
 
   /* istanbul ignore else */
   if (typeof module === "object" && typeof module.exports === "object") {
-    module.exports = factory(noop);
+    module.exports = factory($ || noop);
   } else {
     factory($ || noop);
   }

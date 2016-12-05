@@ -1,6 +1,7 @@
 var jsdom = require("jsdom");
 global.window = jsdom.jsdom().defaultView;
 global.FormData = window.FormData;
+global.$ = undefined
 
 var sinon = require("sinon");
 var chai = require("chai");
