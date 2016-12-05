@@ -25,7 +25,7 @@
   ],
   "homepage": "https://github.com/burt202/lite-uploader",
   "license": "MIT",
-  "main": "liteuploader.js",
+  "main": "src/liteuploader.js",
   "author": "Aaron Burtnyk <aaron@burtdev.net>",
   "repository": {
     "type": "git",
