@@ -1,11 +1,13 @@
-[![Build Status](https://travis-ci.org/burt202/lite-uploader.svg?branch=master)](https://travis-ci.org/burt202/lite-uploader)
-
 ## LiteUploader
+[![npm](https://img.shields.io/npm/v/lite-uploader.svg)](https://www.npmjs.com/package/lite-uploader)
+[![license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
+[![Build Status](https://travis-ci.org/burt202/lite-uploader.svg?branch=master)](https://travis-ci.org/burt202/lite-uploader)
 
 This is a lightweight library for NodeJS and jQuery, aiming to make uploading files a doddle. With some useful options including basic validation, it is a good choice for any developer who is not so worried about supporting legacy browsers.
 
 ### Features
 
+- dependency free
 - file type and size validation
 - support for custom validators
 - hooks for all major events like progress, success, fail etc
