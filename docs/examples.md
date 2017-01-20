@@ -2,7 +2,22 @@
 
 Below are some examples to help get you started
 
-### Basic
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#basic-usage](Basic usage)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#handling-errors](Handling errors)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#adding-extra-params](Adding extra params)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#adding-headers](Adding headers)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#cancelling-an-upload](Cancelling An Upload)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#progress-event](Progress Event)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#progress-event-on-multiple-files](Progress Event On Multiple Files)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#validation](Validation)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#custom-validators](Custom Validators)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#before-request-event](Before Request Event)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#previewing-images](Previewing Images)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#drag-and-drop](Drag And Drop)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#uploading-multiple-files-individually](Uploading Multiple Files Individually)
+* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#using-within-node](Using Within Node)
+
+### Basic usage
 
 The most basic usage of the plugin
 
@@ -21,7 +36,7 @@ The most basic usage of the plugin
       });
     </script>
 
-### Script Errors
+### Handling Errors
 
 Use the fail event to track if your upload script encounters any errors
 
@@ -40,7 +55,7 @@ Use the fail event to track if your upload script encounters any errors
       });
     </script>
 
-### Extra Params
+### Adding Extra Params
 
 Send extra params to your server script on and after instantiation
 
@@ -65,7 +80,7 @@ Send extra params to your server script on and after instantiation
       });
     </script>
 
-### Add Headers
+### Adding Headers
 
 Add custom headers to your request by using the headers option
 
@@ -87,9 +102,9 @@ Add custom headers to your request by using the headers option
       });
     </script>
 
-### Cancel Upload
+### Cancelling An Upload
 
-There is a build-in method to allow cancellation of the upload
+There is a built-in method to allow cancellation of the upload
 
     <input type="file" name="fileUpload" class="fileUpload" />
     <button class="cancelBtn">Cancel</button>
@@ -114,7 +129,7 @@ There is a build-in method to allow cancellation of the upload
       });
     </script>
 
-### Progress
+### Progress Event
 
 Use the progress event to get the completion percentage whilst uploading
 
@@ -136,9 +151,9 @@ Use the progress event to get the completion percentage whilst uploading
       });
     </script>
 
-### Mutilple Progress
+### Progress Event On Multiple Files
 
-How to track progress on multiple files when the singleFileUploads options is set
+How to track progress on multiple files when uploading them one by one (using singleFileUploads option)
 
     <input type="file" name="fileUpload[]" class="fileUpload" multiple />
     <pre></pre>
@@ -244,7 +259,7 @@ Use the validators option to add custom rules for your files. Each custom valida
       });
     </script>
 
-### Before Upload Request
+### Before Request Event
 
 You can dynamically change/update the form data packet before each upload using the beforeRequest option. This function must return a promise, where the resolved value is the ammended form data. Reject the promise to cancel the upload.
 
@@ -276,9 +291,9 @@ You can dynamically change/update the form data packet before each upload using 
       });
     </script>
 
-### Image Preview
+### Previewing Images
 
-Use the before event to get a hold of the files to be uploaded, and display them on screen as a preview
+Use the before event to get a hold of the images to be uploaded, and display them on screen as a preview
 
     <input type="file" name="fileUpload[]" class="fileUpload" multiple />
     <div class="preview"></div>
@@ -308,46 +323,9 @@ Use the before event to get a hold of the files to be uploaded, and display them
       });
     </script>
 
-### Multiple Files With Multiple Requests
+### Drag And Drop
 
-You can split multiple files into separate requests if required using the singleFileUploads option
-
-    <input type="file" name="fileUpload[]" multiple class="fileUpload" />
-
-    <script>
-      $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php",
-        singleFileUploads: true
-      });
-
-      /*
-        expect test.php to be called once for each file in the selection
-      */
-
-      $(".fileUpload").change(function () {
-        $(this).data("liteUploader").startUpload();
-      });
-    </script>
-
-### As Standalone Class
-
-You can use it within node context. Useful if you are using a module bundling tool or if you dont want to use it as a pure jquery plugin.
-
-    var LiteUploader = require("lite-uploader");
-
-    var options = {script: "test.php"};  // takes all of the documented options
-    var getFiles = function () {
-      // return a FileList
-    };
-    var onEvent = function (name, value) {
-      // called on all documented events
-    };
-
-    var liteUploader = new LiteUploader(options, getFiles, onEvent)
-
-### Passing A FileList In As A Parameter
-
-Use startUpload method by passing in a FileList. Works well for drag/drop file upload
+Invoke startUpload method with a FileList
 
     <div class="dropZone" style="height: 100px; width: 100px; border: 1px solid #000;"></div>
 
@@ -373,3 +351,40 @@ Use startUpload method by passing in a FileList. Works well for drag/drop file u
         $(this).data("liteUploader").startUpload(e.originalEvent.dataTransfer.files);
       });
     </script>
+
+### Uploading Multiple Files Individually
+
+You can split multiple files into separate requests if required using the singleFileUploads option
+
+    <input type="file" name="fileUpload[]" multiple class="fileUpload" />
+
+    <script>
+      $(".fileUpload").liteUploader({
+        script: "http://localhost:8000/test/test.php",
+        singleFileUploads: true
+      });
+
+      /*
+        expect test.php to be called once for each file in the selection
+      */
+
+      $(".fileUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+      });
+    </script>
+
+### Using Within Node
+
+You can use it within node with or without jquery
+
+    var LiteUploader = require("lite-uploader");
+
+    var options = {script: "test.php"};  // takes all of the documented options
+    var getFiles = function () {
+      // return a FileList
+    };
+    var onEvent = function (name, value) {
+      // called on all documented events
+    };
+
+    var liteUploader = new LiteUploader(options, getFiles, onEvent)
