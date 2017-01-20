@@ -3,6 +3,9 @@
 [![license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 [![Build Status](https://travis-ci.org/burt202/lite-uploader.svg?branch=master)](https://travis-ci.org/burt202/lite-uploader)
 
+[**Examples**](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md) |
+[**Changelog**](https://github.com/burt202/lite-uploader/blob/master/docs/changelog.md)
+
 This is a lightweight library for NodeJS and jQuery, aiming to make uploading files a doddle. With some useful options including basic validation, it is a good choice for any developer who is not so worried about supporting legacy browsers.
 
 ### Features
@@ -22,10 +25,6 @@ This is a lightweight library for NodeJS and jQuery, aiming to make uploading fi
 ### Bower
 
 `bower install lite-uploader --save`
-
-### Examples
-
-See [examples.md](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md)
 
 ### Options
 
@@ -214,10 +213,6 @@ Allows the upload to be cancelled, triggers `lu:cancelled`
 * Internet Explorer NO (because [Promises](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) and [Object.assign](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign) are used)
 * Safari 9+
 * Opera 32+
-
-### Changelog
-
-View the changelog [here](https://raw.githubusercontent.com/burt202/lite-uploader/master/docs/changelog.md).
 
 ### License
 
