@@ -1,5 +1,10 @@
 ### Changelog
 
+5.0.2 (05 December 2016)
+
+* correct 'main' property in package.json and bower.json
+* fix issue that stopped the uploader working using jQuery within node
+
 5.0.1 (01 November 2016)
 
 * add travis build badge
