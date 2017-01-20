@@ -1,7 +1,5 @@
 ## Examples
 
-Below are some examples to help get you started
-
 * [Basic usage](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#basic-usage)
 * [Handling errors](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#handling-errors)
 * [Adding extra params](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#adding-extra-params)
