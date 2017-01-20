@@ -388,3 +388,16 @@ You can use it within node with or without jquery
     };
 
     var liteUploader = new LiteUploader(options, getFiles, onEvent)
+
+OR
+
+    var $ = require("jquery")
+    require("lite-uploader")
+
+    $(".fileUpload").liteUploader({
+      script: "http://localhost:8000/test/test.php"
+    })
+
+    $(".fileUpload").change(function () {
+      $(this).data("liteUploader").startUpload();
+    });
