@@ -2,20 +2,20 @@
 
 Below are some examples to help get you started
 
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#basic-usage](Basic usage)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#handling-errors](Handling errors)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#adding-extra-params](Adding extra params)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#adding-headers](Adding headers)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#cancelling-an-upload](Cancelling An Upload)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#progress-event](Progress Event)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#progress-event-on-multiple-files](Progress Event On Multiple Files)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#validation](Validation)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#custom-validators](Custom Validators)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#before-request-event](Before Request Event)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#previewing-images](Previewing Images)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#drag-and-drop](Drag And Drop)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#uploading-multiple-files-individually](Uploading Multiple Files Individually)
-* [https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#using-within-node](Using Within Node)
+* [Basic usage](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#basic-usage)
+* [Handling errors](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#handling-errors)
+* [Adding extra params](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#adding-extra-params)
+* [Adding headers](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#adding-headers)
+* [Cancelling An Upload](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#cancelling-an-upload)
+* [Progress Event](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#progress-event)
+* [Progress Event On Multiple Files](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#progress-event-on-multiple-files)
+* [Validation](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#validation)
+* [Custom Validators](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#custom-validators)
+* [Before Request Event](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#before-request-event)
+* [Previewing Images](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#previewing-images)
+* [Drag And Drop](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#drag-and-drop)
+* [Uploading Multiple Files Individually](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#uploading-multiple-files-individually)
+* [Using Within Node](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#using-within-node)
 
 ### Basic usage
 
