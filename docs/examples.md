@@ -389,7 +389,7 @@ You can use it within node with or without jquery
 
 OR
 
-    var $ = require("jquery")
+    global.$ = require("jquery")
     require("lite-uploader")
 
     $(".fileUpload").liteUploader({
