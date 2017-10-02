@@ -1,12 +1,14 @@
 (function (factory) {
   var noop = {fn: {}};
 
-  /* istanbul ignore else */
-  if (typeof module === "object" && typeof module.exports === "object") {
+  if(typeof define === "function" && define.amd) { // AMD support
+    define(['jquery'], factory);
+  } else if (typeof module === "object" && typeof module.exports === "object") { //CommonJS support
     module.exports = factory(global.$ || noop);
-  } else {
+  } else { // Plain browser
     factory($ || noop);
   }
+
 }(function ($) {
 
   /* istanbul ignore next */
