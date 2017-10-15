@@ -1,5 +1,6 @@
 var jsdom = require("jsdom");
 global.window = jsdom.jsdom().defaultView;
+global.HTMLElement = window.HTMLElement;
 global.FormData = window.FormData;
 global.$ = undefined
 
