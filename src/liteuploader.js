@@ -185,8 +185,12 @@
       });
     },
 
+    _getFormDataObject: function() {
+      return new FormData()
+    },
+
     _collateFormData: function (files) {
-      var formData = new FormData();
+      var formData = this._getFormDataObject();
 
       for (var key in this.options.params) {
         formData.append(key, this.options.params[key]);

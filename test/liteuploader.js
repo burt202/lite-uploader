@@ -1,9 +1,3 @@
-var jsdom = require("jsdom");
-global.window = jsdom.jsdom().defaultView;
-global.HTMLElement = window.HTMLElement;
-global.FormData = window.FormData;
-global.$ = undefined
-
 var sinon = require("sinon");
 var chai = require("chai");
 var expect = chai.expect;
@@ -174,6 +168,32 @@ describe("Lite Uploader", function () {
   });
 
   describe("start upload", function () {
+    var mockFormDataObject;
+
+    beforeEach(function () {
+      mockFormDataObject = {
+        append: function (key, value) {
+          if (!mockFormDataObject.data) mockFormDataObject.data = {}
+
+          if (mockFormDataObject.data[key]) {
+            mockFormDataObject.data[key] = [mockFormDataObject.data[key]]
+            mockFormDataObject.data[key].push(value)
+          } else {
+            mockFormDataObject.data[key] = value
+          }
+        },
+        get: function (key) {
+          return mockFormDataObject.data[key]
+        },
+      };
+
+      sandbox.stub(LiteUploader.prototype, "_getFormDataObject").returns(mockFormDataObject);
+    });
+
+    afterEach(function () {
+      mockFormDataObject = null;
+    })
+
     it("should upload all files in one request by default", function () {
       var mockXhrObject = {
         send: sandbox.spy()
@@ -429,6 +449,32 @@ describe("Lite Uploader", function () {
   });
 
   describe("form data", function () {
+    var mockFormDataObject;
+
+    beforeEach(function () {
+      mockFormDataObject = {
+        append: function (key, value) {
+          if (!mockFormDataObject.data) mockFormDataObject.data = {}
+
+          if (mockFormDataObject.data[key]) {
+            mockFormDataObject.data[key] = [mockFormDataObject.data[key]]
+            mockFormDataObject.data[key].push(value)
+          } else {
+            mockFormDataObject.data[key] = value
+          }
+        },
+        get: function (key) {
+          return mockFormDataObject.data[key]
+        },
+      };
+
+      sandbox.stub(LiteUploader.prototype, "_getFormDataObject").returns(mockFormDataObject);
+    });
+
+    afterEach(function () {
+      mockFormDataObject = null;
+    })
+
     it("should add any params to form data", function () {
       var liteUploader = new LiteUploader({params: {foo: "bar", another: "abc"}}, noop, noop);
 
@@ -443,7 +489,7 @@ describe("Lite Uploader", function () {
 
       var result = liteUploader._collateFormData(["tester1", "tester2"]);
 
-      expect(result.getAll("tester")).to.eql(["tester1", "tester2"]);
+      expect(result.get("tester")).to.eql(["tester1", "tester2"]);
     });
   });
 
