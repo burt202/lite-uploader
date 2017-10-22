@@ -1,30 +1,31 @@
 (function (factory) {
-  var noop = {fn: {}};
 
   /* istanbul ignore else */
   if (typeof module === "object" && typeof module.exports === "object") {
-    module.exports = factory(global.$ || noop);
+    module.exports = factory(global.$);
   } else {
-    factory($ || noop);
+    factory($);
   }
 }(function ($) {
 
   /* istanbul ignore next */
-  $.fn.liteUploader = function (options) {
-    return this.each(function () {
-      options.ref = options.ref || $(this).attr("name");
+  if ($ && $.fn) {
+    $.fn.liteUploader = function (options) {
+      return this.each(function () {
+        options.ref = options.ref || $(this).attr("name");
 
-      var getFiles = function () {
-        return $(this).get(0).files;
-      }.bind(this);
+        var getFiles = function () {
+          return $(this).get(0).files;
+        }.bind(this);
 
-      var onEvent = function (name, data) {
-        $(this).trigger.bind($(this))(name, [data]);
-      }.bind(this)
+        var onEvent = function (name, data) {
+          $(this).trigger.bind($(this))(name, [data]);
+        }.bind(this)
 
-      $.data(this, "liteUploader", new LiteUploader(options, getFiles, onEvent));
-    });
-  };
+        $.data(this, "liteUploader", new LiteUploader(options, getFiles, onEvent));
+      });
+    };
+  }
 
   function LiteUploader (options, getFiles, onEvent) {
     this.options = this._applyDefaults(options);
