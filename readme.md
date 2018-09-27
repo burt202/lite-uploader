@@ -22,9 +22,11 @@ This is a lightweight library for NodeJS and jQuery, aiming to make uploading fi
 
 `npm install lite-uploader --save`
 
-### Bower
+### Browser
 
-`bower install lite-uploader --save`
+`<script src="../liteuploader.js"></script>`
+
+jQuery is supported but optional
 
 ### Options
 
