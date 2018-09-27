@@ -68,7 +68,7 @@
     },
 
     _startUpload: function (files) {
-      return this._splitFiles(files).map(function (fileSplit) {
+      const promises = this._splitFiles(files).map(function (fileSplit) {
         var xhr = this._buildXhrObject(fileSplit);
 
         return this._beforeRequest(fileSplit)
@@ -76,6 +76,11 @@
           return xhr.send(formData);
         });
       }.bind(this));
+
+      return Promise.all(promises)
+        .then(function() {
+          return this._triggerEvent("lu:finish");
+        }.bind(this));
     },
 
     _splitFiles: function (files) {

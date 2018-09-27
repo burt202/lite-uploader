@@ -99,37 +99,42 @@ This is a lightweight library for NodeJS and jQuery, aiming to make uploading fi
   </tr>
   <tr>
     <td>lu:errors</td>
-    <td>event, errors</td>
+    <td>eventName, errors</td>
     <td>triggered when errors are found, including built-in and custom validators - see 'Error Types' section for more</td>
   </tr>
   <tr>
     <td>lu:start</td>
-    <td>event, files</td>
+    <td>eventName, files</td>
     <td>triggered before any uploading starts</td>
   </tr>
   <tr>
+    <td>lu:finish</td>
+    <td>eventName</td>
+    <td>triggered when all uploading has finished</td>
+  </tr>
+  <tr>
     <td>lu:before</td>
-    <td>event, files</td>
-    <td>triggered before any request to the server</td>
+    <td>eventName, files</td>
+    <td>triggered before each request to the server</td>
   </tr>
   <tr>
     <td>lu:progress</td>
-    <td>event, {percentage, files}</td>
+    <td>eventName, {percentage, files}</td>
     <td>triggered whilst uploading files</td>
   </tr>
   <tr>
     <td>lu:success</td>
-    <td>event, response</td>
-    <td>triggered on upload success</td>
+    <td>eventName, response</td>
+    <td>triggered on a successful request to the server</td>
   </tr>
   <tr>
     <td>lu:fail</td>
-    <td>event, jqXHR</td>
-    <td>triggered on upload failure</td>
+    <td>eventName, jqXHR</td>
+    <td>triggered on a failed request to the server</td>
   </tr>
   <tr>
     <td>lu:cancelled</td>
-    <td>event</td>
+    <td>eventName</td>
     <td>triggered on upload abort</td>
   </tr>
 </table>
@@ -145,7 +150,7 @@ Below is an overview of the built-in error types that can be returned when valid
 
 ### Public API
 
-#### startUpload()
+#### startUpload(files)
 
 Starts the upload
 

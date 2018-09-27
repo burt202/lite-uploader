@@ -198,14 +198,16 @@ describe("Lite Uploader", function () {
       var mockXhrObject = {
         send: sandbox.spy()
       };
+      var mockOnEvent = sandbox.stub();
       sandbox.stub(LiteUploader.prototype, "_buildXhrObject").returns(mockXhrObject);
       sandbox.stub(LiteUploader.prototype, "_beforeRequest").returns(Promise.resolve("foo"));
-      var liteUploader = new LiteUploader({script: "script"}, noop, noop);
+      var liteUploader = new LiteUploader({script: "script"}, noop, mockOnEvent);
       var mockFileList = mockGetFiles();
 
-      return Promise.all(liteUploader._startUpload(mockFileList))
+      return liteUploader._startUpload(mockFileList)
       .then(function () {
         expect(mockXhrObject.send).to.have.been.calledOnce;
+        expect(mockOnEvent).to.have.been.calledWith("lu:finish");
       });
     });
 
@@ -218,7 +220,7 @@ describe("Lite Uploader", function () {
       var liteUploader = new LiteUploader({script: "script", singleFileUploads: true}, noop, noop);
       var mockFileList = mockGetFiles();
 
-      return Promise.all(liteUploader._startUpload(mockFileList))
+      return liteUploader._startUpload(mockFileList)
       .then(function () {
         expect(mockXhrObject.send).to.have.been.calledTwice;
       });
@@ -233,7 +235,7 @@ describe("Lite Uploader", function () {
       var liteUploader = new LiteUploader({script: "script"}, noop, noop);
       var mockFileList = mockGetFiles();
 
-      return Promise.all(liteUploader._startUpload(mockFileList))
+      return liteUploader._startUpload(mockFileList)
       .then(function () {
         expect(mockXhrObject.send).to.have.been.calledWith("foo");
       });
@@ -248,7 +250,7 @@ describe("Lite Uploader", function () {
       var liteUploader = new LiteUploader({script: "script", beforeRequest: beforeRequest}, noop, noop);
       var mockFileList = mockGetFiles();
 
-      return Promise.all(liteUploader._startUpload(mockFileList))
+      return liteUploader._startUpload(mockFileList)
       .then(function () {
         expect("thisnot").to.eql("topass");
       })
