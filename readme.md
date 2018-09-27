@@ -24,7 +24,7 @@ This is a lightweight library for NodeJS and jQuery, aiming to make uploading fi
 
 ### Browser
 
-`<script src="../liteuploader.js"></script>`
+`<script src="./src/liteuploader.js"></script>`
 
 jQuery is supported but optional
 
