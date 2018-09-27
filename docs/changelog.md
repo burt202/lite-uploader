@@ -1,5 +1,9 @@
 ### Changelog
 
+5.1.0 (27 September 2018)
+
+* Add lu:finish event
+
 5.0.3 (16 September 2017)
 
 * Fix use when using node/jquery
