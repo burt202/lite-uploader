@@ -1,5 +1,10 @@
 ### Changelog
 
+5.0.3 (16 September 2017)
+
+* Fix use when using node/jquery
+* documentation improvements
+
 5.0.2 (05 December 2016)
 
 * correct 'main' property in package.json and bower.json
