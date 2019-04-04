@@ -535,6 +535,14 @@ describe("Lite Uploader", function () {
       expect(mockXmlHttpRequestObject.open).to.have.been.calledWith("POST", "abc");
     });
 
+    it("should open it with overriden method and url", function () {
+      var liteUploader = new LiteUploader({script: "abc", method: "PUT"}, noop, noop);
+
+      liteUploader._buildXhrObject();
+
+      expect(mockXmlHttpRequestObject.open).to.have.been.calledWith("PUT", "abc");
+    });
+
     it("should set headers using passed in option", function () {
       var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}, headers: {foo: "bar", abc: "def"}}, noop, noop);
 

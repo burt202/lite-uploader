@@ -41,6 +41,7 @@
         ref: null,
         withCredentials: false,
         rules: {},
+        method: "POST",
         params: {},
         headers: {},
         validators: [],
@@ -216,7 +217,7 @@
 
     _buildXhrObject: function (files) {
       var xhr = this._getXmlHttpRequestObject();
-      xhr.open("POST", this.options.script);
+      xhr.open(this.options.method, this.options.script);
       if (this.options.withCredentials) xhr.withCredentials = true
 
       for (var key in this.options.headers) {

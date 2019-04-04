@@ -44,6 +44,12 @@ jQuery is supported but optional
     <td>the path to the script file that will handle the upload</td>
   </tr>
   <tr>
+    <td>method</td>
+    <td>String</td>
+    <td>POST</td>
+    <td>allows overriding of the default HTTP request method if necessary</td>
+  </tr>
+  <tr>
     <td>ref</td>
     <td>String</td>
     <td>null</td>
