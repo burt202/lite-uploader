@@ -243,7 +243,7 @@
     _onXHRResponse: function (xhr) {
       if (xhr.readyState !== 4) return;
 
-      if (xhr.status === 200) {
+      if (xhr.status >= 200 && xhr.status < 300) {
         this._triggerEvent("lu:success", xhr.responseText);
       } else {
         this._triggerEvent("lu:fail", xhr);
