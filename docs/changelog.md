@@ -1,5 +1,9 @@
 ### Changelog
 
+5.3.0 (04 April 2019)
+
+* Add method option
+
 5.2.0 (04 April 2019)
 
 * Add withCredentials option
