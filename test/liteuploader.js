@@ -42,7 +42,7 @@ describe("Lite Uploader", function () {
     it("should fallback to defaults if not all options are passed in", function () {
       var liteUploader = new LiteUploader({}, noop, noop);
 
-      expect(liteUploader.options.beforeRequest).to.be.a("function");
+      expect(liteUploader.options.beforeRequest).to.eql(null);
       expect(liteUploader.options.script).to.eql(null);
       expect(liteUploader.options.ref).to.eql(null);
       expect(liteUploader.options.headers).to.eql({});
@@ -50,15 +50,6 @@ describe("Lite Uploader", function () {
       expect(liteUploader.options.rules).to.eql({});
       expect(liteUploader.options.validators).to.eql([]);
       expect(liteUploader.options.singleFileUploads).to.eql(false);
-    });
-
-    it("default beforeRequest method should return a promise", function () {
-      var liteUploader = new LiteUploader({}, noop, noop);
-
-      return liteUploader.options.beforeRequest([], "formData")
-        .then(function (res) {
-          expect(res).to.eql("formData");
-        });
     });
   });
 

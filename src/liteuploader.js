@@ -39,14 +39,14 @@
       return Object.assign({
         script: null,
         ref: null,
-        withCredentials: false,
-        rules: {},
         method: "POST",
+        rules: {},
         params: {},
         headers: {},
         validators: [],
         singleFileUploads: false,
-        beforeRequest: function (files, formData) { return Promise.resolve(formData); }
+        beforeRequest: null,
+        withCredentials: false,
       }, options);
     },
 
@@ -98,7 +98,7 @@
     _beforeRequest: function (files) {
       this._triggerEvent("lu:before", files);
       var formData = this._collateFormData(files);
-      return this.options.beforeRequest(files, formData);
+      return this.options.beforeRequest ? this.options.beforeRequest(files, formData) : Promise.resolve(formData);
     },
 
     _validateOptions: function () {

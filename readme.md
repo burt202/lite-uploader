@@ -26,7 +26,7 @@ This is a lightweight library for NodeJS and jQuery, aiming to make uploading fi
 
 `<script src="./src/liteuploader.js"></script>`
 
-jQuery is supported but optional
+jQuery is supported but is optional
 
 ### Options
 
@@ -44,21 +44,21 @@ jQuery is supported but optional
     <td>the path to the script file that will handle the upload</td>
   </tr>
   <tr>
+    <td>ref</td>
+    <td>String (required)</td>
+    <td>null</td>
+    <td>The request argument name for the file form data. Will fallback to the name property of the file input field if not supplied.</td>
+  </tr>
+  <tr>
     <td>method</td>
     <td>String</td>
     <td>POST</td>
     <td>allows overriding of the default HTTP request method if necessary</td>
   </tr>
   <tr>
-    <td>ref</td>
-    <td>String</td>
-    <td>null</td>
-    <td>The request argument name for the file form data. Will fallback to the name property of the file input field if not supplied.</td>
-  </tr>
-  <tr>
     <td>rules</td>
     <td>Object</td>
-    <td>{allowedFileTypes: null, maxSize: null}</td>
+    <td>{}</td>
     <td>object where you can specify validation rules for the files to be uploaded - current supported rules are:
       <ul>
         <li>allowedFileTypes (list of comma-separated mime-types, wildcards such as image/* are also supported)</li>
@@ -93,7 +93,8 @@ jQuery is supported but optional
   <tr>
     <td>beforeRequest</td>
     <td>Function</td>
-    <td colspan="2">Delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
+    <td>null</td>
+    <td>Delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
   </tr>
   <tr>
     <td>withCredentials</td>
