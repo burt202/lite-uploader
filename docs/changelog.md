@@ -1,5 +1,10 @@
 ### Changelog
 
+5.2.0 (04 April 2019)
+
+* Add withCredentials option
+* Expand success status codes to be anything within 200 range
+
 5.1.0 (27 September 2018)
 
 * Add lu:finish event
