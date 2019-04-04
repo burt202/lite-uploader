@@ -89,6 +89,12 @@ jQuery is supported but optional
     <td>Function</td>
     <td colspan="2">Delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
   </tr>
+  <tr>
+    <td>withCredentials</td>
+    <td>Boolean</td>
+    <td>false</td>
+    <td>Indicates whether requests should be made using credentials such as cookies</td>
+  </tr>
 </table>
 
 ### Events

@@ -545,6 +545,14 @@ describe("Lite Uploader", function () {
       expect(mockXmlHttpRequestObject.setRequestHeader.getCall(1)).to.have.been.calledWith("abc", "def");
     });
 
+    it("should set withCredentials to true if set in options", function () {
+      var liteUploader = new LiteUploader({script: "abc", params: {foo: "123"}, withCredentials: true}, noop, noop);
+
+      liteUploader._buildXhrObject();
+
+      expect(mockXmlHttpRequestObject.withCredentials).to.eql(true);
+    });
+
     it("should trigger 'progress' event with percentage on xhr progress", function () {
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({script: "abc"}, noop, mockOnEvent);

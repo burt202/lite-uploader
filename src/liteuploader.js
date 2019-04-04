@@ -39,6 +39,7 @@
       return Object.assign({
         script: null,
         ref: null,
+        withCredentials: false,
         rules: {},
         params: {},
         headers: {},
@@ -216,6 +217,7 @@
     _buildXhrObject: function (files) {
       var xhr = this._getXmlHttpRequestObject();
       xhr.open("POST", this.options.script);
+      if (this.options.withCredentials) xhr.withCredentials = true
 
       for (var key in this.options.headers) {
         xhr.setRequestHeader(key, this.options.headers[key]);
