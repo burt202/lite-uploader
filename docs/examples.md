@@ -25,7 +25,7 @@ The most basic usage of the plugin
       $(".fileUpload").liteUploader({
         url: "http://localhost:8000/test/test.php"
       })
-      .on("lu:success", function (e, response) {
+      .on("lu:success", function (e, {response}) {
         console.log(response);
       });
 
@@ -44,7 +44,7 @@ Use the fail event to track if your upload script encounters any errors
       $(".fileUpload").liteUploader({
         url: "http://localhost:8000/test/error.php"
       })
-      .on("lu:fail", function (e, xhr) {
+      .on("lu:fail", function (e, {xhr}) {
         console.log(xhr.status, JSON.parse(xhr.responseText));
       });
 
@@ -67,7 +67,7 @@ Send extra params to your server script on and after instantiation
           abc: 123
         }
       })
-      .on("lu:success", function (e, response) {
+      .on("lu:success", function (e, {response}) {
         console.log(response);
       });
 
@@ -91,7 +91,7 @@ Add custom headers to your request by using the headers option
           "xxx": "foobar"
         }
       })
-      .on("lu:success", function (e, response) {
+      .on("lu:success", function (e, {response}) {
         console.log(response);
       });
 
@@ -111,7 +111,7 @@ There is a built-in method to allow cancellation of the upload
       $(".fileUpload").liteUploader({
         url: "http://localhost:8000/test/test.php"
       })
-      .on("lu:success", function (e, response) {
+      .on("lu:success", function (e, {response}) {
         console.log(response);
       })
       .on("lu:cancelled", function () {
@@ -137,11 +137,11 @@ Use the progress event to get the completion percentage whilst uploading
       $(".fileUpload").liteUploader({
         url: "http://localhost:8000/test/test.php"
       })
-      .on("lu:success", function (e, response) {
+      .on("lu:success", function (e, {response}) {
         console.log(response);
       })
-      .on("lu:progress", function (e, state) {
-        console.log(state.percentage);
+      .on("lu:progress", function (e, {percentage}) {
+        console.log(percentage);
       });
 
       $(".fileUpload").change(function () {
@@ -157,23 +157,23 @@ How to track progress on multiple files when uploading them one by one (using si
     <pre></pre>
 
     <script>
-      var progress = {};
+      const progress = {};
 
       $(".fileUpload").liteUploader({
         url: "http://localhost:8000/test/test.php",
         singleFileUploads: true
       })
-      .on("lu:before", function (e, files) {
-        var fileName = files[0].name;
+      .on("lu:before", function (e, {files}) {
+        const fileName = files[0].name;
         progress[fileName] = 0;
       })
-      .on("lu:progress", function (e, state) {
-        var fileName = state.files[0].name;
-        progress[fileName] = state.percentage;
-        var el = document.querySelector("pre");
+      .on("lu:progress", function (e, {files, percentage}) {
+        const fileName = files[0].name;
+        progress[fileName] = percentage;
+        const el = document.querySelector("pre");
         el.innerHTML = JSON.stringify(progress, null, 2);
       })
-      .on("lu:success", function (e, response) {
+      .on("lu:success", function (e, {response}) {
         console.log(response);
       });
 
@@ -196,7 +196,7 @@ Basic validation is built-in for file types and size
           maxSize: 250000
         }
       })
-      .on("lu:errors", function (e, errors) {
+      .on("lu:errors", function (e, {errors}) {
         console.log(errors);
         /*
           example errors content:
@@ -225,15 +225,15 @@ Use the validators option to add custom rules for your files. Each custom valida
     <input type="file" name="fileUpload" class="fileUpload" />
 
     <script>
-      var enforceMaximumWidth = function (file) {
+      const enforceMaximumWidth = function (file) {
         return new Promise(function (resolve) {
-          var reader = new FileReader();
+          const reader = new FileReader();
 
           reader.onload = function (evt) {
-            var image = new Image();
+            const image = new Image();
 
             image.onload = function () {
-              var error = (this.width > 100) ? "Error: rule: 100, given: " + this.width : null;
+              const error = (this.width > 100) ? "Error: rule: 100, given: " + this.width : null;
               resolve(error);
             };
 
@@ -248,7 +248,7 @@ Use the validators option to add custom rules for your files. Each custom valida
         url: "http://localhost:8000/test/test.php",
         validators: [enforceMaximumWidth]
       })
-      .on("lu:errors", function (e, errors) {
+      .on("lu:errors", function (e, {errors}) {
         console.log(errors);
       });
 
@@ -300,14 +300,14 @@ Use the before event to get a hold of the images to be uploaded, and display the
       $(".fileUpload").liteUploader({
         url: "http://localhost:8000/test/test.php"
       })
-      .on("lu:before", function (e, files) {
-        var el = document.querySelector(".preview");
+      .on("lu:before", function (e, {files}) {
+        const el = document.querySelector(".preview");
 
         Array.prototype.forEach.call(files, function (file) {
-          var reader = new FileReader();
+          const reader = new FileReader();
 
           reader.onload = function (e) {
-            var image = document.createElement("img");
+            const image = document.createElement("img");
             image.src = e.target.result;
             el.appendChild(image);
           };
@@ -332,7 +332,7 @@ Invoke startUpload method with a FileList
         url: "http://localhost:8000/test/test.php",
         ref: "fileUpload"
       })
-      .on("lu:success", function (e, response) {
+      .on("lu:success", function (e, {response}) {
         console.log(response);
       })
       .on("drag dragstart dragend dragover dragenter dragleave drop", function (e) {
@@ -375,17 +375,17 @@ You can split multiple files into separate requests if required using the single
 
 You can use it within node with or without jquery
 
-    var LiteUploader = require("lite-uploader");
+    const LiteUploader = require("lite-uploader");
 
-    var options = {url: "test.php"};  // takes all of the documented options
-    var getFiles = function () {
-      // return a FileList
-    };
-    var onEvent = function (name, value) {
+    const options = {url: "test.php"};  // takes all of the documented options
+
+    const onEvent = function (name, value) {
       // called on all documented events
     };
 
-    var liteUploader = new LiteUploader(options, getFiles, onEvent)
+    const liteUploader = new LiteUploader(options, onEvent)
+    const files = "a FileList"
+    liteUploader.startUpload(files)
 
 OR
 
