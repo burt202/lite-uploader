@@ -47,7 +47,7 @@ jQuery is supported but is optional
     <td>ref</td>
     <td>String (required)</td>
     <td>null</td>
-    <td>The request argument name for the file form data. Will fallback to the name property of the file input field if not supplied.</td>
+    <td>the request argument name for the file form data. Will fallback to the name property of the file input field if not supplied.</td>
   </tr>
   <tr>
     <td>method</td>
@@ -94,13 +94,13 @@ jQuery is supported but is optional
     <td>beforeRequest</td>
     <td>Function</td>
     <td>null</td>
-    <td>Delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
+    <td>delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
   </tr>
   <tr>
     <td>withCredentials</td>
     <td>Boolean</td>
     <td>false</td>
-    <td>Indicates whether requests should be made using credentials such as cookies</td>
+    <td>indicates whether requests should be made using credentials such as cookies</td>
   </tr>
 </table>
 
@@ -114,12 +114,12 @@ jQuery is supported but is optional
   </tr>
   <tr>
     <td>lu:errors</td>
-    <td>eventName, errors</td>
+    <td>eventName, {errors}</td>
     <td>triggered when errors are found, including built-in and custom validators - see 'Error Types' section for more</td>
   </tr>
   <tr>
     <td>lu:start</td>
-    <td>eventName, files</td>
+    <td>eventName, {files}</td>
     <td>triggered before any uploading starts</td>
   </tr>
   <tr>
@@ -129,7 +129,7 @@ jQuery is supported but is optional
   </tr>
   <tr>
     <td>lu:before</td>
-    <td>eventName, files</td>
+    <td>eventName, {files}</td>
     <td>triggered before each request to the server</td>
   </tr>
   <tr>
@@ -139,12 +139,12 @@ jQuery is supported but is optional
   </tr>
   <tr>
     <td>lu:success</td>
-    <td>eventName, response</td>
+    <td>eventName, {response}</td>
     <td>triggered on a successful request to the server</td>
   </tr>
   <tr>
     <td>lu:fail</td>
-    <td>eventName, jqXHR</td>
+    <td>eventName, {xhr}</td>
     <td>triggered on a failed request to the server</td>
   </tr>
   <tr>

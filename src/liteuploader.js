@@ -60,9 +60,9 @@
         if (!errors) errors = allErrors[1];
 
         if (errors) {
-          this._triggerEvent("lu:errors", errors);
+          this._triggerEvent("lu:errors", {errors});
         } else {
-          this._triggerEvent("lu:start", files);
+          this._triggerEvent("lu:start", {files});
           this.xhrs = [];
           this._startUpload(files);
         }
@@ -96,7 +96,7 @@
     },
 
     _beforeRequest: function (files) {
-      this._triggerEvent("lu:before", files);
+      this._triggerEvent("lu:before", {files});
       var formData = this._collateFormData(files);
       return this.options.beforeRequest ? this.options.beforeRequest(files, formData) : Promise.resolve(formData);
     },
@@ -247,9 +247,9 @@
       if (xhr.readyState !== 4) return;
 
       if (xhr.status >= 200 && xhr.status < 300) {
-        this._triggerEvent("lu:success", xhr.responseText);
+        this._triggerEvent("lu:success", {response: xhr.responseText});
       } else {
-        this._triggerEvent("lu:fail", xhr);
+        this._triggerEvent("lu:fail", {xhr});
       }
     },
 

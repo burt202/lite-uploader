@@ -81,7 +81,7 @@ describe("Lite Uploader", function () {
       return liteUploader._init()
       .then(function () {
         expect(mockOnEvent.callCount).to.eql(1);
-        expect(mockOnEvent).to.have.been.calledWith("lu:errors", "foo");
+        expect(mockOnEvent).to.have.been.calledWith("lu:errors", {errors: "foo"});
         expect(liteUploader._startUpload).not.to.have.been.called;
       });
     });
@@ -96,7 +96,7 @@ describe("Lite Uploader", function () {
       return liteUploader._init()
       .then(function () {
         expect(mockOnEvent.callCount).to.eql(1);
-        expect(mockOnEvent).to.have.been.calledWith("lu:errors", "bar");
+        expect(mockOnEvent).to.have.been.calledWith("lu:errors", {errors: "bar"});
         expect(liteUploader._startUpload).not.to.have.been.called;
       });
     });
@@ -112,7 +112,7 @@ describe("Lite Uploader", function () {
       return liteUploader._init()
       .then(function () {
         expect(mockOnEvent.callCount).to.eql(1);
-        expect(mockOnEvent).to.have.been.calledWith("lu:start", mockFileList);
+        expect(mockOnEvent).to.have.been.calledWith("lu:start", {files: mockFileList});
       });
     });
 
@@ -264,7 +264,7 @@ describe("Lite Uploader", function () {
       liteUploader._beforeRequest(mockFileList);
 
       expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:before", mockFileList);
+      expect(mockOnEvent).to.have.been.calledWith("lu:before", {files: mockFileList});
     });
 
     it("should collate form data and pass it to beforeRequest function with files", function () {
@@ -587,7 +587,7 @@ describe("Lite Uploader", function () {
       liteUploader.xhrs[0].responseText = "responseText";
       liteUploader.xhrs[0].onreadystatechange()
       expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:success", "responseText");
+      expect(mockOnEvent).to.have.been.calledWith("lu:success", {response: "responseText"});
     });
 
     it("should trigger 'fail' event when a non-successful http status code is encountered", function () {
@@ -605,7 +605,7 @@ describe("Lite Uploader", function () {
       liteUploader.xhrs[0].status = 400;
       liteUploader.xhrs[0].onreadystatechange()
       expect(mockOnEvent.callCount).to.eql(1);
-      expect(mockOnEvent).to.have.been.calledWith("lu:fail", liteUploader.xhrs[0]);
+      expect(mockOnEvent).to.have.been.calledWith("lu:fail", {xhr: liteUploader.xhrs[0]});
     });
 
     it("should keep a reference to the built object for later use", function () {
