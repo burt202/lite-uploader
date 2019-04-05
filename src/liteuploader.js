@@ -22,14 +22,14 @@
           $(this).trigger.bind($(this))(name, [data]);
         }.bind(this)
 
-        $.data(this, "liteUploader", new LiteUploader(options, getFiles, onEvent));
+        $.data(this, "liteUploader", new LiteUploader(options, onEvent, getFiles));
       });
     };
   }
 
-  function LiteUploader (options, getFiles, onEvent) {
+  function LiteUploader (options, onEvent, getFiles) {
     this.options = this._applyDefaults(options);
-    this._getFiles = getFiles;
+    this._getFiles = getFiles || function () { return null};
     this._triggerEvent = onEvent;
     this.xhrs = [];
   }
