@@ -38,10 +38,10 @@ jQuery is supported but is optional
     <th>Description</th>
   </tr>
   <tr>
-    <td>script</td>
+    <td>url</td>
     <td>String (required)</td>
     <td>null</td>
-    <td>the path to the script file that will handle the upload</td>
+    <td>url that will handle the upload</td>
   </tr>
   <tr>
     <td>ref</td>
@@ -161,7 +161,7 @@ Below is an overview of the built-in error types that can be returned when valid
 * type - when file mime type does not match any mime types supplied in the rule.allowedFileTypes option
 * size - when file size is above the size (in bytes) supplied in the rule.maxSize option
 * refRequired - when there is no name attribute on the file input and no 'ref' options is passed to the plugin
-* scriptRequired - when no 'script' option is passed to the plugin
+* urlRequired - when no 'url' option is passed to the plugin
 
 ### Public API
 

@@ -23,7 +23,7 @@ The most basic usage of the plugin
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php"
+        url: "http://localhost:8000/test/test.php"
       })
       .on("lu:success", function (e, response) {
         console.log(response);
@@ -42,7 +42,7 @@ Use the fail event to track if your upload script encounters any errors
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/error.php"
+        url: "http://localhost:8000/test/error.php"
       })
       .on("lu:fail", function (e, xhr) {
         console.log(xhr.status, JSON.parse(xhr.responseText));
@@ -61,7 +61,7 @@ Send extra params to your server script on and after instantiation
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php",
+        url: "http://localhost:8000/test/test.php",
         params: {
           foo: "bar",
           abc: 123
@@ -86,7 +86,7 @@ Add custom headers to your request by using the headers option
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php",
+        url: "http://localhost:8000/test/test.php",
         headers: {
           "xxx": "foobar"
         }
@@ -109,7 +109,7 @@ There is a built-in method to allow cancellation of the upload
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php"
+        url: "http://localhost:8000/test/test.php"
       })
       .on("lu:success", function (e, response) {
         console.log(response);
@@ -135,7 +135,7 @@ Use the progress event to get the completion percentage whilst uploading
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php"
+        url: "http://localhost:8000/test/test.php"
       })
       .on("lu:success", function (e, response) {
         console.log(response);
@@ -160,7 +160,7 @@ How to track progress on multiple files when uploading them one by one (using si
       var progress = {};
 
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php",
+        url: "http://localhost:8000/test/test.php",
         singleFileUploads: true
       })
       .on("lu:before", function (e, files) {
@@ -190,7 +190,7 @@ Basic validation is built-in for file types and size
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php",
+        url: "http://localhost:8000/test/test.php",
         rules: {
           allowedFileTypes: "image/jpeg,image/png,image/gif",
           maxSize: 250000
@@ -245,7 +245,7 @@ Use the validators option to add custom rules for your files. Each custom valida
       }
 
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php",
+        url: "http://localhost:8000/test/test.php",
         validators: [enforceMaximumWidth]
       })
       .on("lu:errors", function (e, errors) {
@@ -265,7 +265,7 @@ You can dynamically change/update the form data packet before each upload using 
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php",
+        url: "http://localhost:8000/test/test.php",
         params: {
           foo: "bar"
         },
@@ -298,7 +298,7 @@ Use the before event to get a hold of the images to be uploaded, and display the
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php"
+        url: "http://localhost:8000/test/test.php"
       })
       .on("lu:before", function (e, files) {
         var el = document.querySelector(".preview");
@@ -329,7 +329,7 @@ Invoke startUpload method with a FileList
 
     <script>
       $(".dropZone").liteUploader({
-        script: "http://localhost:8000/test/test.php",
+        url: "http://localhost:8000/test/test.php",
         ref: "fileUpload"
       })
       .on("lu:success", function (e, response) {
@@ -358,7 +358,7 @@ You can split multiple files into separate requests if required using the single
 
     <script>
       $(".fileUpload").liteUploader({
-        script: "http://localhost:8000/test/test.php",
+        url: "http://localhost:8000/test/test.php",
         singleFileUploads: true
       });
 
@@ -377,7 +377,7 @@ You can use it within node with or without jquery
 
     var LiteUploader = require("lite-uploader");
 
-    var options = {script: "test.php"};  // takes all of the documented options
+    var options = {url: "test.php"};  // takes all of the documented options
     var getFiles = function () {
       // return a FileList
     };
@@ -393,7 +393,7 @@ OR
     require("lite-uploader")
 
     $(".fileUpload").liteUploader({
-      script: "http://localhost:8000/test/test.php"
+      url: "http://localhost:8000/test/test.php"
     })
 
     $(".fileUpload").change(function () {

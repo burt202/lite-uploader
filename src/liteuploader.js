@@ -37,7 +37,7 @@
   LiteUploader.prototype = {
     _applyDefaults: function (options) {
       return Object.assign({
-        script: null,
+        url: null,
         ref: null,
         method: "POST",
         rules: {},
@@ -102,7 +102,7 @@
     },
 
     _validateOptions: function () {
-      var requiredOptions = ["script", "ref"];
+      var requiredOptions = ["url", "ref"];
 
       var errors = requiredOptions.reduce(function (acc, option) {
         if (!this.options[option]) acc.push({ type: option + "Required" });
@@ -217,7 +217,7 @@
 
     _buildXhrObject: function (files) {
       var xhr = this._getXmlHttpRequestObject();
-      xhr.open(this.options.method, this.options.script);
+      xhr.open(this.options.method, this.options.url);
       if (this.options.withCredentials) xhr.withCredentials = true
 
       for (var key in this.options.headers) {
