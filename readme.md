@@ -39,9 +39,9 @@ jQuery is supported but is optional
   </tr>
   <tr>
     <td>url</td>
-    <td>String (required)</td>
+    <td>String or Function (required)</td>
     <td>null</td>
-    <td>url that will handle the upload</td>
+    <td>url that will handle the upload, or a function that resolves with the url</td>
   </tr>
   <tr>
     <td>ref</td>

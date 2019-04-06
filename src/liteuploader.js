@@ -71,12 +71,13 @@
 
     _startUpload: function (files) {
       const promises = this._splitFiles(files).map(function (fileSplit) {
-        var xhr = this._buildXhrObject(fileSplit);
-
-        return this._beforeRequest(fileSplit)
-        .then(function (formData) {
-          return xhr.send(formData);
-        });
+        return this._buildXhrObject(fileSplit)
+          .then(function(xhr) {
+            return this._beforeRequest(fileSplit)
+            .then(function (formData) {
+              return xhr.send(formData);
+            });
+          }.bind(this))
       }.bind(this));
 
       return Promise.all(promises)
@@ -212,23 +213,31 @@
       return new XMLHttpRequest();
     },
 
+    _getScriptUrl: function(files) {
+      if (typeof this.options.url === "function") return this.options.url(files)
+      return Promise.resolve(this.options.url)
+    },
+
     _buildXhrObject: function (files) {
-      var xhr = this._getXmlHttpRequestObject();
-      xhr.open(this.options.method, this.options.url);
-      if (this.options.withCredentials) xhr.withCredentials = true
+      return this._getScriptUrl(files)
+        .then(function(url) {
+          var xhr = this._getXmlHttpRequestObject();
+          xhr.open(this.options.method, url);
+          if (this.options.withCredentials) xhr.withCredentials = true
 
-      for (var key in this.options.headers) {
-        xhr.setRequestHeader(key, this.options.headers[key]);
-      }
+          for (var key in this.options.headers) {
+            xhr.setRequestHeader(key, this.options.headers[key]);
+          }
 
-      xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this, files), false);
+          xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this, files), false);
 
-      xhr.onreadystatechange = function () {
-        this._onXHRResponse(files, xhr);
-      }.bind(this);
+          xhr.onreadystatechange = function () {
+            this._onXHRResponse(files, xhr);
+          }.bind(this);
 
-      this.xhrs.push(xhr);
-      return xhr;
+          this.xhrs.push(xhr);
+          return xhr;
+        }.bind(this))
     },
 
     _onXHRProgress: function (files, e) {

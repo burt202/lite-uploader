@@ -10,6 +10,7 @@
 * [Validation](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#validation)
 * [Custom validators](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#custom-validators)
 * [Before request event](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#before-request-event)
+* [Getting the url dynamically](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#getting-the-url-dynamically)
 * [Previewing images](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#previewing-images)
 * [Drag and drop](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#drag-and-drop)
 * [Uploading multiple files individually](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#uploading-multiple-files-individually)
@@ -283,6 +284,24 @@ You can dynamically change/update the form data packet before each upload using 
           abc: 123.
         }
       */
+
+      $(".fileUpload").change(function () {
+        $(this).data("liteUploader").startUpload();
+      });
+    </script>
+
+### Getting The URL Dynamically
+
+Sometimes you might need to dynamically get the url based on the file payload you're about to upload. If you pass a function in as the url option, you can do exactly that. The function must return a Promise resolving a url.
+
+    <input type="file" name="fileUpload" class="fileUpload" />
+
+    <script>
+      $(".fileUpload").liteUploader({
+        url: function (files) {
+          return Promise.resolve("http://localhost:8000/test/test.php");
+        }
+      });
 
       $(".fileUpload").change(function () {
         $(this).data("liteUploader").startUpload();
