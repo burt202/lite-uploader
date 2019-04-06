@@ -80,9 +80,6 @@
       }.bind(this));
 
       return Promise.all(promises)
-        .then(function() {
-          return this._triggerEvent("lu:finish");
-        }.bind(this));
     },
 
     _splitFiles: function (files) {
@@ -245,6 +242,8 @@
 
     _onXHRResponse: function (xhr) {
       if (xhr.readyState !== 4) return;
+
+      this._triggerEvent("lu:finish");
 
       if (xhr.status >= 200 && xhr.status < 300) {
         this._triggerEvent("lu:success", {response: xhr.responseText});

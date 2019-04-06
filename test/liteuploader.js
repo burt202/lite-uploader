@@ -198,7 +198,6 @@ describe("Lite Uploader", function () {
       return liteUploader._startUpload(mockFileList)
       .then(function () {
         expect(mockXhrObject.send).to.have.been.calledOnce;
-        expect(mockOnEvent).to.have.been.calledWith("lu:finish");
       });
     });
 
@@ -586,7 +585,8 @@ describe("Lite Uploader", function () {
       liteUploader.xhrs[0].status = 200;
       liteUploader.xhrs[0].responseText = "responseText";
       liteUploader.xhrs[0].onreadystatechange()
-      expect(mockOnEvent.callCount).to.eql(1);
+      expect(mockOnEvent.callCount).to.eql(2);
+      expect(mockOnEvent).to.have.been.calledWith("lu:finish");
       expect(mockOnEvent).to.have.been.calledWith("lu:success", {response: "responseText"});
     });
 
@@ -604,7 +604,8 @@ describe("Lite Uploader", function () {
       liteUploader.xhrs[0].readyState = 4;
       liteUploader.xhrs[0].status = 400;
       liteUploader.xhrs[0].onreadystatechange()
-      expect(mockOnEvent.callCount).to.eql(1);
+      expect(mockOnEvent.callCount).to.eql(2);
+      expect(mockOnEvent).to.have.been.calledWith("lu:finish");
       expect(mockOnEvent).to.have.been.calledWith("lu:fail", {xhr: liteUploader.xhrs[0]});
     });
 
