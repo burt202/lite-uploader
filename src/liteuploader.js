@@ -224,7 +224,7 @@
       xhr.upload.addEventListener("progress", this._onXHRProgress.bind(this, files), false);
 
       xhr.onreadystatechange = function () {
-        this._onXHRResponse(xhr);
+        this._onXHRResponse(files, xhr);
       }.bind(this);
 
       this.xhrs.push(xhr);
@@ -235,18 +235,18 @@
       if (!e.lengthComputable) return;
 
       this._triggerEvent("lu:progress", {
-        percentage: Math.floor((e.loaded / e.total) * 100),
-        files: files
+        files: files,
+        percentage: Math.floor((e.loaded / e.total) * 100)
       });
     },
 
-    _onXHRResponse: function (xhr) {
+    _onXHRResponse: function (files, xhr) {
       if (xhr.readyState !== 4) return;
 
       this._triggerEvent("lu:finish");
 
       if (xhr.status >= 200 && xhr.status < 300) {
-        this._triggerEvent("lu:success", {response: xhr.responseText});
+        this._triggerEvent("lu:success", {files, response: xhr.responseText});
       } else {
         this._triggerEvent("lu:fail", {xhr});
       }

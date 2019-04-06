@@ -134,12 +134,12 @@ jQuery is supported but is optional
   </tr>
   <tr>
     <td>lu:progress</td>
-    <td>eventName, {percentage, files}</td>
+    <td>eventName, {files, percentage}</td>
     <td>triggered whilst uploading files</td>
   </tr>
   <tr>
     <td>lu:success</td>
-    <td>eventName, {response}</td>
+    <td>eventName, {files, response}</td>
     <td>triggered on a successful request to the server</td>
   </tr>
   <tr>

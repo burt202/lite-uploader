@@ -574,7 +574,7 @@ describe("Lite Uploader", function () {
       var mockOnEvent = sandbox.stub();
       var liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, mockOnEvent);
 
-      liteUploader._buildXhrObject();
+      liteUploader._buildXhrObject(mockGetFiles);
       expect(mockOnEvent.callCount).to.eql(0);
 
       liteUploader.xhrs[0].readyState = 3;
@@ -587,7 +587,7 @@ describe("Lite Uploader", function () {
       liteUploader.xhrs[0].onreadystatechange()
       expect(mockOnEvent.callCount).to.eql(2);
       expect(mockOnEvent).to.have.been.calledWith("lu:finish");
-      expect(mockOnEvent).to.have.been.calledWith("lu:success", {response: "responseText"});
+      expect(mockOnEvent).to.have.been.calledWith("lu:success", {files: mockGetFiles, response: "responseText"});
     });
 
     it("should trigger 'fail' event when a non-successful http status code is encountered", function () {
