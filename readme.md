@@ -91,16 +91,22 @@ jQuery is supported but is optional
     <td>set to true to upload each file of a selection using an individual request</td>
   </tr>
   <tr>
+    <td>withCredentials</td>
+    <td>Boolean</td>
+    <td>false</td>
+    <td>indicates whether requests should be made using credentials such as cookies</td>
+  </tr>
+  <tr>
     <td>beforeRequest</td>
     <td>Function</td>
     <td>null</td>
     <td>delay the file upload request by returning a promise. Recieves the Files and the FormData. Expected to resolve with the FormData to continue. Reject to stop upload.</td>
   </tr>
   <tr>
-    <td>withCredentials</td>
+    <td>sendAsFormData</td>
     <td>Boolean</td>
-    <td>false</td>
-    <td>indicates whether requests should be made using credentials such as cookies</td>
+    <td>true</td>
+    <td>when set to false and singleFileUploads is true, dont send the file payload as form data. Also any params added via 'addParam' to form data, will be ignored</td>
   </tr>
 </table>
 

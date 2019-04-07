@@ -45,8 +45,9 @@
         headers: {},
         validators: [],
         singleFileUploads: false,
-        beforeRequest: null,
         withCredentials: false,
+        beforeRequest: null,
+        sendAsFormData: true,
       }, options);
     },
 
@@ -75,8 +76,9 @@
           .then(function(xhr) {
             return this._beforeRequest(fileSplit)
             .then(function (formData) {
+              if (!this.options.sendAsFormData && this.options.singleFileUploads) return xhr.send(fileSplit[0])
               return xhr.send(formData);
-            });
+            }.bind(this));
           }.bind(this))
       }.bind(this));
 

@@ -250,6 +250,23 @@ describe("Lite Uploader", function () {
         expect(mockXhrObject.send).not.to.have.been.called;
       });
     });
+
+    it("should not send file as form data when sendAsFormData is false and singleFileUploads is true", function () {
+      var mockXhrObject = {
+        send: sandbox.spy()
+      };
+      sandbox.stub(LiteUploader.prototype, "_buildXhrObject").resolves(mockXhrObject);
+      sandbox.stub(LiteUploader.prototype, "_beforeRequest").returns(Promise.resolve("foo"));
+      var liteUploader = new LiteUploader({url: "url", sendAsFormData: false, singleFileUploads: true}, noop);
+      var mockFileList = mockGetFiles();
+
+      return liteUploader._startUpload(mockFileList)
+      .then(function () {
+        expect(mockXhrObject.send.callCount).to.eql(2);
+        expect(mockXhrObject.send).to.have.been.calledWith(mockFileList[0]);
+        expect(mockXhrObject.send).to.have.been.calledWith(mockFileList[1]);
+      });
+    });
   });
 
   describe("before request", function () {
