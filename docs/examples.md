@@ -15,7 +15,7 @@
 * [Drag and drop](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#drag-and-drop)
 * [Uploading multiple files individually](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#uploading-multiple-files-individually)
 * [Using within node](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#using-within-node)
-
+* [React example](https://github.com/burt202/lite-uploader/blob/master/docs/examples.md#react-example)
 ### Basic usage
 
 The most basic usage of the plugin
@@ -418,3 +418,7 @@ OR
     $(".fileUpload").change(function () {
       $(this).data("liteUploader").startUpload();
     });
+
+### React Example
+
+[https://github.com/burt202/react-lite-uploader-example/blob/master/src/upload.js](https://github.com/burt202/react-lite-uploader-example/blob/master/src/upload.js)
