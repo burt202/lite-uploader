@@ -1,5 +1,15 @@
 ### Changelog
 
+6.0.0 (07 April 2019)
+
+* Rename script option -> url
+* Switch order of initial params to allow 'getFiles' to be optional
+* Make all value payload for events objects for consistency
+* Correct location of 'finish' event
+* Add files to 'success' event payload
+* Allow url prop to dynamically defined via a function
+* Add sendAsFormData option
+
 5.3.0 (04 April 2019)
 
 * Add method option
