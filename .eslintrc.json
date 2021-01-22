@@ -1,13 +1,17 @@
 {
-  "extends": ["eslint:recommended"],
+  "plugins": ["prettier"],
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
   "env": {
-    "browser": 1,
-    "node": 1,
-    "mocha": 1,
-    "jquery": 1,
-    "es6": 1
+    "browser": true,
+    "node": true,
+    "mocha": true,
+    "jquery": true,
+    "es6": true
   },
   "rules": {
-    "quotes": [2, "double"]
+    "no-var": "error"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018
   }
 }
