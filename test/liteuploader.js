@@ -671,6 +671,30 @@ describe("Lite Uploader", function () {
       })
     })
 
+    it("should trigger 'success' event with response on xhr success (json data)", function () {
+      const mockOnEvent = sandbox.stub()
+      const liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, mockOnEvent)
+
+      return liteUploader._buildXhrObject(mockGetFiles).then(() => {
+        expect(mockOnEvent.callCount).to.eql(0)
+
+        liteUploader.xhrs[0].readyState = 3
+        liteUploader.xhrs[0].onreadystatechange()
+        expect(mockOnEvent.callCount).to.eql(0)
+
+        liteUploader.xhrs[0].readyState = 4
+        liteUploader.xhrs[0].status = 200
+        liteUploader.xhrs[0].responseText = '{"foo": "bar"}'
+        liteUploader.xhrs[0].onreadystatechange()
+        expect(mockOnEvent.callCount).to.eql(2)
+        expect(mockOnEvent).to.have.been.calledWith("lu:finish")
+        expect(mockOnEvent).to.have.been.calledWith("lu:success", {
+          files: mockGetFiles,
+          response: {foo: "bar"},
+        })
+      })
+    })
+
     it("should trigger 'fail' event when a non-successful http status code is encountered", function () {
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, mockOnEvent)
