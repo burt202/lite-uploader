@@ -257,7 +257,7 @@
       this._triggerEvent("lu:finish");
 
       if (xhr.status >= 200 && xhr.status < 300) {
-        this._triggerEvent("lu:success", {files, response: xhr.responseText});
+        this._triggerEvent("lu:success", {files, response: (function(raw) { try { return JSON.parse(raw); } catch (err) { return e.responseText;} })(e.responseText) });
       } else {
         this._triggerEvent("lu:fail", {xhr});
       }
