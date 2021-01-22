@@ -7,27 +7,27 @@ chai.use(sinonChai)
 const LiteUploader = require("../src/liteuploader")
 
 let sandbox
-const noop = function () {}
+const noop = () => {}
 
-const mockGetFiles = function () {
+const mockGetFiles = () => {
   return {0: {name: "file1"}, 1: {name: "file2"}, length: 2}
 }
 
-const mockEmptyGetFiles = function () {
+const mockEmptyGetFiles = () => {
   return {length: 0}
 }
 
-describe("Lite Uploader", function () {
-  beforeEach(function () {
+describe("Lite Uploader", () => {
+  beforeEach(() => {
     sandbox = sinon.createSandbox()
   })
 
-  afterEach(function () {
+  afterEach(() => {
     sandbox.restore()
   })
 
-  describe("uploader object and options defaults", function () {
-    it("should be able to be instantiated", function () {
+  describe("uploader object and options defaults", () => {
+    it("should be able to be instantiated", () => {
       sandbox.stub(LiteUploader.prototype, "_applyDefaults").returns({tester: "abc"})
       const liteUploader = new LiteUploader({tester: "abc"}, noop)
 
@@ -38,7 +38,7 @@ describe("Lite Uploader", function () {
       expect(liteUploader.xhrs).to.eql([])
     })
 
-    it("should fallback to defaults if not all options are passed in", function () {
+    it("should fallback to defaults if not all options are passed in", () => {
       const liteUploader = new LiteUploader({}, noop, noop)
 
       expect(liteUploader.options.beforeRequest).to.eql(null)
@@ -52,32 +52,32 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("instantiation", function () {
-    it("should throw error if there is no file list", function () {
+  describe("instantiation", () => {
+    it("should throw error if there is no file list", () => {
       sandbox.stub(LiteUploader.prototype, "_startUpload")
       const liteUploader = new LiteUploader({url: "url"}, noop)
 
-      expect(function () {
+      expect(() => {
         liteUploader._init()
       }).to.throw("No files")
     })
 
-    it("should throw error if the file list is empty", function () {
+    it("should throw error if the file list is empty", () => {
       sandbox.stub(LiteUploader.prototype, "_startUpload")
       const liteUploader = new LiteUploader({url: "url"}, noop, mockEmptyGetFiles)
 
-      expect(function () {
+      expect(() => {
         liteUploader._init()
       }).to.throw("No files")
     })
 
-    it("should trigger 'error' event if there are options errors and not proceed with upload", function () {
+    it("should trigger 'error' event if there are options errors and not proceed with upload", () => {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns("foo")
       sandbox.stub(LiteUploader.prototype, "_startUpload")
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({url: "url"}, mockOnEvent, mockGetFiles)
 
-      return liteUploader._init().then(function () {
+      return liteUploader._init().then(() => {
         expect(mockOnEvent.callCount).to.eql(1)
         expect(mockOnEvent).to.have.been.calledWith("lu:errors", {
           errors: "foo",
@@ -86,14 +86,14 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should trigger 'error' event if there are file errors and not proceed with upload", function () {
+    it("should trigger 'error' event if there are file errors and not proceed with upload", () => {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null)
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns("bar")
       sandbox.stub(LiteUploader.prototype, "_startUpload")
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({url: "url"}, mockOnEvent, mockGetFiles)
 
-      return liteUploader._init().then(function () {
+      return liteUploader._init().then(() => {
         expect(mockOnEvent.callCount).to.eql(1)
         expect(mockOnEvent).to.have.been.calledWith("lu:errors", {
           errors: "bar",
@@ -102,7 +102,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should trigger 'start' event if no errors are found", function () {
+    it("should trigger 'start' event if no errors are found", () => {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null)
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null)
       sandbox.stub(LiteUploader.prototype, "_startUpload")
@@ -110,7 +110,7 @@ describe("Lite Uploader", function () {
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({url: "url"}, mockOnEvent, mockGetFiles)
 
-      return liteUploader._init().then(function () {
+      return liteUploader._init().then(() => {
         expect(mockOnEvent.callCount).to.eql(1)
         expect(mockOnEvent).to.have.been.calledWith("lu:start", {
           files: mockFileList,
@@ -118,7 +118,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should clear any previous references to built xhr objects before starting another upload", function () {
+    it("should clear any previous references to built xhr objects before starting another upload", () => {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null)
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null)
       sandbox.stub(LiteUploader.prototype, "_startUpload")
@@ -126,41 +126,41 @@ describe("Lite Uploader", function () {
       const liteUploader = new LiteUploader({url: "url"}, mockOnEvent, mockGetFiles)
 
       liteUploader.xhrs = ["foo"]
-      return liteUploader._init().then(function () {
+      return liteUploader._init().then(() => {
         expect(liteUploader.xhrs.length).to.eql(0)
       })
     })
 
-    it("should proceed with upload if no errors are found", function () {
+    it("should proceed with upload if no errors are found", () => {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null)
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null)
       sandbox.stub(LiteUploader.prototype, "_startUpload")
       const mockFileList = mockGetFiles()
       const liteUploader = new LiteUploader({url: "url"}, noop, mockGetFiles)
 
-      return liteUploader._init().then(function () {
+      return liteUploader._init().then(() => {
         expect(liteUploader._startUpload).to.have.been.calledOnce
         expect(liteUploader._startUpload).to.have.been.calledWith(mockFileList)
       })
     })
 
-    it("should proceed with upload with injected files if no errors are found", function () {
+    it("should proceed with upload with injected files if no errors are found", () => {
       sandbox.stub(LiteUploader.prototype, "_validateOptions").returns(null)
       sandbox.stub(LiteUploader.prototype, "_validateFiles").returns(null)
       sandbox.stub(LiteUploader.prototype, "_startUpload")
       const liteUploader = new LiteUploader({url: "url"}, noop, mockGetFiles)
 
-      return liteUploader._init("foo").then(function () {
+      return liteUploader._init("foo").then(() => {
         expect(liteUploader._startUpload).to.have.been.calledOnce
         expect(liteUploader._startUpload).to.have.been.calledWith("foo")
       })
     })
   })
 
-  describe("start upload", function () {
+  describe("start upload", () => {
     let mockFormDataObject
 
-    beforeEach(function () {
+    beforeEach(() => {
       mockFormDataObject = {
         append: function (key, value) {
           if (!mockFormDataObject.data) mockFormDataObject.data = {}
@@ -180,11 +180,11 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_getFormDataObject").returns(mockFormDataObject)
     })
 
-    afterEach(function () {
+    afterEach(() => {
       mockFormDataObject = null
     })
 
-    it("should upload all files in one request by default", function () {
+    it("should upload all files in one request by default", () => {
       const mockXhrObject = {
         send: sandbox.spy(),
       }
@@ -194,12 +194,12 @@ describe("Lite Uploader", function () {
       const liteUploader = new LiteUploader({url: "url"}, mockOnEvent, noop)
       const mockFileList = mockGetFiles()
 
-      return liteUploader._startUpload(mockFileList).then(function () {
+      return liteUploader._startUpload(mockFileList).then(() => {
         expect(mockXhrObject.send).to.have.been.calledOnce
       })
     })
 
-    it("should split all files into separate requests if singleFileUploads option is true", function () {
+    it("should split all files into separate requests if singleFileUploads option is true", () => {
       const mockXhrObject = {
         send: sandbox.spy(),
       }
@@ -208,12 +208,12 @@ describe("Lite Uploader", function () {
       const liteUploader = new LiteUploader({url: "url", singleFileUploads: true}, noop)
       const mockFileList = mockGetFiles()
 
-      return liteUploader._startUpload(mockFileList).then(function () {
+      return liteUploader._startUpload(mockFileList).then(() => {
         expect(mockXhrObject.send).to.have.been.calledTwice
       })
     })
 
-    it("should send formData with xhr request", function () {
+    it("should send formData with xhr request", () => {
       const mockXhrObject = {
         send: sandbox.spy(),
       }
@@ -222,17 +222,17 @@ describe("Lite Uploader", function () {
       const liteUploader = new LiteUploader({url: "url"}, noop)
       const mockFileList = mockGetFiles()
 
-      return liteUploader._startUpload(mockFileList).then(function () {
+      return liteUploader._startUpload(mockFileList).then(() => {
         expect(mockXhrObject.send).to.have.been.calledWith("foo")
       })
     })
 
-    it("should not continue with upload if beforeRequest rejects", function () {
+    it("should not continue with upload if beforeRequest rejects", () => {
       const mockXhrObject = {
         send: sandbox.spy(),
       }
       sandbox.stub(LiteUploader.prototype, "_buildXhrObject").resolves(mockXhrObject)
-      const beforeRequest = function () {
+      const beforeRequest = () => {
         return Promise.reject(new Error("bar"))
       }
       const liteUploader = new LiteUploader({url: "url", beforeRequest: beforeRequest}, noop)
@@ -240,17 +240,17 @@ describe("Lite Uploader", function () {
 
       return liteUploader
         ._startUpload(mockFileList)
-        .then(function () {
+        .then(() => {
           expect("thisnot").to.eql("topass")
         })
-        .catch(function (error) {
+        .catch((error) => {
           expect(error).to.be.instanceof(Error)
           expect(error.message).to.eql("bar")
           expect(mockXhrObject.send).not.to.have.been.called
         })
     })
 
-    it("should not send file as form data when sendAsFormData is false and singleFileUploads is true", function () {
+    it("should not send file as form data when sendAsFormData is false and singleFileUploads is true", () => {
       const mockXhrObject = {
         send: sandbox.spy(),
       }
@@ -262,7 +262,7 @@ describe("Lite Uploader", function () {
       )
       const mockFileList = mockGetFiles()
 
-      return liteUploader._startUpload(mockFileList).then(function () {
+      return liteUploader._startUpload(mockFileList).then(() => {
         expect(mockXhrObject.send.callCount).to.eql(2)
         expect(mockXhrObject.send).to.have.been.calledWith(mockFileList[0])
         expect(mockXhrObject.send).to.have.been.calledWith(mockFileList[1])
@@ -270,8 +270,8 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("before request", function () {
-    it("should trigger 'before' event with files", function () {
+  describe("before request", () => {
+    it("should trigger 'before' event with files", () => {
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated")
       const beforeRequest = sandbox.stub().returns("resolved")
       const mockOnEvent = sandbox.stub()
@@ -286,7 +286,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should collate form data and pass it to beforeRequest function with files", function () {
+    it("should collate form data and pass it to beforeRequest function with files", () => {
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated")
       const beforeRequest = sandbox.stub().returns("resolved")
       const mockOnEvent = sandbox.stub()
@@ -298,7 +298,7 @@ describe("Lite Uploader", function () {
       expect(beforeRequest).to.have.been.calledWith(mockFileList, "collated")
     })
 
-    it("should return beforeRequest response", function () {
+    it("should return beforeRequest response", () => {
       sandbox.stub(LiteUploader.prototype, "_collateFormData").returns("collated")
       const beforeRequest = sandbox.stub().returns("resolved")
       const mockOnEvent = sandbox.stub()
@@ -311,8 +311,8 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("options errors", function () {
-    it("should return error if there is no ref set", function () {
+  describe("options errors", () => {
+    it("should return error if there is no ref set", () => {
       const liteUploader = new LiteUploader({url: "url"}, noop, noop)
 
       const result = liteUploader._validateOptions()
@@ -320,7 +320,7 @@ describe("Lite Uploader", function () {
       expect(result).to.eql([{name: "_options", errors: [{type: "refRequired"}]}])
     })
 
-    it("should return error if the url option is blank", function () {
+    it("should return error if the url option is blank", () => {
       const liteUploader = new LiteUploader({ref: "ref"}, noop, noop)
 
       const result = liteUploader._validateOptions()
@@ -328,7 +328,7 @@ describe("Lite Uploader", function () {
       expect(result).to.eql([{name: "_options", errors: [{type: "urlRequired"}]}])
     })
 
-    it("should return null if no options errors are found", function () {
+    it("should return null if no options errors are found", () => {
       const liteUploader = new LiteUploader({url: "url", ref: "ref"}, noop, noop)
 
       const result = liteUploader._validateOptions()
@@ -337,8 +337,8 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("file type validator", function () {
-    it("should return undefined if the file type exactly matches an allowed type", function () {
+  describe("file type validator", () => {
+    it("should return undefined if the file type exactly matches an allowed type", () => {
       const liteUploader = new LiteUploader()
 
       const res = liteUploader._allowedFileTypeValidator("image/jpeg,image/png", {
@@ -348,7 +348,7 @@ describe("Lite Uploader", function () {
       expect(res).to.eq(undefined)
     })
 
-    it("should return error object if the file type is not a match for the allowed file type", function () {
+    it("should return error object if the file type is not a match for the allowed file type", () => {
       const liteUploader = new LiteUploader()
 
       const res = liteUploader._allowedFileTypeValidator("image/gif", {
@@ -362,7 +362,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should return undefined if the file type matches a wildcard allowed type", function () {
+    it("should return undefined if the file type matches a wildcard allowed type", () => {
       const liteUploader = new LiteUploader()
 
       const res = liteUploader._allowedFileTypeValidator("image/*,video/*", {
@@ -372,7 +372,7 @@ describe("Lite Uploader", function () {
       expect(res).to.eq(undefined)
     })
 
-    it("should return error object if the file type does not match a wildcard allowed type", function () {
+    it("should return error object if the file type does not match a wildcard allowed type", () => {
       const liteUploader = new LiteUploader()
 
       const res = liteUploader._allowedFileTypeValidator("image/*", {
@@ -387,8 +387,8 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("file size validator", function () {
-    it("should return undefined if the file size is below limit", function () {
+  describe("file size validator", () => {
+    it("should return undefined if the file size is below limit", () => {
       const liteUploader = new LiteUploader()
 
       const res = liteUploader._maxSizeValidator(200, {size: 199})
@@ -396,7 +396,7 @@ describe("Lite Uploader", function () {
       expect(res).to.eq(undefined)
     })
 
-    it("should return error object if the file is above limit", function () {
+    it("should return error object if the file is above limit", () => {
       const liteUploader = new LiteUploader()
 
       const res = liteUploader._maxSizeValidator(200, {size: 201})
@@ -409,8 +409,8 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("file errors", function () {
-    it("should return errors if any are found", function () {
+  describe("file errors", () => {
+    it("should return errors if any are found", () => {
       const allowedFileTypeValidatorStub = sandbox.stub(
         LiteUploader.prototype,
         "_allowedFileTypeValidator",
@@ -431,7 +431,7 @@ describe("Lite Uploader", function () {
         noop,
       )
 
-      return liteUploader._validateFiles(mockGetFiles()).then(function (result) {
+      return liteUploader._validateFiles(mockGetFiles()).then((result) => {
         expect(result).to.eql([
           {name: "file1", errors: ["foo", "bar"]},
           {name: "file2", errors: ["bar"]},
@@ -439,7 +439,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should return null if no errors are found", function () {
+    it("should return null if no errors are found", () => {
       sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator").returns(undefined)
       sandbox.stub(LiteUploader.prototype, "_maxSizeValidator").returns(undefined)
       const liteUploader = new LiteUploader(
@@ -452,12 +452,12 @@ describe("Lite Uploader", function () {
         noop,
       )
 
-      return liteUploader._validateFiles(mockGetFiles()).then(function (result) {
+      return liteUploader._validateFiles(mockGetFiles()).then((result) => {
         expect(result).to.eql(null)
       })
     })
 
-    it("should return errors from a custom validator if one is supplied", function () {
+    it("should return errors from a custom validator if one is supplied", () => {
       sandbox.stub(LiteUploader.prototype, "_allowedFileTypeValidator").returns(undefined)
       sandbox.stub(LiteUploader.prototype, "_maxSizeValidator").returns(undefined)
       const customValidator = sandbox.stub()
@@ -477,10 +477,10 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("form data", function () {
+  describe("form data", () => {
     let mockFormDataObject
 
-    beforeEach(function () {
+    beforeEach(() => {
       mockFormDataObject = {
         append: function (key, value) {
           if (!mockFormDataObject.data) mockFormDataObject.data = {}
@@ -500,11 +500,11 @@ describe("Lite Uploader", function () {
       sandbox.stub(LiteUploader.prototype, "_getFormDataObject").returns(mockFormDataObject)
     })
 
-    afterEach(function () {
+    afterEach(() => {
       mockFormDataObject = null
     })
 
-    it("should add any params to form data", function () {
+    it("should add any params to form data", () => {
       const liteUploader = new LiteUploader({params: {foo: "bar", another: "abc"}}, noop)
 
       const result = liteUploader._collateFormData([])
@@ -513,7 +513,7 @@ describe("Lite Uploader", function () {
       expect(result.get("another")).to.eql("abc")
     })
 
-    it("should add any files to form data keyed by ref", function () {
+    it("should add any files to form data keyed by ref", () => {
       const liteUploader = new LiteUploader({params: {}, ref: "tester"}, noop)
 
       const result = liteUploader._collateFormData(["tester1", "tester2"])
@@ -522,10 +522,10 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("building xhr object", function () {
+  describe("building xhr object", () => {
     let mockXmlHttpRequestObject
 
-    beforeEach(function () {
+    beforeEach(() => {
       mockXmlHttpRequestObject = {
         open: sandbox.spy(),
         setRequestHeader: sandbox.spy(),
@@ -558,11 +558,11 @@ describe("Lite Uploader", function () {
         .returns(mockXmlHttpRequestObject)
     })
 
-    afterEach(function () {
+    afterEach(() => {
       mockXmlHttpRequestObject = null
     })
 
-    it("should open it with correct method and url", function () {
+    it("should open it with correct method and url", () => {
       const liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, noop)
 
       return liteUploader._buildXhrObject().then(() => {
@@ -570,10 +570,10 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should open it with correct method and url, when url option is a function ", function () {
+    it("should open it with correct method and url, when url option is a function ", () => {
       const liteUploader = new LiteUploader(
         {
-          url: function () {
+          url: () => {
             return Promise.resolve("abc")
           },
           params: {foo: "123"},
@@ -586,7 +586,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should open it with overriden method and url", function () {
+    it("should open it with overriden method and url", () => {
       const liteUploader = new LiteUploader({url: "abc", method: "PUT"}, noop)
 
       return liteUploader._buildXhrObject().then(() => {
@@ -594,7 +594,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should set headers using passed in option", function () {
+    it("should set headers using passed in option", () => {
       const liteUploader = new LiteUploader(
         {
           url: "abc",
@@ -617,7 +617,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should set withCredentials to true if set in options", function () {
+    it("should set withCredentials to true if set in options", () => {
       const liteUploader = new LiteUploader(
         {url: "abc", params: {foo: "123"}, withCredentials: true},
         noop,
@@ -628,7 +628,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should trigger 'progress' event with percentage on xhr progress", function () {
+    it("should trigger 'progress' event with percentage on xhr progress", () => {
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({url: "abc"}, mockOnEvent)
 
@@ -647,7 +647,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should trigger 'success' event with response on xhr success", function () {
+    it("should trigger 'success' event with response on xhr success", () => {
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, mockOnEvent)
 
@@ -671,7 +671,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should trigger 'success' event with response on xhr success (json data)", function () {
+    it("should trigger 'success' event with response on xhr success (json data)", () => {
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, mockOnEvent)
 
@@ -695,7 +695,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should trigger 'fail' event when a non-successful http status code is encountered", function () {
+    it("should trigger 'fail' event when a non-successful http status code is encountered", () => {
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, mockOnEvent)
 
@@ -717,7 +717,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should keep a reference to the built object for later use", function () {
+    it("should keep a reference to the built object for later use", () => {
       const liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, noop)
 
       expect(liteUploader.xhrs.length).to.eql(0)
@@ -727,7 +727,7 @@ describe("Lite Uploader", function () {
       })
     })
 
-    it("should return xhr instance", function () {
+    it("should return xhr instance", () => {
       const liteUploader = new LiteUploader({url: "abc", params: {foo: "123"}}, noop)
 
       return liteUploader._buildXhrObject().then((result) => {
@@ -736,8 +736,8 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("start upload", function () {
-    it("should initiate the upload", function () {
+  describe("start upload", () => {
+    it("should initiate the upload", () => {
       sandbox.stub(LiteUploader.prototype, "_init")
       const liteUploader = new LiteUploader({tester: "abc"}, noop)
 
@@ -747,8 +747,8 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("add params", function () {
-    it("should add extra params onto params hash defined on instantiation", function () {
+  describe("add params", () => {
+    it("should add extra params onto params hash defined on instantiation", () => {
       const liteUploader = new LiteUploader({params: {foo: "123"}}, noop)
 
       liteUploader.addParam("bar", "456")
@@ -757,8 +757,8 @@ describe("Lite Uploader", function () {
     })
   })
 
-  describe("cancel upload", function () {
-    it("should abort the upload", function () {
+  describe("cancel upload", () => {
+    it("should abort the upload", () => {
       const liteUploader = new LiteUploader({tester: "abc"}, noop)
       liteUploader.xhrs = [
         {
@@ -771,7 +771,7 @@ describe("Lite Uploader", function () {
       expect(liteUploader.xhrs[0].abort).to.have.been.called
     })
 
-    it("should trigger 'cancelled' event", function () {
+    it("should trigger 'cancelled' event", () => {
       const mockOnEvent = sandbox.stub()
       const liteUploader = new LiteUploader({tester: "abc"}, mockOnEvent)
 

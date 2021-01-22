@@ -98,7 +98,7 @@
 
     _splitFiles: function (files) {
       if (this.options.singleFileUploads) {
-        return Array.prototype.map.call(files, function (file) {
+        return Array.prototype.map.call(files, (file) => {
           return [file]
         })
       } else {
@@ -141,7 +141,7 @@
 
       if (allowedTypes.indexOf(file.type) !== -1) return
 
-      const allowed = allowedTypes.reduce(function (result, allowedType) {
+      const allowed = allowedTypes.reduce((result, allowedType) => {
         if (result) {
           return result
         } else {
@@ -177,8 +177,8 @@
         }.bind(this),
       )
 
-      return Promise.all(promises).then(function (fileErrors) {
-        const allErrors = fileErrors.filter(function (file) {
+      return Promise.all(promises).then((fileErrors) => {
+        const allErrors = fileErrors.filter((file) => {
           return file.errors.length
         })
 
@@ -201,14 +201,14 @@
         [],
       )
 
-      const custom = this.options.validators.map(function (fn) {
+      const custom = this.options.validators.map((fn) => {
         return fn(file)
       })
 
-      return Promise.all(builtIn.concat(custom)).then(function (fileErrors) {
+      return Promise.all(builtIn.concat(custom)).then((fileErrors) => {
         return {
           name: file.name,
-          errors: fileErrors.filter(function (error) {
+          errors: fileErrors.filter((error) => {
             return !!error
           }),
         }
@@ -285,7 +285,7 @@
       if (xhr.status >= 200 && xhr.status < 300) {
         this._triggerEvent("lu:success", {
           files,
-          response: (function (raw) {
+          response: ((raw) => {
             try {
               return JSON.parse(raw)
             } catch (err) {
@@ -311,7 +311,7 @@
     cancelUpload: function () {
       this._triggerEvent("lu:cancelled")
 
-      this.xhrs.forEach(function (xhr) {
+      this.xhrs.forEach((xhr) => {
         xhr.abort()
       })
     },
